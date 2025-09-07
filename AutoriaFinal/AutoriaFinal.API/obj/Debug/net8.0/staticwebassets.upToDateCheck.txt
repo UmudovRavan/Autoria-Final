@@ -1,0 +1,5 @@
+wwwroot\uploads\photos\2e5b9480-6ee8-4bbf-909e-308a1c1e9f22.jpeg
+wwwroot\uploads\photos\43cbde98-e67f-4cc1-b00a-f4ce40e3b42f.jpeg
+wwwroot\uploads\photos\fde45668-a7e5-4c1b-a8c7-7d7471c6afc5.jpeg
+wwwroot\uploads\videos\145a103e-5715-400e-bdfc-e58d23acf35b.mp4
+wwwroot\uploads\videos\7b0e9b8e-2877-4b82-ba17-61e38f0d77aa.mp4

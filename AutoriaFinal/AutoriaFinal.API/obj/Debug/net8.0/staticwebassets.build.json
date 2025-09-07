@@ -1,0 +1,537 @@
+{
+  "Version": 1,
+  "Hash": "AxHGPSW7m7UCFQ1INbyThkU/7kdWXtEQEwLZzjGJR4Q=",
+  "Source": "AutoriaFinal.API",
+  "BasePath": "_content/AutoriaFinal.API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "AutoriaFinal.API\\wwwroot",
+      "Source": "AutoriaFinal.API",
+      "ContentRoot": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\",
+      "BasePath": "_content/AutoriaFinal.API",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\uploads\\photos\\2e5b9480-6ee8-4bbf-909e-308a1c1e9f22.jpeg",
+      "SourceId": "AutoriaFinal.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\",
+      "BasePath": "_content/AutoriaFinal.API",
+      "RelativePath": "uploads/photos/2e5b9480-6ee8-4bbf-909e-308a1c1e9f22#[.{fingerprint}]?.jpeg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "fta5cmrg6r",
+      "Integrity": "/eWBAJrCUfjDOr9TKUo/xqFoH1qWRF7c0qAY4koVYUs=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\uploads\\photos\\2e5b9480-6ee8-4bbf-909e-308a1c1e9f22.jpeg"
+    },
+    {
+      "Identity": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\uploads\\photos\\43cbde98-e67f-4cc1-b00a-f4ce40e3b42f.jpeg",
+      "SourceId": "AutoriaFinal.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\",
+      "BasePath": "_content/AutoriaFinal.API",
+      "RelativePath": "uploads/photos/43cbde98-e67f-4cc1-b00a-f4ce40e3b42f#[.{fingerprint}]?.jpeg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "fta5cmrg6r",
+      "Integrity": "/eWBAJrCUfjDOr9TKUo/xqFoH1qWRF7c0qAY4koVYUs=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\uploads\\photos\\43cbde98-e67f-4cc1-b00a-f4ce40e3b42f.jpeg"
+    },
+    {
+      "Identity": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\uploads\\photos\\fde45668-a7e5-4c1b-a8c7-7d7471c6afc5.jpeg",
+      "SourceId": "AutoriaFinal.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\",
+      "BasePath": "_content/AutoriaFinal.API",
+      "RelativePath": "uploads/photos/fde45668-a7e5-4c1b-a8c7-7d7471c6afc5#[.{fingerprint}]?.jpeg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "fta5cmrg6r",
+      "Integrity": "/eWBAJrCUfjDOr9TKUo/xqFoH1qWRF7c0qAY4koVYUs=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\uploads\\photos\\fde45668-a7e5-4c1b-a8c7-7d7471c6afc5.jpeg"
+    },
+    {
+      "Identity": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\uploads\\videos\\145a103e-5715-400e-bdfc-e58d23acf35b.mp4",
+      "SourceId": "AutoriaFinal.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\",
+      "BasePath": "_content/AutoriaFinal.API",
+      "RelativePath": "uploads/videos/145a103e-5715-400e-bdfc-e58d23acf35b#[.{fingerprint}]?.mp4",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "7cb066l2u4",
+      "Integrity": "Z6egw9GwxMxJsH64cnfbOfSVxfLCQIopJkY7uBH2Nho=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\uploads\\videos\\145a103e-5715-400e-bdfc-e58d23acf35b.mp4"
+    },
+    {
+      "Identity": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\uploads\\videos\\7b0e9b8e-2877-4b82-ba17-61e38f0d77aa.mp4",
+      "SourceId": "AutoriaFinal.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\",
+      "BasePath": "_content/AutoriaFinal.API",
+      "RelativePath": "uploads/videos/7b0e9b8e-2877-4b82-ba17-61e38f0d77aa#[.{fingerprint}]?.mp4",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "7cb066l2u4",
+      "Integrity": "Z6egw9GwxMxJsH64cnfbOfSVxfLCQIopJkY7uBH2Nho=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\uploads\\videos\\7b0e9b8e-2877-4b82-ba17-61e38f0d77aa.mp4"
+    }
+  ],
+  "Endpoints": [
+    {
+      "Route": "uploads/photos/2e5b9480-6ee8-4bbf-909e-308a1c1e9f22.fta5cmrg6r.jpeg",
+      "AssetFile": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\uploads\\photos\\2e5b9480-6ee8-4bbf-909e-308a1c1e9f22.jpeg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "5551"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"/eWBAJrCUfjDOr9TKUo/xqFoH1qWRF7c0qAY4koVYUs=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 06 Sep 2025 16:00:21 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "fta5cmrg6r"
+        },
+        {
+          "Name": "label",
+          "Value": "uploads/photos/2e5b9480-6ee8-4bbf-909e-308a1c1e9f22.jpeg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-/eWBAJrCUfjDOr9TKUo/xqFoH1qWRF7c0qAY4koVYUs="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/photos/2e5b9480-6ee8-4bbf-909e-308a1c1e9f22.jpeg",
+      "AssetFile": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\uploads\\photos\\2e5b9480-6ee8-4bbf-909e-308a1c1e9f22.jpeg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "5551"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"/eWBAJrCUfjDOr9TKUo/xqFoH1qWRF7c0qAY4koVYUs=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 06 Sep 2025 16:00:21 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-/eWBAJrCUfjDOr9TKUo/xqFoH1qWRF7c0qAY4koVYUs="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/photos/43cbde98-e67f-4cc1-b00a-f4ce40e3b42f.fta5cmrg6r.jpeg",
+      "AssetFile": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\uploads\\photos\\43cbde98-e67f-4cc1-b00a-f4ce40e3b42f.jpeg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "5551"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"/eWBAJrCUfjDOr9TKUo/xqFoH1qWRF7c0qAY4koVYUs=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 06 Sep 2025 15:58:45 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "fta5cmrg6r"
+        },
+        {
+          "Name": "label",
+          "Value": "uploads/photos/43cbde98-e67f-4cc1-b00a-f4ce40e3b42f.jpeg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-/eWBAJrCUfjDOr9TKUo/xqFoH1qWRF7c0qAY4koVYUs="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/photos/43cbde98-e67f-4cc1-b00a-f4ce40e3b42f.jpeg",
+      "AssetFile": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\uploads\\photos\\43cbde98-e67f-4cc1-b00a-f4ce40e3b42f.jpeg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "5551"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"/eWBAJrCUfjDOr9TKUo/xqFoH1qWRF7c0qAY4koVYUs=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 06 Sep 2025 15:58:45 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-/eWBAJrCUfjDOr9TKUo/xqFoH1qWRF7c0qAY4koVYUs="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/photos/fde45668-a7e5-4c1b-a8c7-7d7471c6afc5.fta5cmrg6r.jpeg",
+      "AssetFile": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\uploads\\photos\\fde45668-a7e5-4c1b-a8c7-7d7471c6afc5.jpeg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "5551"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"/eWBAJrCUfjDOr9TKUo/xqFoH1qWRF7c0qAY4koVYUs=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 06 Sep 2025 16:04:50 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "fta5cmrg6r"
+        },
+        {
+          "Name": "label",
+          "Value": "uploads/photos/fde45668-a7e5-4c1b-a8c7-7d7471c6afc5.jpeg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-/eWBAJrCUfjDOr9TKUo/xqFoH1qWRF7c0qAY4koVYUs="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/photos/fde45668-a7e5-4c1b-a8c7-7d7471c6afc5.jpeg",
+      "AssetFile": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\uploads\\photos\\fde45668-a7e5-4c1b-a8c7-7d7471c6afc5.jpeg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "5551"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"/eWBAJrCUfjDOr9TKUo/xqFoH1qWRF7c0qAY4koVYUs=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 06 Sep 2025 16:04:50 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-/eWBAJrCUfjDOr9TKUo/xqFoH1qWRF7c0qAY4koVYUs="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/videos/145a103e-5715-400e-bdfc-e58d23acf35b.7cb066l2u4.mp4",
+      "AssetFile": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\uploads\\videos\\145a103e-5715-400e-bdfc-e58d23acf35b.mp4",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1188944"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "video/mp4"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"Z6egw9GwxMxJsH64cnfbOfSVxfLCQIopJkY7uBH2Nho=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 06 Sep 2025 16:04:50 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "7cb066l2u4"
+        },
+        {
+          "Name": "label",
+          "Value": "uploads/videos/145a103e-5715-400e-bdfc-e58d23acf35b.mp4"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-Z6egw9GwxMxJsH64cnfbOfSVxfLCQIopJkY7uBH2Nho="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/videos/145a103e-5715-400e-bdfc-e58d23acf35b.mp4",
+      "AssetFile": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\uploads\\videos\\145a103e-5715-400e-bdfc-e58d23acf35b.mp4",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1188944"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "video/mp4"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"Z6egw9GwxMxJsH64cnfbOfSVxfLCQIopJkY7uBH2Nho=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 06 Sep 2025 16:04:50 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-Z6egw9GwxMxJsH64cnfbOfSVxfLCQIopJkY7uBH2Nho="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/videos/7b0e9b8e-2877-4b82-ba17-61e38f0d77aa.7cb066l2u4.mp4",
+      "AssetFile": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\uploads\\videos\\7b0e9b8e-2877-4b82-ba17-61e38f0d77aa.mp4",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1188944"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "video/mp4"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"Z6egw9GwxMxJsH64cnfbOfSVxfLCQIopJkY7uBH2Nho=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 06 Sep 2025 16:00:21 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "7cb066l2u4"
+        },
+        {
+          "Name": "label",
+          "Value": "uploads/videos/7b0e9b8e-2877-4b82-ba17-61e38f0d77aa.mp4"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-Z6egw9GwxMxJsH64cnfbOfSVxfLCQIopJkY7uBH2Nho="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/videos/7b0e9b8e-2877-4b82-ba17-61e38f0d77aa.mp4",
+      "AssetFile": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\uploads\\videos\\7b0e9b8e-2877-4b82-ba17-61e38f0d77aa.mp4",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1188944"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "video/mp4"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"Z6egw9GwxMxJsH64cnfbOfSVxfLCQIopJkY7uBH2Nho=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 06 Sep 2025 16:00:21 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-Z6egw9GwxMxJsH64cnfbOfSVxfLCQIopJkY7uBH2Nho="
+        }
+      ]
+    }
+  ]
+}

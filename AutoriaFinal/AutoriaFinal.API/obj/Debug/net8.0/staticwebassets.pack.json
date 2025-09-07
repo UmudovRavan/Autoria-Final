@@ -1,0 +1,45 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\uploads\\photos\\2e5b9480-6ee8-4bbf-909e-308a1c1e9f22.jpeg",
+      "PackagePath": "staticwebassets\\uploads\\photos\\2e5b9480-6ee8-4bbf-909e-308a1c1e9f22.jpeg"
+    },
+    {
+      "Id": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\uploads\\photos\\43cbde98-e67f-4cc1-b00a-f4ce40e3b42f.jpeg",
+      "PackagePath": "staticwebassets\\uploads\\photos\\43cbde98-e67f-4cc1-b00a-f4ce40e3b42f.jpeg"
+    },
+    {
+      "Id": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\uploads\\photos\\fde45668-a7e5-4c1b-a8c7-7d7471c6afc5.jpeg",
+      "PackagePath": "staticwebassets\\uploads\\photos\\fde45668-a7e5-4c1b-a8c7-7d7471c6afc5.jpeg"
+    },
+    {
+      "Id": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\uploads\\videos\\145a103e-5715-400e-bdfc-e58d23acf35b.mp4",
+      "PackagePath": "staticwebassets\\uploads\\videos\\145a103e-5715-400e-bdfc-e58d23acf35b.mp4"
+    },
+    {
+      "Id": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\uploads\\videos\\7b0e9b8e-2877-4b82-ba17-61e38f0d77aa.mp4",
+      "PackagePath": "staticwebassets\\uploads\\videos\\7b0e9b8e-2877-4b82-ba17-61e38f0d77aa.mp4"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.AutoriaFinal.API.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.AutoriaFinal.API.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.AutoriaFinal.API.props",
+      "PackagePath": "build\\AutoriaFinal.API.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.AutoriaFinal.API.props",
+      "PackagePath": "buildMultiTargeting\\AutoriaFinal.API.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.AutoriaFinal.API.props",
+      "PackagePath": "buildTransitive\\AutoriaFinal.API.props"
+    }
+  ],
+  "ElementsToRemove": []
+}
