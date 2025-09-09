@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using AutoriaFinal.Contract.Dtos.Auctions.Car;
-
+using AutoriaFinal.Contract.Dtos.Identity;
+using AutoriaFinal.Contract.Dtos.Identity.Token;
 using AutoriaFinal.Domain.Entities.Auctions;
+using AutoriaFinal.Domain.Entities.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,8 +16,8 @@ namespace AutoriaFinal.Application.Profiles
     {
         public CustomProfile()
         {
-            //Auctions
-
+            #region Auctions
+            #region Car
             // ✅ Siyahı görünüşü
             CreateMap<Car, CarGetDto>().ReverseMap();
 
@@ -42,6 +44,34 @@ namespace AutoriaFinal.Application.Profiles
                 .ForMember(dest => dest.VideoUrls,
                     opt => opt.Ignore())
                 .ReverseMap();
+            #endregion
+            #endregion
+            #region Identity
+            #region Register
+            CreateMap<RegisterDto, ApplicationUser>()
+                .ReverseMap();
+            #endregion
+            #region AuthResponse
+            CreateMap<ApplicationUser, AuthResponseDto>()
+              .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id))
+              .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+              .ForMember(dest => dest.Token, opt => opt.Ignore())
+              .ForMember(dest => dest.ExpiresAt, opt => opt.Ignore())
+              .ReverseMap();
+            #endregion
+            #region Token
+            CreateMap<TokenGenerationRequest, AuthResponseDto>()
+               .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+               .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+               .ForMember(dest => dest.Token, opt => opt.Ignore())
+               .ForMember(dest => dest.ExpiresAt, opt => opt.MapFrom(src => src.ExpiresAt))
+               .ReverseMap();
+            #endregion
+            
+
+
+
+            #endregion
 
         }
     }

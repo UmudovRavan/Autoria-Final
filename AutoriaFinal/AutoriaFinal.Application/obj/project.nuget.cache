@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "Jx3Lki1TgE4=",
+  "dgSpecHash": "rt77fWLySms=",
   "success": true,
   "projectFilePath": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Application\\AutoriaFinal.Application.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Ravan\\.nuget\\packages\\automapper\\15.0.1\\automapper.15.0.1.nupkg.sha512",
+    "C:\\Users\\Ravan\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\8.0.19\\microsoft.aspnetcore.authentication.jwtbearer.8.0.19.nupkg.sha512",
     "C:\\Users\\Ravan\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\8.0.19\\microsoft.aspnetcore.cryptography.internal.8.0.19.nupkg.sha512",
     "C:\\Users\\Ravan\\.nuget\\packages\\microsoft.aspnetcore.cryptography.keyderivation\\8.0.19\\microsoft.aspnetcore.cryptography.keyderivation.8.0.19.nupkg.sha512",
     "C:\\Users\\Ravan\\.nuget\\packages\\microsoft.aspnetcore.http.features\\5.0.17\\microsoft.aspnetcore.http.features.5.0.17.nupkg.sha512",
@@ -27,7 +28,10 @@
     "C:\\Users\\Ravan\\.nuget\\packages\\microsoft.identitymodel.abstractions\\8.0.1\\microsoft.identitymodel.abstractions.8.0.1.nupkg.sha512",
     "C:\\Users\\Ravan\\.nuget\\packages\\microsoft.identitymodel.jsonwebtokens\\8.0.1\\microsoft.identitymodel.jsonwebtokens.8.0.1.nupkg.sha512",
     "C:\\Users\\Ravan\\.nuget\\packages\\microsoft.identitymodel.logging\\8.0.1\\microsoft.identitymodel.logging.8.0.1.nupkg.sha512",
+    "C:\\Users\\Ravan\\.nuget\\packages\\microsoft.identitymodel.protocols\\7.1.2\\microsoft.identitymodel.protocols.7.1.2.nupkg.sha512",
+    "C:\\Users\\Ravan\\.nuget\\packages\\microsoft.identitymodel.protocols.openidconnect\\7.1.2\\microsoft.identitymodel.protocols.openidconnect.7.1.2.nupkg.sha512",
     "C:\\Users\\Ravan\\.nuget\\packages\\microsoft.identitymodel.tokens\\8.0.1\\microsoft.identitymodel.tokens.8.0.1.nupkg.sha512",
+    "C:\\Users\\Ravan\\.nuget\\packages\\system.identitymodel.tokens.jwt\\7.1.2\\system.identitymodel.tokens.jwt.7.1.2.nupkg.sha512",
     "C:\\Users\\Ravan\\.nuget\\packages\\system.io.pipelines\\5.0.2\\system.io.pipelines.5.0.2.nupkg.sha512"
   ],
   "logs": []

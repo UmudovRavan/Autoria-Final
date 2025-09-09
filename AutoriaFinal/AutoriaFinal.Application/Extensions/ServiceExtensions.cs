@@ -1,8 +1,10 @@
 ﻿
 using AutoriaFinal.Application.Services;
 using AutoriaFinal.Application.Services.Auctions;
+using AutoriaFinal.Application.Services.Identity;
 using AutoriaFinal.Contract.Services;
 using AutoriaFinal.Contract.Services.Auctions;
+using AutoriaFinal.Contract.Services.Identity;
 using AutoriaFinal.Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -18,8 +20,10 @@ namespace AutoriaFinal.Application.Extensions
         public static IServiceCollection AddServiceRegistration(this IServiceCollection services)
         {
             services.AddScoped(typeof(IGenericService<,,,,>), typeof(GenericService<,,,,>));
-            services.AddScoped<IFileStorageService, LocalFileStorageService>();
+            
             services.AddScoped<ICarService, CarService>();
+
+            services.AddScoped<IAuthService, AuthService>();
             return services;
         }
     }

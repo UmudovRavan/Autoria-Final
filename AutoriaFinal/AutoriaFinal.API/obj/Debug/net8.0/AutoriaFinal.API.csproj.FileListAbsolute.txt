@@ -163,3 +163,4 @@ C:\Users\Ravan\Desktop\AutoriaFinalProject\AutoriaFinal\AutoriaFinal.API\obj\Deb
 C:\Users\Ravan\Desktop\AutoriaFinalProject\AutoriaFinal\AutoriaFinal.API\obj\Debug\net8.0\AutoriaFinal.API.pdb
 C:\Users\Ravan\Desktop\AutoriaFinalProject\AutoriaFinal\AutoriaFinal.API\obj\Debug\net8.0\AutoriaFinal.API.genruntimeconfig.cache
 C:\Users\Ravan\Desktop\AutoriaFinalProject\AutoriaFinal\AutoriaFinal.API\obj\Debug\net8.0\ref\AutoriaFinal.API.dll
+C:\Users\Ravan\Desktop\AutoriaFinalProject\AutoriaFinal\AutoriaFinal.API\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

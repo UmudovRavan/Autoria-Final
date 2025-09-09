@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace AutoriaFinal.Contract.Dtos.Identity
 {
-    public record UserRequestDto(string Name,
-        string Email,
-        string Password);
+    public class LoginDto
+    {
+        public string Email { get; set; } = null!;
+        public string Password { get; set; } = null!;
+    }
 }

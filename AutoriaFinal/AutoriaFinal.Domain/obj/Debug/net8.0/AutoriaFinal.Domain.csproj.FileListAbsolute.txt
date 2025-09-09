@@ -11,3 +11,5 @@ C:\Users\Ravan\Desktop\AutoriaFinalProject\AutoriaFinal\AutoriaFinal.Domain\obj\
 C:\Users\Ravan\Desktop\AutoriaFinalProject\AutoriaFinal\AutoriaFinal.Domain\obj\Debug\net8.0\refint\AutoriaFinal.Domain.dll
 C:\Users\Ravan\Desktop\AutoriaFinalProject\AutoriaFinal\AutoriaFinal.Domain\obj\Debug\net8.0\AutoriaFinal.Domain.pdb
 C:\Users\Ravan\Desktop\AutoriaFinalProject\AutoriaFinal\AutoriaFinal.Domain\obj\Debug\net8.0\ref\AutoriaFinal.Domain.dll
+C:\Users\Ravan\Desktop\AutoriaFinalProject\AutoriaFinal\AutoriaFinal.Domain\bin\Debug\net8.0\AutoriaFinal.Domain.runtimeconfig.json
+C:\Users\Ravan\Desktop\AutoriaFinalProject\AutoriaFinal\AutoriaFinal.Domain\obj\Debug\net8.0\AutoriaFinal.Domain.genruntimeconfig.cache

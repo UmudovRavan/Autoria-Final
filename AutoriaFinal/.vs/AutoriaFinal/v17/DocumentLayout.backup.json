@@ -1,0 +1,427 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{53150912-C574-418A-B34F-6BF6F8F378B6}|AutoriaFinal.Application\\AutoriaFinal.Application.csproj|c:\\users\\ravan\\desktop\\autoriafinalproject\\autoriafinal\\autoriafinal.application\\profiles\\customprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{53150912-C574-418A-B34F-6BF6F8F378B6}|AutoriaFinal.Application\\AutoriaFinal.Application.csproj|solutionrelative:autoriafinal.application\\profiles\\customprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{53150912-C574-418A-B34F-6BF6F8F378B6}|AutoriaFinal.Application\\AutoriaFinal.Application.csproj|c:\\users\\ravan\\desktop\\autoriafinalproject\\autoriafinal\\autoriafinal.application\\services\\identity\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{53150912-C574-418A-B34F-6BF6F8F378B6}|AutoriaFinal.Application\\AutoriaFinal.Application.csproj|solutionrelative:autoriafinal.application\\services\\identity\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{122244B1-ED8C-4EE3-A358-68F678A187F5}|AutoriaFinal.API\\AutoriaFinal.API.csproj|c:\\users\\ravan\\desktop\\autoriafinalproject\\autoriafinal\\autoriafinal.api\\controllers\\identity\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{122244B1-ED8C-4EE3-A358-68F678A187F5}|AutoriaFinal.API\\AutoriaFinal.API.csproj|solutionrelative:autoriafinal.api\\controllers\\identity\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A39749A8-7584-4878-8593-EC5AEEC61EF6}|AutoriaFinal.Contract\\AutoriaFinal.Contract.csproj|c:\\users\\ravan\\desktop\\autoriafinalproject\\autoriafinal\\autoriafinal.contract\\dtos\\identity\\logindto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A39749A8-7584-4878-8593-EC5AEEC61EF6}|AutoriaFinal.Contract\\AutoriaFinal.Contract.csproj|solutionrelative:autoriafinal.contract\\dtos\\identity\\logindto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7B0D33FE-EDB7-43A5-9592-BA793B939869}|AutoriaFinal.Infrastructure\\AutoriaFinal.Infrastructure.csproj|c:\\users\\ravan\\desktop\\autoriafinalproject\\autoriafinal\\autoriafinal.infrastructure\\services\\token\\tokenservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7B0D33FE-EDB7-43A5-9592-BA793B939869}|AutoriaFinal.Infrastructure\\AutoriaFinal.Infrastructure.csproj|solutionrelative:autoriafinal.infrastructure\\services\\token\\tokenservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7B0D33FE-EDB7-43A5-9592-BA793B939869}|AutoriaFinal.Infrastructure\\AutoriaFinal.Infrastructure.csproj|c:\\users\\ravan\\desktop\\autoriafinalproject\\autoriafinal\\autoriafinal.infrastructure\\services\\email\\smtpemailservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7B0D33FE-EDB7-43A5-9592-BA793B939869}|AutoriaFinal.Infrastructure\\AutoriaFinal.Infrastructure.csproj|solutionrelative:autoriafinal.infrastructure\\services\\email\\smtpemailservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{353E2A87-F643-4747-9B9B-AFA76248BAA1}|AutoriaFinal.Persistence\\AutoriaFinal.Persistence.csproj|c:\\users\\ravan\\desktop\\autoriafinalproject\\autoriafinal\\autoriafinal.persistence\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{353E2A87-F643-4747-9B9B-AFA76248BAA1}|AutoriaFinal.Persistence\\AutoriaFinal.Persistence.csproj|solutionrelative:autoriafinal.persistence\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{122244B1-ED8C-4EE3-A358-68F678A187F5}|AutoriaFinal.API\\AutoriaFinal.API.csproj|c:\\users\\ravan\\desktop\\autoriafinalproject\\autoriafinal\\autoriafinal.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{122244B1-ED8C-4EE3-A358-68F678A187F5}|AutoriaFinal.API\\AutoriaFinal.API.csproj|solutionrelative:autoriafinal.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A39749A8-7584-4878-8593-EC5AEEC61EF6}|AutoriaFinal.Contract\\AutoriaFinal.Contract.csproj|c:\\users\\ravan\\desktop\\autoriafinalproject\\autoriafinal\\autoriafinal.contract\\dtos\\identity\\authresponsedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A39749A8-7584-4878-8593-EC5AEEC61EF6}|AutoriaFinal.Contract\\AutoriaFinal.Contract.csproj|solutionrelative:autoriafinal.contract\\dtos\\identity\\authresponsedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{122244B1-ED8C-4EE3-A358-68F678A187F5}|AutoriaFinal.API\\AutoriaFinal.API.csproj|c:\\users\\ravan\\desktop\\autoriafinalproject\\autoriafinal\\autoriafinal.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{122244B1-ED8C-4EE3-A358-68F678A187F5}|AutoriaFinal.API\\AutoriaFinal.API.csproj|solutionrelative:autoriafinal.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Persistence\\Migrations\\20250909153849_FactroyIdentity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:AutoriaFinal.Persistence\\Migrations\\20250909153849_FactroyIdentity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A39749A8-7584-4878-8593-EC5AEEC61EF6}|AutoriaFinal.Contract\\AutoriaFinal.Contract.csproj|c:\\users\\ravan\\desktop\\autoriafinalproject\\autoriafinal\\autoriafinal.contract\\dtos\\identity\\registerdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A39749A8-7584-4878-8593-EC5AEEC61EF6}|AutoriaFinal.Contract\\AutoriaFinal.Contract.csproj|solutionrelative:autoriafinal.contract\\dtos\\identity\\registerdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{53150912-C574-418A-B34F-6BF6F8F378B6}|AutoriaFinal.Application\\AutoriaFinal.Application.csproj|c:\\users\\ravan\\desktop\\autoriafinalproject\\autoriafinal\\autoriafinal.application\\extensions\\serviceextensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{53150912-C574-418A-B34F-6BF6F8F378B6}|AutoriaFinal.Application\\AutoriaFinal.Application.csproj|solutionrelative:autoriafinal.application\\extensions\\serviceextensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7B0D33FE-EDB7-43A5-9592-BA793B939869}|AutoriaFinal.Infrastructure\\AutoriaFinal.Infrastructure.csproj|c:\\users\\ravan\\desktop\\autoriafinalproject\\autoriafinal\\autoriafinal.infrastructure\\dependencyinjection\\infrastructureserviceregistration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7B0D33FE-EDB7-43A5-9592-BA793B939869}|AutoriaFinal.Infrastructure\\AutoriaFinal.Infrastructure.csproj|solutionrelative:autoriafinal.infrastructure\\dependencyinjection\\infrastructureserviceregistration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A39749A8-7584-4878-8593-EC5AEEC61EF6}|AutoriaFinal.Contract\\AutoriaFinal.Contract.csproj|c:\\users\\ravan\\desktop\\autoriafinalproject\\autoriafinal\\autoriafinal.contract\\dtos\\identity\\token\\tokengenerationrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A39749A8-7584-4878-8593-EC5AEEC61EF6}|AutoriaFinal.Contract\\AutoriaFinal.Contract.csproj|solutionrelative:autoriafinal.contract\\dtos\\identity\\token\\tokengenerationrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A39749A8-7584-4878-8593-EC5AEEC61EF6}|AutoriaFinal.Contract\\AutoriaFinal.Contract.csproj|c:\\users\\ravan\\desktop\\autoriafinalproject\\autoriafinal\\autoriafinal.contract\\services\\token\\itokenservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A39749A8-7584-4878-8593-EC5AEEC61EF6}|AutoriaFinal.Contract\\AutoriaFinal.Contract.csproj|solutionrelative:autoriafinal.contract\\services\\token\\itokenservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{53150912-C574-418A-B34F-6BF6F8F378B6}|AutoriaFinal.Application\\AutoriaFinal.Application.csproj|c:\\users\\ravan\\desktop\\autoriafinalproject\\autoriafinal\\autoriafinal.application\\exceptions\\useralreadyexistsexception.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{53150912-C574-418A-B34F-6BF6F8F378B6}|AutoriaFinal.Application\\AutoriaFinal.Application.csproj|solutionrelative:autoriafinal.application\\exceptions\\useralreadyexistsexception.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A39749A8-7584-4878-8593-EC5AEEC61EF6}|AutoriaFinal.Contract\\AutoriaFinal.Contract.csproj|c:\\users\\ravan\\desktop\\autoriafinalproject\\autoriafinal\\autoriafinal.contract\\services\\identity\\iauthservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A39749A8-7584-4878-8593-EC5AEEC61EF6}|AutoriaFinal.Contract\\AutoriaFinal.Contract.csproj|solutionrelative:autoriafinal.contract\\services\\identity\\iauthservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{34C4861C-EFFB-4513-810E-6F106160D6D8}|AutoriaFinal.Domain\\AutoriaFinal.Domain.csproj|c:\\users\\ravan\\desktop\\autoriafinalproject\\autoriafinal\\autoriafinal.domain\\entities\\identity\\applicationuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{34C4861C-EFFB-4513-810E-6F106160D6D8}|AutoriaFinal.Domain\\AutoriaFinal.Domain.csproj|solutionrelative:autoriafinal.domain\\entities\\identity\\applicationuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{34C4861C-EFFB-4513-810E-6F106160D6D8}|AutoriaFinal.Domain\\AutoriaFinal.Domain.csproj|c:\\users\\ravan\\desktop\\autoriafinalproject\\autoriafinal\\autoriafinal.domain\\entities\\identity\\emailsettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{34C4861C-EFFB-4513-810E-6F106160D6D8}|AutoriaFinal.Domain\\AutoriaFinal.Domain.csproj|solutionrelative:autoriafinal.domain\\entities\\identity\\emailsettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{34C4861C-EFFB-4513-810E-6F106160D6D8}|AutoriaFinal.Domain\\AutoriaFinal.Domain.csproj|c:\\users\\ravan\\desktop\\autoriafinalproject\\autoriafinal\\autoriafinal.domain\\enums\\identityenums\\userrole.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{34C4861C-EFFB-4513-810E-6F106160D6D8}|AutoriaFinal.Domain\\AutoriaFinal.Domain.csproj|solutionrelative:autoriafinal.domain\\enums\\identityenums\\userrole.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{353E2A87-F643-4747-9B9B-AFA76248BAA1}|AutoriaFinal.Persistence\\AutoriaFinal.Persistence.csproj|c:\\users\\ravan\\desktop\\autoriafinalproject\\autoriafinal\\autoriafinal.persistence\\data\\roleseeder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{353E2A87-F643-4747-9B9B-AFA76248BAA1}|AutoriaFinal.Persistence\\AutoriaFinal.Persistence.csproj|solutionrelative:autoriafinal.persistence\\data\\roleseeder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A39749A8-7584-4878-8593-EC5AEEC61EF6}|AutoriaFinal.Contract\\AutoriaFinal.Contract.csproj|c:\\users\\ravan\\desktop\\autoriafinalproject\\autoriafinal\\autoriafinal.contract\\services\\email\\iemailservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A39749A8-7584-4878-8593-EC5AEEC61EF6}|AutoriaFinal.Contract\\AutoriaFinal.Contract.csproj|solutionrelative:autoriafinal.contract\\services\\email\\iemailservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{353E2A87-F643-4747-9B9B-AFA76248BAA1}|AutoriaFinal.Persistence\\AutoriaFinal.Persistence.csproj|c:\\users\\ravan\\desktop\\autoriafinalproject\\autoriafinal\\autoriafinal.persistence\\migrations\\20250908213856_initidentityroles.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{353E2A87-F643-4747-9B9B-AFA76248BAA1}|AutoriaFinal.Persistence\\AutoriaFinal.Persistence.csproj|solutionrelative:autoriafinal.persistence\\migrations\\20250908213856_initidentityroles.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 8,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\Controllers\\Identity\\AuthController.cs",
+              "RelativeDocumentMoniker": "AutoriaFinal.API\\Controllers\\Identity\\AuthController.cs",
+              "ToolTip": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\Controllers\\Identity\\AuthController.cs",
+              "RelativeToolTip": "AutoriaFinal.API\\Controllers\\Identity\\AuthController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACwAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-09T15:03:36.59Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "AuthResponseDto.cs",
+              "DocumentMoniker": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Contract\\Dtos\\Identity\\AuthResponseDto.cs",
+              "RelativeDocumentMoniker": "AutoriaFinal.Contract\\Dtos\\Identity\\AuthResponseDto.cs",
+              "ToolTip": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Contract\\Dtos\\Identity\\AuthResponseDto.cs",
+              "RelativeToolTip": "AutoriaFinal.Contract\\Dtos\\Identity\\AuthResponseDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-08T22:31:34.351Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "AppDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Persistence\\Data\\AppDbContext.cs",
+              "RelativeDocumentMoniker": "AutoriaFinal.Persistence\\Data\\AppDbContext.cs",
+              "ToolTip": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Persistence\\Data\\AppDbContext.cs",
+              "RelativeToolTip": "AutoriaFinal.Persistence\\Data\\AppDbContext.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAewBEAAABWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-08T16:18:10.485Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "SmtpEmailService.cs",
+              "DocumentMoniker": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Infrastructure\\Services\\Email\\SmtpEmailService.cs",
+              "RelativeDocumentMoniker": "AutoriaFinal.Infrastructure\\Services\\Email\\SmtpEmailService.cs",
+              "ToolTip": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Infrastructure\\Services\\Email\\SmtpEmailService.cs",
+              "RelativeToolTip": "AutoriaFinal.Infrastructure\\Services\\Email\\SmtpEmailService.cs",
+              "ViewState": "AgIAAAIAAAAAAAAAAAAewBQAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-08T14:01:57.485Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "TokenService.cs",
+              "DocumentMoniker": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Infrastructure\\Services\\Token\\TokenService.cs",
+              "RelativeDocumentMoniker": "AutoriaFinal.Infrastructure\\Services\\Token\\TokenService.cs",
+              "ToolTip": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Infrastructure\\Services\\Token\\TokenService.cs",
+              "RelativeToolTip": "AutoriaFinal.Infrastructure\\Services\\Token\\TokenService.cs",
+              "ViewState": "AgIAAAIAAAAAAAAAAAAewA4AAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-08T23:42:06.895Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "LoginDto.cs",
+              "DocumentMoniker": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Contract\\Dtos\\Identity\\LoginDto.cs",
+              "RelativeDocumentMoniker": "AutoriaFinal.Contract\\Dtos\\Identity\\LoginDto.cs",
+              "ToolTip": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Contract\\Dtos\\Identity\\LoginDto.cs",
+              "RelativeToolTip": "AutoriaFinal.Contract\\Dtos\\Identity\\LoginDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-08T22:31:16.304Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "CustomProfile.cs",
+              "DocumentMoniker": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Application\\Profiles\\CustomProfile.cs",
+              "RelativeDocumentMoniker": "AutoriaFinal.Application\\Profiles\\CustomProfile.cs",
+              "ToolTip": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Application\\Profiles\\CustomProfile.cs",
+              "RelativeToolTip": "AutoriaFinal.Application\\Profiles\\CustomProfile.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAAE4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-09T14:31:44.028Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AuthService.cs",
+              "DocumentMoniker": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Application\\Services\\Identity\\AuthService.cs",
+              "RelativeDocumentMoniker": "AutoriaFinal.Application\\Services\\Identity\\AuthService.cs",
+              "ToolTip": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Application\\Services\\Identity\\AuthService.cs",
+              "RelativeToolTip": "AutoriaFinal.Application\\Services\\Identity\\AuthService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-08T22:33:25.606Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\Program.cs",
+              "RelativeDocumentMoniker": "AutoriaFinal.API\\Program.cs",
+              "ToolTip": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\Program.cs",
+              "RelativeToolTip": "AutoriaFinal.API\\Program.cs",
+              "ViewState": "AgIAABYAAAAAAAAAAAAQwCAAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-08T15:36:01.995Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\appsettings.json",
+              "RelativeDocumentMoniker": "AutoriaFinal.API\\appsettings.json",
+              "ToolTip": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.API\\appsettings.json",
+              "RelativeToolTip": "AutoriaFinal.API\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-09-09T11:33:35.452Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "TokenGenerationRequest.cs",
+              "DocumentMoniker": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Contract\\Dtos\\Identity\\Token\\TokenGenerationRequest.cs",
+              "RelativeDocumentMoniker": "AutoriaFinal.Contract\\Dtos\\Identity\\Token\\TokenGenerationRequest.cs",
+              "ToolTip": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Contract\\Dtos\\Identity\\Token\\TokenGenerationRequest.cs",
+              "RelativeToolTip": "AutoriaFinal.Contract\\Dtos\\Identity\\Token\\TokenGenerationRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAABBAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-08T23:38:24.05Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "20250909153849_FactroyIdentity.cs",
+              "DocumentMoniker": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Persistence\\Migrations\\20250909153849_FactroyIdentity.cs",
+              "RelativeDocumentMoniker": "AutoriaFinal.Persistence\\Migrations\\20250909153849_FactroyIdentity.cs",
+              "ToolTip": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Persistence\\Migrations\\20250909153849_FactroyIdentity.cs",
+              "RelativeToolTip": "AutoriaFinal.Persistence\\Migrations\\20250909153849_FactroyIdentity.cs",
+              "ViewState": "AgIAABIAAAAAAAAAAAA1wAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-09T15:38:49.586Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "ServiceExtensions.cs",
+              "DocumentMoniker": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Application\\Extensions\\ServiceExtensions.cs",
+              "RelativeDocumentMoniker": "AutoriaFinal.Application\\Extensions\\ServiceExtensions.cs",
+              "ToolTip": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Application\\Extensions\\ServiceExtensions.cs",
+              "RelativeToolTip": "AutoriaFinal.Application\\Extensions\\ServiceExtensions.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAABcAAAA6AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-09T11:31:49.737Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "RegisterDto.cs",
+              "DocumentMoniker": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Contract\\Dtos\\Identity\\RegisterDto.cs",
+              "RelativeDocumentMoniker": "AutoriaFinal.Contract\\Dtos\\Identity\\RegisterDto.cs",
+              "ToolTip": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Contract\\Dtos\\Identity\\RegisterDto.cs",
+              "RelativeToolTip": "AutoriaFinal.Contract\\Dtos\\Identity\\RegisterDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAoAAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-08T22:23:38.526Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "IAuthService.cs",
+              "DocumentMoniker": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Contract\\Services\\Identity\\IAuthService.cs",
+              "RelativeDocumentMoniker": "AutoriaFinal.Contract\\Services\\Identity\\IAuthService.cs",
+              "ToolTip": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Contract\\Services\\Identity\\IAuthService.cs",
+              "RelativeToolTip": "AutoriaFinal.Contract\\Services\\Identity\\IAuthService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAwAAAA3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-08T22:32:29.723Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "InfrastructureServiceRegistration.cs",
+              "DocumentMoniker": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Infrastructure\\DependencyInjection\\InfrastructureServiceRegistration.cs",
+              "RelativeDocumentMoniker": "AutoriaFinal.Infrastructure\\DependencyInjection\\InfrastructureServiceRegistration.cs",
+              "ToolTip": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Infrastructure\\DependencyInjection\\InfrastructureServiceRegistration.cs",
+              "RelativeToolTip": "AutoriaFinal.Infrastructure\\DependencyInjection\\InfrastructureServiceRegistration.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwBUAAABPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-08T14:08:50.363Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "ITokenService.cs",
+              "DocumentMoniker": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Contract\\Services\\Token\\ITokenService.cs",
+              "RelativeDocumentMoniker": "AutoriaFinal.Contract\\Services\\Token\\ITokenService.cs",
+              "ToolTip": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Contract\\Services\\Token\\ITokenService.cs",
+              "RelativeToolTip": "AutoriaFinal.Contract\\Services\\Token\\ITokenService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAsAAABiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-08T23:41:46.633Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "ApplicationUser.cs",
+              "DocumentMoniker": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Domain\\Entities\\Identity\\ApplicationUser.cs",
+              "RelativeDocumentMoniker": "AutoriaFinal.Domain\\Entities\\Identity\\ApplicationUser.cs",
+              "ToolTip": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Domain\\Entities\\Identity\\ApplicationUser.cs",
+              "RelativeToolTip": "AutoriaFinal.Domain\\Entities\\Identity\\ApplicationUser.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-08T22:25:42.362Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "UserAlreadyExistsException.cs",
+              "DocumentMoniker": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Application\\Exceptions\\UserAlreadyExistsException.cs",
+              "RelativeDocumentMoniker": "AutoriaFinal.Application\\Exceptions\\UserAlreadyExistsException.cs",
+              "ToolTip": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Application\\Exceptions\\UserAlreadyExistsException.cs",
+              "RelativeToolTip": "AutoriaFinal.Application\\Exceptions\\UserAlreadyExistsException.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-08T22:42:15.713Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "EmailSettings.cs",
+              "DocumentMoniker": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Domain\\Entities\\Identity\\EmailSettings.cs",
+              "RelativeDocumentMoniker": "AutoriaFinal.Domain\\Entities\\Identity\\EmailSettings.cs",
+              "ToolTip": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Domain\\Entities\\Identity\\EmailSettings.cs",
+              "RelativeToolTip": "AutoriaFinal.Domain\\Entities\\Identity\\EmailSettings.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-08T14:03:00.13Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "UserRole.cs",
+              "DocumentMoniker": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Domain\\Enums\\IdentityEnums\\UserRole.cs",
+              "RelativeDocumentMoniker": "AutoriaFinal.Domain\\Enums\\IdentityEnums\\UserRole.cs",
+              "ToolTip": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Domain\\Enums\\IdentityEnums\\UserRole.cs",
+              "RelativeToolTip": "AutoriaFinal.Domain\\Enums\\IdentityEnums\\UserRole.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-08T22:27:33.482Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "20250908213856_InitIdentityRoles.cs",
+              "DocumentMoniker": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Persistence\\Migrations\\20250908213856_InitIdentityRoles.cs",
+              "RelativeDocumentMoniker": "AutoriaFinal.Persistence\\Migrations\\20250908213856_InitIdentityRoles.cs",
+              "ToolTip": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Persistence\\Migrations\\20250908213856_InitIdentityRoles.cs",
+              "RelativeToolTip": "AutoriaFinal.Persistence\\Migrations\\20250908213856_InitIdentityRoles.cs",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAUwAMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-08T21:38:56.186Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "RoleSeeder.cs",
+              "DocumentMoniker": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Persistence\\Data\\RoleSeeder.cs",
+              "RelativeDocumentMoniker": "AutoriaFinal.Persistence\\Data\\RoleSeeder.cs",
+              "ToolTip": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Persistence\\Data\\RoleSeeder.cs",
+              "RelativeToolTip": "AutoriaFinal.Persistence\\Data\\RoleSeeder.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-08T21:31:51.854Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "IEmailService.cs",
+              "DocumentMoniker": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Contract\\Services\\Email\\IEmailService.cs",
+              "RelativeDocumentMoniker": "AutoriaFinal.Contract\\Services\\Email\\IEmailService.cs",
+              "ToolTip": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Contract\\Services\\Email\\IEmailService.cs",
+              "RelativeToolTip": "AutoriaFinal.Contract\\Services\\Email\\IEmailService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-08T14:00:01.396Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -10,8 +10,5 @@ namespace AutoriaFinal.Domain.Entities.Identity
 {
     public class ApplicationUser : IdentityUser
     {
-        public string Name { get; private set; } = default!;
-       
-
     }
 }
