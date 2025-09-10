@@ -1,6 +1,7 @@
 ﻿using AutoriaFinal.Domain.Entities.Auctions;
 using AutoriaFinal.Domain.Repositories.Auctions;
 using AutoriaFinal.Persistence.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,11 @@ namespace AutoriaFinal.Persistence.Repositories.Auctions
     {
         public LocationRepository(AppDbContext context) : base(context)
         {
+        }
+
+        public async Task<Location?> GetByNameAsync(string name)
+        {
+            return await _dbSet.FirstOrDefaultAsync(l=>l.Name == name);
         }
     }
 }

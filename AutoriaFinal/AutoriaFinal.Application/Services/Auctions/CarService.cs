@@ -24,15 +24,19 @@ namespace AutoriaFinal.Application.Services.Auctions
         private readonly ICarRepository _carRepository;
         private readonly IMapper _mapper;
         private readonly IFileStorageService _fileStorageService;
+        private readonly ILocationRepository _locationRepository;
         public CarService(
             ICarRepository carRepository,
+            ILocationRepository locationRepository,
+            IFileStorageService fileStorageService,
             IMapper mapper,
-            IUnitOfWork unitOfWork,
-            IFileStorageService fileStorageService) : base(carRepository, mapper,unitOfWork)
+            IUnitOfWork unitOfWork)
+            : base(carRepository, mapper, unitOfWork)
         {
-            _carRepository = carRepository;
-            _mapper = mapper;
-            _fileStorageService = fileStorageService;
+            _carRepository = carRepository ?? throw new ArgumentNullException(nameof(carRepository));
+            _locationRepository = locationRepository ?? throw new ArgumentNullException(nameof(locationRepository));
+            _fileStorageService = fileStorageService ?? throw new ArgumentNullException(nameof(fileStorageService));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
         public override async Task<CarDetailDto> AddAsync(CarCreateDto dto)
         {
@@ -41,11 +45,12 @@ namespace AutoriaFinal.Application.Services.Auctions
 
             if (string.IsNullOrWhiteSpace(dto.Vin))
                 throw new Exception("Car VIN is required.");
-
-           
+            var location = await _locationRepository.GetByIdAsync(dto.LocationId);
+            if (location is null)
+                throw new Exception($"Location with ID {dto.LocationId} not found.");
             if (dto.Image != null)
             {
-                var imagePath = await _fileStorageService.SaveFileAsync(dto.Image, "images/pokemons");
+                var imagePath = await _fileStorageService.SaveFileAsync(dto.Image, "images/car");
                 dto.ImagePath = imagePath;
             }
 
@@ -54,29 +59,14 @@ namespace AutoriaFinal.Application.Services.Auctions
             await _unitOfWork.SaveChangesAsync();
             return _mapper.Map<CarDetailDto>(entity);
         }
-
-
-
-
-
-
-
         public async Task<CarDetailDto?> GetByVinAsync(string vin)
         {
            var entity = await _carRepository.GetByVinAsync(vin);
             if (entity is null)
-                throw new Exception($"Pokémon with ID {vin} not found.");
+                throw new Exception($"Car with VIN {vin} not found.");
             return _mapper.Map<CarDetailDto>(entity);
         }
 
 
-
-
-
-        //public async Task<CarResponseDto?> GetByVinAsync(string vin)
-        //{
-        //    var cars = await _carRepository.GetByVinAsync(vin);
-        //    return cars == null ? null : _mapper.Map<CarResponseDto>(cars);
-        //}
     }
 }

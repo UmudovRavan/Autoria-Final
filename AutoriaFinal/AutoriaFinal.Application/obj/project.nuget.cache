@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "rt77fWLySms=",
+  "dgSpecHash": "2KzMluhECqc=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Application\\AutoriaFinal.Application.csproj",
+  "projectFilePath": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\Autoria-Final\\AutoriaFinal\\AutoriaFinal.Application\\AutoriaFinal.Application.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Ravan\\.nuget\\packages\\automapper\\15.0.1\\automapper.15.0.1.nupkg.sha512",
     "C:\\Users\\Ravan\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\8.0.19\\microsoft.aspnetcore.authentication.jwtbearer.8.0.19.nupkg.sha512",

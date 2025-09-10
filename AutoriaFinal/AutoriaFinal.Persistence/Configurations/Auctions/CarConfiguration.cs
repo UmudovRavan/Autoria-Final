@@ -15,42 +15,32 @@ namespace AutoriaFinal.Persistence.Configurations.Auctions
         {
             base.Configure(builder);
 
-
             builder.Property(x => x.Vin)
-            .IsRequired()
-            .HasMaxLength(17);
+                .IsRequired()
+                .HasMaxLength(17);
             builder.HasIndex(x => x.Vin).IsUnique();
 
-
-            builder.Property(x => x.Year)
-            .IsRequired();
-
+            builder.Property(x => x.Year).IsRequired();
 
             builder.Property(x => x.Make)
-            .IsRequired()
-            .HasMaxLength(100);
-
+                .IsRequired()
+                .HasMaxLength(100);
 
             builder.Property(x => x.Model)
-            .IsRequired()
-            .HasMaxLength(100);
-
+                .IsRequired()
+                .HasMaxLength(100);
 
             builder.Property(x => x.BodyStyle)
-            .HasMaxLength(64);
-
+                .HasMaxLength(64);
 
             builder.Property(x => x.Color)
-            .HasMaxLength(64);
-
+                .HasMaxLength(64);
 
             builder.Property(x => x.Odometer);
 
-
             builder.Property(x => x.OdometerUnit)
-            .IsRequired()
-            .HasMaxLength(2); // "mi" / "km"
-
+                .IsRequired()
+                .HasMaxLength(2); // "mi" / "km"
 
             builder.Property(x => x.Fuel).HasConversion<int>();
             builder.Property(x => x.Transmission).HasConversion<int>();
@@ -60,18 +50,18 @@ namespace AutoriaFinal.Persistence.Configurations.Auctions
             builder.Property(x => x.SecondaryDamage).HasConversion<int>();
             builder.Property(x => x.TitleType).HasConversion<int>();
 
-
             builder.Property(x => x.TitleState)
-            .HasMaxLength(10);
-
+                .HasMaxLength(10);
 
             builder.Property(x => x.EstimatedRetailValue)
-            .HasColumnType("decimal(18,2)");
+                .HasColumnType("decimal(18,2)");
 
-
-
-
-            // Documents are in Support module; FK configured there if needed.
+            // ✅ Car → Location əlaqəsi
+            builder.HasOne(c => c.Location)
+                   .WithMany(l => l.Cars)
+                   .HasForeignKey(c => c.LocationId)
+                   .OnDelete(DeleteBehavior.Restrict)
+                   .IsRequired(false);
         }
     }
 }

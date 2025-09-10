@@ -9,5 +9,6 @@ namespace AutoriaFinal.Domain.Repositories.Auctions
 {
     public interface ILocationRepository : IGenericRepository<Location>
     {
+        Task<Location?> GetByNameAsync(string name);
     }
 }

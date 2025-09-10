@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoriaFinal.Contract.Dtos.Auctions.Car;
+using AutoriaFinal.Contract.Dtos.Auctions.Location;
 using AutoriaFinal.Contract.Dtos.Identity;
 using AutoriaFinal.Contract.Dtos.Identity.Token;
 using AutoriaFinal.Domain.Entities.Auctions;
@@ -45,7 +46,14 @@ namespace AutoriaFinal.Application.Profiles
                     opt => opt.Ignore())
                 .ReverseMap();
             #endregion
+            #region Location
+            CreateMap<Location, LocationGetDto>().ReverseMap();
+            CreateMap<Location, LocationDetailDto>().ReverseMap();
+            CreateMap<LocationCreateDto, Location>().ReverseMap();
+            CreateMap<LocationUpdateDto, Location>().ReverseMap();
             #endregion
+            #endregion
+
             #region Identity
             #region Register
             CreateMap<RegisterDto, ApplicationUser>()

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "hxtx7Ft4Y6Q=",
+  "dgSpecHash": "L3ruJVN58CQ=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\AutoriaFinal\\AutoriaFinal.Infrastructure\\AutoriaFinal.Infrastructure.csproj",
+  "projectFilePath": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\Autoria-Final\\AutoriaFinal\\AutoriaFinal.Infrastructure\\AutoriaFinal.Infrastructure.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Ravan\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\8.0.19\\microsoft.aspnetcore.authentication.jwtbearer.8.0.19.nupkg.sha512",
     "C:\\Users\\Ravan\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\8.0.19\\microsoft.aspnetcore.cryptography.internal.8.0.19.nupkg.sha512",

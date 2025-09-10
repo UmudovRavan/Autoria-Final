@@ -33,13 +33,14 @@ namespace AutoriaFinal.Domain.Entities.Auctions
 
         public decimal? EstimatedRetailValue { get; private set; }
 
-        // ✅ Artıq CarPhoto yoxdur, birbaşa string list saxlanır
         public string PhotoUrls { get;  set; }= new string("");
         public string VideoUrls { get;  set; } = new string("");
+        public Guid? LocationId { get; private set; }
+        public Location? Location { get; private set; } = default!;
 
         public ICollection<Support.Document> Documents { get; private set; } = new List<Support.Document>();
 
-        // Helper metodlar
+        #region Helper Methods
         public void SetOdometer(int? value, string unit)
         {
             Odometer = value;
@@ -82,8 +83,8 @@ namespace AutoriaFinal.Domain.Entities.Auctions
             MarkUpdated();
         }
 
-      
+        #endregion
 
-       
+
     }
 }

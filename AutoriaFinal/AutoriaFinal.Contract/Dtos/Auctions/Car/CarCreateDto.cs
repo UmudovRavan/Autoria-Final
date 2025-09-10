@@ -16,6 +16,7 @@ namespace AutoriaFinal.Contract.Dtos.Auctions.Car
         public string Model { get; set; } = default!;
         public string? BodyStyle { get; set; }
         public string? Color { get; set; }
+        public Guid LocationId { get; set; }
         public int? Odometer { get; set; }
         public string OdometerUnit { get; set; } = "km";
 

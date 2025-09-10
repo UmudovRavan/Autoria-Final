@@ -237,6 +237,9 @@ namespace AutoriaFinal.Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<Guid?>("LocationId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Make")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -292,6 +295,8 @@ namespace AutoriaFinal.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("LocationId");
+
                     b.HasIndex("Vin")
                         .IsUnique();
 
@@ -309,17 +314,12 @@ namespace AutoriaFinal.Persistence.Migrations
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("City")
-                        .HasMaxLength(80)
-                        .HasColumnType("nvarchar(80)");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Country")
-                        .HasMaxLength(80)
-                        .HasColumnType("nvarchar(80)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -329,24 +329,21 @@ namespace AutoriaFinal.Persistence.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("PostalCode")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("Region")
-                        .HasMaxLength(80)
-                        .HasColumnType("nvarchar(80)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("UpdatedAtUtc")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Code")
-                        .IsUnique();
 
                     b.ToTable("Locations");
                 });
@@ -1128,6 +1125,16 @@ namespace AutoriaFinal.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("AutoriaFinal.Domain.Entities.Auctions.Car", b =>
+                {
+                    b.HasOne("AutoriaFinal.Domain.Entities.Auctions.Location", "Location")
+                        .WithMany("Cars")
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Location");
+                });
+
             modelBuilder.Entity("AutoriaFinal.Domain.Entities.Auctions.LotMedia", b =>
                 {
                     b.HasOne("AutoriaFinal.Domain.Entities.Auctions.AuctionCar", null)
@@ -1236,6 +1243,11 @@ namespace AutoriaFinal.Persistence.Migrations
             modelBuilder.Entity("AutoriaFinal.Domain.Entities.Auctions.Car", b =>
                 {
                     b.Navigation("Documents");
+                });
+
+            modelBuilder.Entity("AutoriaFinal.Domain.Entities.Auctions.Location", b =>
+                {
+                    b.Navigation("Cars");
                 });
 
             modelBuilder.Entity("AutoriaFinal.Domain.Entities.Billing.Invoice", b =>

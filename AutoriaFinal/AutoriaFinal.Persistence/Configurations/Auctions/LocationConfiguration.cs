@@ -1,4 +1,5 @@
 ﻿using AutoriaFinal.Domain.Entities.Auctions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
@@ -14,25 +15,30 @@ namespace AutoriaFinal.Persistence.Configurations.Auctions
         {
             base.Configure(builder);
 
-
             builder.Property(x => x.Name)
-            .IsRequired()
-            .HasMaxLength(150);
+                   .IsRequired()
+                   .HasMaxLength(100);
 
+            builder.Property(x => x.AddressLine1)
+                   .HasMaxLength(200);
 
-            builder.Property(x => x.Code)
-            .IsRequired()
-            .HasMaxLength(20);
+            builder.Property(x => x.City)
+                   .HasMaxLength(100);
 
+            builder.Property(x => x.Region)
+                   .HasMaxLength(100);
 
-            builder.HasIndex(x => x.Code).IsUnique();
+            builder.Property(x => x.Country)
+                   .HasMaxLength(100);
 
+            builder.Property(x => x.PostalCode)
+                   .HasMaxLength(20);
 
-            builder.Property(x => x.AddressLine1).HasMaxLength(200);
-            builder.Property(x => x.City).HasMaxLength(80);
-            builder.Property(x => x.Region).HasMaxLength(80);
-            builder.Property(x => x.Country).HasMaxLength(80);
-            builder.Property(x => x.PostalCode).HasMaxLength(20);
+            // 1 Location → çoxlu Car
+            builder.HasMany(l => l.Cars)
+                   .WithOne(c => c.Location)
+                   .HasForeignKey(c => c.LocationId)
+                   .OnDelete(DeleteBehavior.Restrict);
         }   
     }
 }

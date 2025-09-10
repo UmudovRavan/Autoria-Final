@@ -37,7 +37,7 @@ namespace AutoriaFinal.Persistence.Repositories
 
         public async Task<IEnumerable<TEntity>> GetAllAsync()
         {
-            return await Task.FromResult(_dbSet.AsQueryable());
+            return await _dbSet.Where(e => !e.IsDeleted).ToListAsync();
         }
 
         public async Task<TEntity?> GetByIdAsync(Guid id)

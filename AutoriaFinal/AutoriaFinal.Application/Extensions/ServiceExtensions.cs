@@ -22,6 +22,7 @@ namespace AutoriaFinal.Application.Extensions
             services.AddScoped(typeof(IGenericService<,,,,>), typeof(GenericService<,,,,>));
             
             services.AddScoped<ICarService, CarService>();
+            services.AddScoped<ILocationService, LocationService>();
 
             services.AddScoped<IAuthService, AuthService>();
             return services;

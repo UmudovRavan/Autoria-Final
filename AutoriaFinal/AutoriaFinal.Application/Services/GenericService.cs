@@ -36,7 +36,8 @@ namespace AutoriaFinal.Application.Services
         public async Task<IEnumerable<TGetDto>> GetAllAsync()
         {
             var entities = await _repository.GetAllAsync();
-            return _mapper.Map<IEnumerable<TGetDto>>(entities);
+            var activeEntities = entities.Where(e => !e.IsDeleted);
+            return _mapper.Map<IEnumerable<TGetDto>>(activeEntities);
         }
 
         public async Task<TDetailDto> GetByIdAsync(Guid id)
@@ -83,7 +84,7 @@ namespace AutoriaFinal.Application.Services
             if (existing is null)
                 throw new Exception($"{typeof(TEntity).Name} with ID {id} not found");
 
-            await _repository.DeleteAsync(id);
+            existing.MarkDeleted();
             await _unitOfWork.SaveChangesAsync();
             return true;
         }
