@@ -31,6 +31,9 @@ namespace AutoriaFinal.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("CreatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("EndTimeUtc")
                         .HasColumnType("datetime2");
 
@@ -39,6 +42,11 @@ namespace AutoriaFinal.Persistence.Migrations
 
                     b.Property<Guid>("LocationId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("MinBidIncrement")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(18,2)")
+                        .HasDefaultValue(100m);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -76,6 +84,11 @@ namespace AutoriaFinal.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<decimal>("CurrentPrice")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(18,2)")
+                        .HasDefaultValue(0m);
+
                     b.Property<decimal?>("HammerPrice")
                         .HasColumnType("decimal(18,2)");
 
@@ -88,10 +101,7 @@ namespace AutoriaFinal.Persistence.Migrations
                         .HasDefaultValue(false);
 
                     b.Property<int?>("ItemNumber")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
+                        .HasColumnType("int");
 
                     b.Property<string>("LotNumber")
                         .IsRequired()
@@ -104,7 +114,7 @@ namespace AutoriaFinal.Persistence.Migrations
                     b.Property<DateTime?>("UpdatedAtUtc")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Winner")
+                    b.Property<int>("WinnerStatus")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -127,6 +137,9 @@ namespace AutoriaFinal.Persistence.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<DateTime>("AssignedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("AuctionCarId")
                         .HasColumnType("uniqueidentifier");
 
@@ -135,6 +148,14 @@ namespace AutoriaFinal.Persistence.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<decimal?>("PaidAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("PaymentStatus")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<DateTime?>("UpdatedAtUtc")
                         .HasColumnType("datetime2");
@@ -1135,15 +1156,6 @@ namespace AutoriaFinal.Persistence.Migrations
                     b.Navigation("Location");
                 });
 
-            modelBuilder.Entity("AutoriaFinal.Domain.Entities.Auctions.LotMedia", b =>
-                {
-                    b.HasOne("AutoriaFinal.Domain.Entities.Auctions.AuctionCar", null)
-                        .WithMany("Medias")
-                        .HasForeignKey("AuctionCarId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("AutoriaFinal.Domain.Entities.Billing.Payment", b =>
                 {
                     b.HasOne("AutoriaFinal.Domain.Entities.Billing.Invoice", null)
@@ -1236,8 +1248,6 @@ namespace AutoriaFinal.Persistence.Migrations
             modelBuilder.Entity("AutoriaFinal.Domain.Entities.Auctions.AuctionCar", b =>
                 {
                     b.Navigation("Bids");
-
-                    b.Navigation("Medias");
                 });
 
             modelBuilder.Entity("AutoriaFinal.Domain.Entities.Auctions.Car", b =>

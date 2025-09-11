@@ -16,23 +16,29 @@ namespace AutoriaFinal.Persistence.Configurations.Auctions
         {
             base.Configure(builder);
 
-
             builder.Property(a => a.Name)
                    .IsRequired()
                    .HasMaxLength(200);
-                
 
-            builder.HasOne<Location>() // Auction.LocationId FK
+            builder.Property(a => a.MinBidIncrement)
+                   .HasColumnType("decimal(18,2)")
+                   .HasDefaultValue(100);
+
+            builder.Property(a => a.CreatedByUserId)
+                   .IsRequired(false);
+
+            builder.HasOne<Location>()
                    .WithMany()
                    .HasForeignKey(a => a.LocationId)
                    .OnDelete(DeleteBehavior.Restrict);
 
             builder.Property(a => a.Status)
-                   .HasConversion<int>(); // Enum -> int
+                   .HasConversion<int>();
 
             builder.HasMany(a => a.AuctionCars)
                    .WithOne()
-                   .HasForeignKey(ac => ac.AuctionId);
+                   .HasForeignKey(ac => ac.AuctionId)
+                   .OnDelete(DeleteBehavior.Cascade);
         }
   
     }

@@ -1,6 +1,10 @@
 {
   "Files": [
     {
+      "Id": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\Autoria-Final\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\logs\\log-20250911.txt",
+      "PackagePath": "staticwebassets\\logs\\log-20250911.txt"
+    },
+    {
       "Id": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\Autoria-Final\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\uploads\\photos\\2e5b9480-6ee8-4bbf-909e-308a1c1e9f22.jpeg",
       "PackagePath": "staticwebassets\\uploads\\photos\\2e5b9480-6ee8-4bbf-909e-308a1c1e9f22.jpeg"
     },

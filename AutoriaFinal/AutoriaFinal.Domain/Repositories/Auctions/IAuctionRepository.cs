@@ -7,5 +7,10 @@ using System.Threading.Tasks;
 
 namespace AutoriaFinal.Domain.Repositories.Auctions
 {
-    public interface IAuctionRepository : IGenericRepository<Auction> { }
+    public interface IAuctionRepository : IGenericRepository<Auction>
+    {
+        Task<IEnumerable<Auction>> GetActiveAuctionsAsync();
+        Task<IEnumerable<Auction>> GetAuctionsByLocationAsync(Guid locationId);
+        Task<IEnumerable<Auction>> GetUpcomingAuctionsAsync(DateTime from, DateTime to);
+    }
 }

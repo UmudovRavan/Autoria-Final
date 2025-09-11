@@ -16,10 +16,27 @@ namespace AutoriaFinal.Persistence.Repositories.Auctions
         {
         }
 
-        public async Task<AuctionCar?> GetWithMediaAsync(Guid id)
-            => await _context.AuctionCars
-                    .Include(m => m.Medias)
-                    .Include(b => b.Bids)
-                    .FirstOrDefaultAsync(x => x.Id == id);
+        public async Task<IEnumerable<AuctionCar>> GetByAuctionIdAsync(Guid auctionId)
+        {
+            return await _context.AuctionCars
+                .Where(ac => ac.AuctionId == auctionId)
+                .Include(ac => ac.Bids)
+                .ToListAsync();
+        }
+
+        public async Task<AuctionCar?> GetByLotNumberAsync(string lotNumber)
+        {
+            return await _context.AuctionCars
+                .Include(ac => ac.Bids)
+                .FirstOrDefaultAsync(ac => ac.LotNumber == lotNumber);
+        }
+
+        public async Task<decimal?> GetCurrentPriceAsync(Guid auctionCarId)
+        {
+            return await _context.AuctionCars
+                .Where(ac=>ac.Id == auctionCarId)
+                .Select(ac=>(decimal?)ac.CurrentPrice)
+                .FirstOrDefaultAsync();
+        }
     }
 }

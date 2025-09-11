@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoriaFinal.Domain.Enums.AuctionEnums;
 
 namespace AutoriaFinal.Persistence.Configurations.Auctions
 {
@@ -15,26 +16,32 @@ namespace AutoriaFinal.Persistence.Configurations.Auctions
         {
             base.Configure(builder);
 
-
             builder.Property(x => x.Amount)
-            .IsRequired()
-            .HasColumnType("decimal(18,2)");
+                   .IsRequired()
+                   .HasColumnType("decimal(18,2)");
 
+            builder.Property(x => x.PaidAmount)
+                   .HasColumnType("decimal(18,2)")
+                   .IsRequired(false);
 
-            // Exactly one winner per lot
+            builder.Property(x => x.PaymentStatus)
+                   .HasConversion<int>()
+                   .HasDefaultValue(PaymentStatus.Pending); // Pending
+
+            builder.Property(x => x.AssignedAt)
+                   .IsRequired();
+
             builder.HasIndex(x => x.AuctionCarId).IsUnique();
 
-
             builder.HasOne<AuctionCar>()
-            .WithMany()
-            .HasForeignKey(x => x.AuctionCarId)
-            .OnDelete(DeleteBehavior.Cascade);
-
+                   .WithMany()
+                   .HasForeignKey(x => x.AuctionCarId)
+                   .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne<Bid>()
-            .WithMany()
-            .HasForeignKey(x => x.WinningBidId)
-            .OnDelete(DeleteBehavior.Restrict);
+                   .WithMany()
+                   .HasForeignKey(x => x.WinningBidId)
+                   .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

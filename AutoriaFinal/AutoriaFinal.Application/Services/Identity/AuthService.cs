@@ -53,7 +53,7 @@ namespace AutoriaFinal.Application.Services.Identity
             var result = await _userManager.CreateAsync(newUser, dto.Password);
             if (!result.Succeeded)
             {
-                throw new Exception(
+                throw new BadRequestException(
                     $"Failed to create the user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
             }
             await EnsureRoleExistsAsync("Member");
@@ -81,12 +81,12 @@ namespace AutoriaFinal.Application.Services.Identity
             var user = await _userManager.FindByEmailAsync(dto.Email);
             if (user == null || !await _userManager.CheckPasswordAsync(user, dto.Password))
             {
-                throw new Exception("Invalid email or password");
+                throw new UnauthorizedException("Invalid email or password");
             }
 
             if (!user.EmailConfirmed)
             {
-                throw new Exception("Email is not confirmed yet");
+                throw new BadRequestException("Email is not confirmed yet");
             }
 
             var roles = await _userManager.GetRolesAsync(user);

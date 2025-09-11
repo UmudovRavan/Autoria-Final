@@ -9,6 +9,8 @@ namespace AutoriaFinal.Domain.Repositories.Auctions
 {
     public interface IAuctionCarRepository : IGenericRepository<AuctionCar>
     {
-        Task<AuctionCar?> GetWithMediaAsync(Guid id);
+        Task<AuctionCar?> GetByLotNumberAsync(string lotNumber);
+        Task<IEnumerable<AuctionCar>> GetByAuctionIdAsync(Guid auctionId);
+        Task<decimal?> GetCurrentPriceAsync(Guid auctionCarId);
     }
 }

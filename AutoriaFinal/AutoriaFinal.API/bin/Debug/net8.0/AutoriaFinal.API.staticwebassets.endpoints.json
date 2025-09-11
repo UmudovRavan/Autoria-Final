@@ -3,6 +3,88 @@
   "ManifestType": "Build",
   "Endpoints": [
     {
+      "Route": "logs/log-20250911.begjfisbq6.txt",
+      "AssetFile": "logs/log-20250911.txt",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "730"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"w1CS42QIcwlSOkPD1Hm4DllMEGCQf7OEH9aTWHu1dD4=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 11 Sep 2025 14:52:44 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "begjfisbq6"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-w1CS42QIcwlSOkPD1Hm4DllMEGCQf7OEH9aTWHu1dD4="
+        },
+        {
+          "Name": "label",
+          "Value": "logs/log-20250911.txt"
+        }
+      ]
+    },
+    {
+      "Route": "logs/log-20250911.txt",
+      "AssetFile": "logs/log-20250911.txt",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "730"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"w1CS42QIcwlSOkPD1Hm4DllMEGCQf7OEH9aTWHu1dD4=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 11 Sep 2025 14:52:44 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-w1CS42QIcwlSOkPD1Hm4DllMEGCQf7OEH9aTWHu1dD4="
+        }
+      ]
+    },
+    {
       "Route": "uploads/photos/2e5b9480-6ee8-4bbf-909e-308a1c1e9f22.fta5cmrg6r.jpeg",
       "AssetFile": "uploads/photos/2e5b9480-6ee8-4bbf-909e-308a1c1e9f22.jpeg",
       "Selectors": [],

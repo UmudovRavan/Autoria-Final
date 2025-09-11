@@ -1,5 +1,17 @@
 ﻿<Project>
   <ItemGroup>
+    <StaticWebAssetEndpoint Include="_content/AutoriaFinal.API/logs/log-20250911.begjfisbq6.txt">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\logs\log-20250911.txt'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"begjfisbq6"},{"Name":"integrity","Value":"sha256-w1CS42QIcwlSOkPD1Hm4DllMEGCQf7OEH9aTWHu1dD4="},{"Name":"label","Value":"_content/AutoriaFinal.API/logs/log-20250911.txt"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"730"},{"Name":"Content-Type","Value":"text/plain"},{"Name":"ETag","Value":"\u0022w1CS42QIcwlSOkPD1Hm4DllMEGCQf7OEH9aTWHu1dD4=\u0022"},{"Name":"Last-Modified","Value":"Thu, 11 Sep 2025 14:52:44 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/AutoriaFinal.API/logs/log-20250911.txt">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\logs\log-20250911.txt'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-w1CS42QIcwlSOkPD1Hm4DllMEGCQf7OEH9aTWHu1dD4="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"730"},{"Name":"Content-Type","Value":"text/plain"},{"Name":"ETag","Value":"\u0022w1CS42QIcwlSOkPD1Hm4DllMEGCQf7OEH9aTWHu1dD4=\u0022"},{"Name":"Last-Modified","Value":"Thu, 11 Sep 2025 14:52:44 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/AutoriaFinal.API/uploads/photos/2e5b9480-6ee8-4bbf-909e-308a1c1e9f22.fta5cmrg6r.jpeg">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\photos\2e5b9480-6ee8-4bbf-909e-308a1c1e9f22.jpeg'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>

@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using AutoriaFinal.Application.Exceptions;
 using AutoriaFinal.Contract.Dtos.Auctions.Location;
 using AutoriaFinal.Contract.Services.Auctions;
 using AutoriaFinal.Domain.Entities.Auctions;
 using AutoriaFinal.Domain.Repositories;
 using AutoriaFinal.Domain.Repositories.Auctions;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,20 +23,33 @@ namespace AutoriaFinal.Application.Services.Auctions
     {
         private readonly ILocationRepository _locationRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger<LocationService> _logger;
         public LocationService(
-            ILocationRepository locationRepository,
-            IMapper mapper,
-            IUnitOfWork unitOfWork)
-            : base(locationRepository, mapper, unitOfWork)
+     ILocationRepository locationRepository,
+     IMapper mapper,
+     IUnitOfWork unitOfWork,
+     ILogger<GenericService<Location, LocationGetDto, LocationDetailDto, LocationCreateDto, LocationUpdateDto>> baseLogger,
+     ILogger<LocationService> logger)
+     : base(locationRepository, mapper, unitOfWork, baseLogger)
         {
-            _locationRepository = locationRepository ?? throw new ArgumentNullException(nameof(locationRepository));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _locationRepository = locationRepository;
+            _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<LocationDetailDto?> GetByNameAsync(string name)
         {
+            _logger.LogInformation("Fetching location by name {Name}", name);
+
             var entity = await _locationRepository.GetByNameAsync(name);
-            return entity == null ? null : _mapper.Map<LocationDetailDto>(entity);
+            if (entity == null)
+            {
+                _logger.LogWarning("Location with name {Name} not found", name);
+                throw new NotFoundException("Location", name);
+            }
+
+            _logger.LogInformation("Location with name {Name} retrieved successfully", name);
+            return _mapper.Map<LocationDetailDto>(entity);
         }
     }
 }

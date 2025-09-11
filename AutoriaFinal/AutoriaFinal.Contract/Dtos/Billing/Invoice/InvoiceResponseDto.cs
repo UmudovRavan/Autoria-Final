@@ -1,4 +1,5 @@
 ﻿using AutoriaFinal.Contract.Dtos.Billing.Payments;
+using AutoriaFinal.Domain.Enums.AuctionEnums;
 using AutoriaFinal.Domain.Enums.FinanceEnums;
 using System;
 using System.Collections.Generic;

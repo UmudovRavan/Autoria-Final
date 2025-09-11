@@ -40,11 +40,6 @@ namespace AutoriaFinal.Persistence.Configurations.Auctions
             builder.HasIndex(x => x.AuctionCarId);
             builder.HasIndex(x => new { x.AuctionCarId, x.SortOrder }).IsUnique();
 
-
-            builder.HasOne<AuctionCar>()
-            .WithMany(ac => ac.Medias)
-            .HasForeignKey(x => x.AuctionCarId)
-            .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

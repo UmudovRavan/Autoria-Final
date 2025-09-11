@@ -1,4 +1,5 @@
 ﻿using AutoriaFinal.Domain.Entities.Abstractions;
+using AutoriaFinal.Domain.Enums.AuctionEnums;
 using AutoriaFinal.Domain.Enums.FinanceEnums;
 using System;
 using System.Collections.Generic;
@@ -26,8 +27,8 @@ namespace AutoriaFinal.Domain.Entities.Billing
         public ICollection<TransactionPayment> Transactions { get; private set; } = new List<TransactionPayment>();
         public void SetFees(decimal fees) { Fees = fees; MarkUpdated(); }
         public void SetTax(decimal tax) { Tax = tax; MarkUpdated(); }
-        public void MarkPaid() { Status = PaymentStatus.Succeeded; MarkUpdated(); }
-        public void MarkFailed() { Status = PaymentStatus.Failed; MarkUpdated(); }
-        public void MarkRefunded() { Status = PaymentStatus.Refunded; MarkUpdated(); }
+        //public void MarkPaid() { Status = PaymentStatus.Succeeded; MarkUpdated(); }
+        //public void MarkFailed() { Status = PaymentStatus.Failed; MarkUpdated(); }
+        //public void MarkRefunded() { Status = PaymentStatus.Refunded; MarkUpdated(); }
     }
 }

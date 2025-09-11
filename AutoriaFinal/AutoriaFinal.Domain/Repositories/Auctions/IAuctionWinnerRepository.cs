@@ -9,6 +9,7 @@ namespace AutoriaFinal.Domain.Repositories.Auctions
 {
     public interface IAuctionWinnerRepository : IGenericRepository<AuctionWinner>
     {
-
+        Task<AuctionWinner?> GetByAuctionCarIdAsync(Guid auctionCarId);
+        Task<IEnumerable<AuctionWinner>> GetByUserIdAsync(Guid userId);
     }
 }

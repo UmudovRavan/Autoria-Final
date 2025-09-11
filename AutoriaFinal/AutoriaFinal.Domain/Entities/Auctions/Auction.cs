@@ -15,8 +15,11 @@ namespace AutoriaFinal.Domain.Entities.Auctions
         public DateTime StartTimeUtc { get; private set; }
         public DateTime EndTimeUtc { get; private set; }
         public AuctionStatus Status { get; private set; } = AuctionStatus.Draft;
-        public ICollection<AuctionCar> AuctionCars { get; private set; } = new List<AuctionCar>();
 
+        public decimal MinBidIncrement { get; private set; } = 100;
+        public Guid? CreatedByUserId { get; private set; }
+
+        public ICollection<AuctionCar> AuctionCars { get; private set; } = new List<AuctionCar>();
 
         public void Schedule(DateTime start, DateTime end) { StartTimeUtc = start; EndTimeUtc = end; MarkUpdated(); }
         public void Start() { Status = AuctionStatus.Running; MarkUpdated(); }

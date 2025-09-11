@@ -1,6 +1,8 @@
-﻿using AutoriaFinal.Contract.Services;
+﻿
+using AutoriaFinal.Contract.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 // 👈 IFormFile üçün lazım
 
@@ -15,7 +17,7 @@ namespace AutoriaFinal.Infrastructure.Services
             _env = env;
         }
         public async Task<string> SaveFileAsync(IFormFile file, string folder)
-        {
+        {   
             var uploadsRootFolder = Path.Combine(_env.WebRootPath ?? "wwwroot", folder);
             if (!Directory.Exists(uploadsRootFolder))
                 Directory.CreateDirectory(uploadsRootFolder);
