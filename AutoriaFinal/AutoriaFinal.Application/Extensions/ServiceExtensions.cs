@@ -20,10 +20,14 @@ namespace AutoriaFinal.Application.Extensions
         public static IServiceCollection AddServiceRegistration(this IServiceCollection services)
         {
             services.AddScoped(typeof(IGenericService<,,,,>), typeof(GenericService<,,,,>));
-            
+
+            #region Auctions
+            services.AddScoped<IAuctionService, AuctionService>();
+            //services.AddScoped<IAuctionCarService, AuctionCarService>();
+
             services.AddScoped<ICarService, CarService>();
             services.AddScoped<ILocationService, LocationService>();
-
+            #endregion
             services.AddScoped<IAuthService, AuthService>();
             return services;
         }

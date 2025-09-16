@@ -34,14 +34,36 @@ namespace AutoriaFinal.Persistence.Migrations
                     b.Property<Guid?>("CreatedByUserId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("CurrentCarLotNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("CurrentCarStartTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("EndTimeUtc")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("ExtendedCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsLive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<Guid>("LocationId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("MaxCarDurationMinutes")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(30);
 
                     b.Property<decimal>("MinBidIncrement")
                         .ValueGeneratedOnAdd()
@@ -53,18 +75,32 @@ namespace AutoriaFinal.Persistence.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<decimal?>("StartPrice")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<DateTime>("StartTimeUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<int>("TimerSeconds")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(10);
+
                     b.Property<DateTime?>("UpdatedAtUtc")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LocationId");
+                    b.HasIndex("IsLive");
+
+                    b.HasIndex("StartTimeUtc");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("LocationId", "Status");
 
                     b.ToTable("Auctions");
                 });
@@ -75,8 +111,16 @@ namespace AutoriaFinal.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime?>("ActiveStartTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("AuctionId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("BidCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<Guid>("CarId")
                         .HasColumnType("uniqueidentifier");
@@ -92,6 +136,11 @@ namespace AutoriaFinal.Persistence.Migrations
                     b.Property<decimal?>("HammerPrice")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -103,12 +152,21 @@ namespace AutoriaFinal.Persistence.Migrations
                     b.Property<int?>("ItemNumber")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("LastBidTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("LotNumber")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<decimal>("MinPreBid")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal?>("ReservePrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("SoldPrice")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("UpdatedAtUtc")
@@ -118,6 +176,12 @@ namespace AutoriaFinal.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CarId");
+
+                    b.HasIndex("IsActive");
+
+                    b.HasIndex("LastBidTime");
 
                     b.HasIndex("AuctionId", "CarId")
                         .IsUnique();
@@ -138,10 +202,16 @@ namespace AutoriaFinal.Persistence.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("AssignedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2025, 9, 16, 11, 54, 23, 19, DateTimeKind.Utc).AddTicks(6019));
 
                     b.Property<Guid>("AuctionCarId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ConfirmedByUserId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasComment("Seller user ID - kim təsdiqləyib");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -149,13 +219,52 @@ namespace AutoriaFinal.Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsSecondChanceWinner")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasComment("İkinci şans winner-idir");
+
+                    b.Property<DateTime?>("LastPaymentReminderSent")
+                        .HasColumnType("datetime2")
+                        .HasComment("Son payment reminder tarixi");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)")
+                        .HasComment("Audit trail və əlavə qeydlər");
+
+                    b.Property<Guid?>("OriginalWinnerId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasComment("Əvvəlki winner ID (second chance üçün)");
+
                     b.Property<decimal?>("PaidAmount")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("PaymentDueDate")
+                        .HasColumnType("datetime2")
+                        .HasComment("Ödəniş son tarixi");
+
+                    b.Property<string>("PaymentReference")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasComment("Bank reference, transaction ID");
+
+                    b.Property<int>("PaymentReminderCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0)
+                        .HasComment("Göndərilmiş reminder sayı");
 
                     b.Property<int>("PaymentStatus")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValue(0);
+
+                    b.Property<string>("RejectionReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasComment("Winner rədd edilmə səbəbi");
 
                     b.Property<DateTime?>("UpdatedAtUtc")
                         .HasColumnType("datetime2");
@@ -163,17 +272,66 @@ namespace AutoriaFinal.Persistence.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime?>("WinnerConfirmedAt")
+                        .HasColumnType("datetime2")
+                        .HasComment("Seller tərəfindən təsdiq edildiyi tarix");
+
                     b.Property<Guid>("WinningBidId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AuctionCarId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_AuctionWinner_AuctionCarId_Unique");
+
+                    b.HasIndex("PaymentDueDate")
+                        .HasDatabaseName("IX_AuctionWinner_PaymentDueDate");
+
+                    b.HasIndex("PaymentStatus")
+                        .HasDatabaseName("IX_AuctionWinner_PaymentStatus");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_AuctionWinner_UserId");
+
+                    b.HasIndex("WinnerConfirmedAt")
+                        .HasDatabaseName("IX_AuctionWinner_ConfirmedAt")
+                        .HasFilter("WinnerConfirmedAt IS NOT NULL");
 
                     b.HasIndex("WinningBidId");
 
-                    b.ToTable("AuctionWinners");
+                    b.HasIndex("Amount", "PaymentStatus")
+                        .HasDatabaseName("IX_AuctionWinner_Amount_Status");
+
+                    b.HasIndex("IsSecondChanceWinner", "OriginalWinnerId")
+                        .HasDatabaseName("IX_AuctionWinner_SecondChance")
+                        .HasFilter("IsSecondChanceWinner = 1");
+
+                    b.HasIndex("PaymentStatus", "LastPaymentReminderSent")
+                        .HasDatabaseName("IX_AuctionWinner_Reminder_System")
+                        .HasFilter("PaymentStatus IN (0, 3)");
+
+                    b.HasIndex("PaymentStatus", "PaymentDueDate")
+                        .HasDatabaseName("IX_AuctionWinner_PaymentStatus_DueDate")
+                        .HasFilter("PaymentStatus IN (0, 3)");
+
+                    b.HasIndex("UserId", "PaymentStatus", "AssignedAt")
+                        .HasDatabaseName("IX_AuctionWinner_User_Status_Date");
+
+                    b.ToTable("AuctionWinners", null, t =>
+                        {
+                            t.HasComment("Auction qaliblərinin məlumatları və payment tracking");
+
+                            t.HasCheckConstraint("CK_AuctionWinner_Amount_Positive", "Amount > 0");
+
+                            t.HasCheckConstraint("CK_AuctionWinner_ConfirmedDate_Valid", "WinnerConfirmedAt IS NULL OR WinnerConfirmedAt >= AssignedAt");
+
+                            t.HasCheckConstraint("CK_AuctionWinner_PaidAmount_Valid", "PaidAmount IS NULL OR (PaidAmount >= 0 AND PaidAmount <= Amount)");
+
+                            t.HasCheckConstraint("CK_AuctionWinner_PaymentDueDate_Valid", "PaymentDueDate IS NULL OR PaymentDueDate >= AssignedAt");
+
+                            t.HasCheckConstraint("CK_AuctionWinner_PaymentReminderCount_Valid", "PaymentReminderCount >= 0");
+                        });
                 });
 
             modelBuilder.Entity("AutoriaFinal.Domain.Entities.Auctions.Bid", b =>
@@ -188,39 +346,102 @@ namespace AutoriaFinal.Persistence.Migrations
                     b.Property<Guid>("AuctionCarId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("BidType")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("IPAddress")
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)");
+
+                    b.Property<bool>("IsAutoBid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<bool>("IsPreBid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsProxy")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<Guid?>("ParentBidId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("PlacedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ProcessedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<decimal?>("ProxyMax")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int>("SequenceNumber")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
                     b.Property<int>("Status")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<DateTime?>("UpdatedAtUtc")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("UserAgent")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ValidUntil")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AuctionCarId");
 
+                    b.HasIndex("BidType");
+
+                    b.HasIndex("ParentBidId");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("ValidUntil");
+
+                    b.HasIndex("AuctionCarId", "Amount");
+
+                    b.HasIndex("AuctionCarId", "IsPreBid");
+
                     b.HasIndex("AuctionCarId", "PlacedAtUtc");
 
-                    b.ToTable("Bids");
+                    b.HasIndex("UserId", "PlacedAtUtc");
+
+                    b.HasIndex("AuctionCarId", "Status", "Amount");
+
+                    b.HasIndex("UserId", "AuctionCarId", "Status");
+
+                    b.ToTable("Bids", (string)null);
                 });
 
             modelBuilder.Entity("AutoriaFinal.Domain.Entities.Auctions.Car", b =>
@@ -416,7 +637,7 @@ namespace AutoriaFinal.Persistence.Migrations
                     b.HasIndex("AuctionCarId", "SortOrder")
                         .IsUnique();
 
-                    b.ToTable("LotMedias");
+                    b.ToTable("LotMedia");
                 });
 
             modelBuilder.Entity("AutoriaFinal.Domain.Entities.Billing.Invoice", b =>
@@ -1106,44 +1327,71 @@ namespace AutoriaFinal.Persistence.Migrations
 
             modelBuilder.Entity("AutoriaFinal.Domain.Entities.Auctions.Auction", b =>
                 {
-                    b.HasOne("AutoriaFinal.Domain.Entities.Auctions.Location", null)
+                    b.HasOne("AutoriaFinal.Domain.Entities.Auctions.Location", "Location")
                         .WithMany()
                         .HasForeignKey("LocationId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Location");
                 });
 
             modelBuilder.Entity("AutoriaFinal.Domain.Entities.Auctions.AuctionCar", b =>
                 {
-                    b.HasOne("AutoriaFinal.Domain.Entities.Auctions.Auction", null)
+                    b.HasOne("AutoriaFinal.Domain.Entities.Auctions.Auction", "Auction")
                         .WithMany("AuctionCars")
                         .HasForeignKey("AuctionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("AutoriaFinal.Domain.Entities.Auctions.Car", "Car")
+                        .WithMany()
+                        .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Auction");
+
+                    b.Navigation("Car");
                 });
 
             modelBuilder.Entity("AutoriaFinal.Domain.Entities.Auctions.AuctionWinner", b =>
                 {
-                    b.HasOne("AutoriaFinal.Domain.Entities.Auctions.AuctionCar", null)
-                        .WithMany()
-                        .HasForeignKey("AuctionCarId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("AutoriaFinal.Domain.Entities.Auctions.AuctionCar", "AuctionCar")
+                        .WithOne("AuctionWinner")
+                        .HasForeignKey("AutoriaFinal.Domain.Entities.Auctions.AuctionWinner", "AuctionCarId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_AuctionWinner_AuctionCar");
 
-                    b.HasOne("AutoriaFinal.Domain.Entities.Auctions.Bid", null)
+                    b.HasOne("AutoriaFinal.Domain.Entities.Auctions.Bid", "WinningBid")
                         .WithMany()
                         .HasForeignKey("WinningBidId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_AuctionWinner_Bid");
+
+                    b.Navigation("AuctionCar");
+
+                    b.Navigation("WinningBid");
                 });
 
             modelBuilder.Entity("AutoriaFinal.Domain.Entities.Auctions.Bid", b =>
                 {
-                    b.HasOne("AutoriaFinal.Domain.Entities.Auctions.AuctionCar", null)
+                    b.HasOne("AutoriaFinal.Domain.Entities.Auctions.AuctionCar", "AuctionCar")
                         .WithMany("Bids")
                         .HasForeignKey("AuctionCarId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("AutoriaFinal.Domain.Entities.Auctions.Bid", "ParentBid")
+                        .WithMany("ChildBids")
+                        .HasForeignKey("ParentBidId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("AuctionCar");
+
+                    b.Navigation("ParentBid");
                 });
 
             modelBuilder.Entity("AutoriaFinal.Domain.Entities.Auctions.Car", b =>
@@ -1247,7 +1495,14 @@ namespace AutoriaFinal.Persistence.Migrations
 
             modelBuilder.Entity("AutoriaFinal.Domain.Entities.Auctions.AuctionCar", b =>
                 {
+                    b.Navigation("AuctionWinner");
+
                     b.Navigation("Bids");
+                });
+
+            modelBuilder.Entity("AutoriaFinal.Domain.Entities.Auctions.Bid", b =>
+                {
+                    b.Navigation("ChildBids");
                 });
 
             modelBuilder.Entity("AutoriaFinal.Domain.Entities.Auctions.Car", b =>

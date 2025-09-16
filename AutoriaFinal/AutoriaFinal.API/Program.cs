@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Serilog;
 using AutoriaFinal.API.ExceptionHandler;
+using AutoriaFinal.API.Hubs;
 
 namespace AutoriaFinal.API
 {
@@ -24,14 +25,18 @@ namespace AutoriaFinal.API
             // Add services to the container.
             builder.Services.AddControllers();
 
+            // ✅ SignalR əlavə edin
+            builder.Services.AddSignalR();
+
             // AutoMapper
             builder.Services.AddAutoMapper(opt =>
             {
                 opt.AddProfile(new CustomProfile());
             });
+
             //Serilog
             builder.Host.UseSerilog((hostingContext, loggerConfiguration) =>
-    loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration));
+                loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration));
 
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             builder.Services.AddExceptionHandler<AppExceptionHandler>();
@@ -39,6 +44,7 @@ namespace AutoriaFinal.API
             builder.Services.AddExceptionHandler<NotFoundExceptionHandler>();
             builder.Services.AddExceptionHandler<ConflictExceptionHandler>();
             builder.Services.AddExceptionHandler<UnauthorizedExceptionHandler>();
+
             // DbContext
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("AutoriaDb")));
@@ -102,7 +108,9 @@ namespace AutoriaFinal.API
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
                 await RoleSeeder.SeedRolesAsync(roleManager);
             }
+
             app.UseExceptionHandler(_ => { });
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -116,6 +124,10 @@ namespace AutoriaFinal.API
             app.UseAuthorization();
 
             app.MapControllers();
+
+            // ✅ DÜZƏLİŞ - SignalR Hub routing
+            app.MapHub<AuctionHub>("/auctionHub");
+            app.MapHub<BidHub>("/bidHub");
 
             app.Run();
         }

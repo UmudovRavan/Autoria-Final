@@ -8,9 +8,7 @@ namespace AutoriaFinal.Contract.Dtos.Auctions.AuctionCar
 {
     public class AuctionCarUpdateDto
     {
-        public string LotNumber { get; set; } = default!;
-        public int? ItemNumber { get; set; }
         public decimal? ReservePrice { get; set; }
-        public decimal? HammerPrice { get; set; }
+        public decimal? MinPreBid { get; set; }
     }
 }

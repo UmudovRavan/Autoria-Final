@@ -1,11 +1,6 @@
 ﻿using AutoriaFinal.Domain.Entities.Auctions;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutoriaFinal.Persistence.Configurations.Auctions
 {
@@ -32,18 +27,46 @@ namespace AutoriaFinal.Persistence.Configurations.Auctions
                    .HasColumnType("decimal(18,2)")
                    .HasDefaultValue(0);
 
+            builder.Property(x => x.MinPreBid)
+                   .HasColumnType("decimal(18,2)")
+                   .IsRequired();
+
             builder.Property(x => x.IsReserveMet)
                    .HasDefaultValue(false);
 
             builder.Property(x => x.WinnerStatus)
                    .HasConversion<int>();
+            builder.Property(x => x.SoldPrice)
+                   .HasColumnType("decimal(18,2)")
+                   .IsRequired(false);
 
+            builder.Property(x => x.LastBidTime)
+                   .IsRequired(false);
+
+            builder.Property(x => x.BidCount)
+                   .HasDefaultValue(0);
+
+            builder.Property(x => x.IsActive)
+                   .HasDefaultValue(false);
+
+            builder.Property(x => x.ActiveStartTime)
+                   .IsRequired(false);
+
+            // Index-lər - performans üçün vacibdir
             builder.HasIndex(x => new { x.AuctionId, x.CarId }).IsUnique();
             builder.HasIndex(x => new { x.AuctionId, x.LotNumber }).IsUnique();
+            builder.HasIndex(x => x.IsActive); // Aktiv maşınları tez tapmaq üçün
+            builder.HasIndex(x => x.LastBidTime); // Timer məntiqində istifadə üçün
 
+            // Relationships
             builder.HasMany(x => x.Bids)
-                   .WithOne()
+                   .WithOne(b => b.AuctionCar)
                    .HasForeignKey(b => b.AuctionCarId)
+                   .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(x => x.AuctionWinner)
+                   .WithOne(aw => aw.AuctionCar)
+                   .HasForeignKey<AuctionWinner>(aw => aw.AuctionCarId)
                    .OnDelete(DeleteBehavior.Restrict);
         }
     }

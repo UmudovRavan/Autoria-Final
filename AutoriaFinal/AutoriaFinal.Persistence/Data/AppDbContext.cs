@@ -25,7 +25,6 @@ namespace AutoriaFinal.Persistence.Data
         public DbSet<Auction> Auctions { get; set; }
         public DbSet<AuctionCar> AuctionCars { get; set; }
         public DbSet<Bid> Bids { get; set; }
-        public DbSet<LotMedia> LotMedias { get; set; }
         public DbSet<Car> Cars { get; set; }
         public DbSet<AuctionWinner> AuctionWinners { get; set; }
         // DbSets — Billing

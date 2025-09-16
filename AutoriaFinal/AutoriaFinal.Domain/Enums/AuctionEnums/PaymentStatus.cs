@@ -10,6 +10,8 @@ namespace AutoriaFinal.Domain.Enums.AuctionEnums
     {
         Pending = 0,
         Paid = 1,
-        Cancelled = 2
+        Cancelled = 2,
+        PartiallyPaid = 3,
+        Failed = 4
     }
 }

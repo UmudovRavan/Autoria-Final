@@ -3,7 +3,7 @@
   "ManifestType": "Build",
   "Endpoints": [
     {
-      "Route": "logs/log-20250911.begjfisbq6.txt",
+      "Route": "logs/log-20250911.almj0kdp7x.txt",
       "AssetFile": "logs/log-20250911.txt",
       "Selectors": [],
       "ResponseHeaders": [
@@ -17,7 +17,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "730"
+          "Value": "1141"
         },
         {
           "Name": "Content-Type",
@@ -25,21 +25,21 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"w1CS42QIcwlSOkPD1Hm4DllMEGCQf7OEH9aTWHu1dD4=\""
+          "Value": "\"HtmVGfDuFSkVgZbdTzzo8YGtH606G8ZJYpGyK4Bcdt4=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 11 Sep 2025 14:52:44 GMT"
+          "Value": "Thu, 11 Sep 2025 15:01:58 GMT"
         }
       ],
       "EndpointProperties": [
         {
           "Name": "fingerprint",
-          "Value": "begjfisbq6"
+          "Value": "almj0kdp7x"
         },
         {
           "Name": "integrity",
-          "Value": "sha256-w1CS42QIcwlSOkPD1Hm4DllMEGCQf7OEH9aTWHu1dD4="
+          "Value": "sha256-HtmVGfDuFSkVgZbdTzzo8YGtH606G8ZJYpGyK4Bcdt4="
         },
         {
           "Name": "label",
@@ -62,7 +62,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "730"
+          "Value": "1141"
         },
         {
           "Name": "Content-Type",
@@ -70,17 +70,181 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"w1CS42QIcwlSOkPD1Hm4DllMEGCQf7OEH9aTWHu1dD4=\""
+          "Value": "\"HtmVGfDuFSkVgZbdTzzo8YGtH606G8ZJYpGyK4Bcdt4=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 11 Sep 2025 14:52:44 GMT"
+          "Value": "Thu, 11 Sep 2025 15:01:58 GMT"
         }
       ],
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-w1CS42QIcwlSOkPD1Hm4DllMEGCQf7OEH9aTWHu1dD4="
+          "Value": "sha256-HtmVGfDuFSkVgZbdTzzo8YGtH606G8ZJYpGyK4Bcdt4="
+        }
+      ]
+    },
+    {
+      "Route": "logs/log-20250912.5xq5t4y7xb.txt",
+      "AssetFile": "logs/log-20250912.txt",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "411"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"icS2U47O0c0uIjuIJf9qrTipxmhSg/8bLSuRDm6pALU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 12 Sep 2025 10:48:45 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "5xq5t4y7xb"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-icS2U47O0c0uIjuIJf9qrTipxmhSg/8bLSuRDm6pALU="
+        },
+        {
+          "Name": "label",
+          "Value": "logs/log-20250912.txt"
+        }
+      ]
+    },
+    {
+      "Route": "logs/log-20250912.txt",
+      "AssetFile": "logs/log-20250912.txt",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "411"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"icS2U47O0c0uIjuIJf9qrTipxmhSg/8bLSuRDm6pALU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 12 Sep 2025 10:48:45 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-icS2U47O0c0uIjuIJf9qrTipxmhSg/8bLSuRDm6pALU="
+        }
+      ]
+    },
+    {
+      "Route": "logs/log-20250916.t4e1t3xn2c.txt",
+      "AssetFile": "logs/log-20250916.txt",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "8132"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"MwndOl4Mxj6qrEAX3/ktRQnF89bzyKBZcF/Ai7Vtb2c=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 16 Sep 2025 16:04:51 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "t4e1t3xn2c"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-MwndOl4Mxj6qrEAX3/ktRQnF89bzyKBZcF/Ai7Vtb2c="
+        },
+        {
+          "Name": "label",
+          "Value": "logs/log-20250916.txt"
+        }
+      ]
+    },
+    {
+      "Route": "logs/log-20250916.txt",
+      "AssetFile": "logs/log-20250916.txt",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "8132"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"MwndOl4Mxj6qrEAX3/ktRQnF89bzyKBZcF/Ai7Vtb2c=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 16 Sep 2025 16:04:51 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-MwndOl4Mxj6qrEAX3/ktRQnF89bzyKBZcF/Ai7Vtb2c="
         }
       ]
     },

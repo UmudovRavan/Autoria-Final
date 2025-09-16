@@ -16,6 +16,7 @@ namespace AutoriaFinal.Persistence.Configurations.Auctions
         {
             base.Configure(builder);
 
+            // Əsas property-lər
             builder.Property(a => a.Name)
                    .IsRequired()
                    .HasMaxLength(200);
@@ -24,21 +25,49 @@ namespace AutoriaFinal.Persistence.Configurations.Auctions
                    .HasColumnType("decimal(18,2)")
                    .HasDefaultValue(100);
 
+            builder.Property(a => a.StartPrice)
+                   .HasColumnType("decimal(18,2)");
+
+            builder.Property(a => a.TimerSeconds)
+                   .HasDefaultValue(10);
+
             builder.Property(a => a.CreatedByUserId)
                    .IsRequired(false);
-
-            builder.HasOne<Location>()
-                   .WithMany()
-                   .HasForeignKey(a => a.LocationId)
-                   .OnDelete(DeleteBehavior.Restrict);
 
             builder.Property(a => a.Status)
                    .HasConversion<int>();
 
+            builder.Property(a => a.CurrentCarLotNumber)
+                   .HasMaxLength(50)
+                   .IsRequired(false);
+
+            builder.Property(a => a.IsLive)
+                   .HasDefaultValue(false);
+
+            builder.Property(a => a.ExtendedCount)
+                   .HasDefaultValue(0);
+
+            builder.Property(a => a.MaxCarDurationMinutes)
+                   .HasDefaultValue(30);
+
+            builder.Property(a => a.CurrentCarStartTime)
+                   .IsRequired(false);
+
+            // Relationships
+            builder.HasOne(a => a.Location)
+                   .WithMany()
+                   .HasForeignKey(a => a.LocationId)
+                   .OnDelete(DeleteBehavior.Restrict);
+
             builder.HasMany(a => a.AuctionCars)
-                   .WithOne()
+                   .WithOne(ac => ac.Auction)
                    .HasForeignKey(ac => ac.AuctionId)
                    .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasIndex(a => a.Status);
+            builder.HasIndex(a => a.StartTimeUtc);
+            builder.HasIndex(a => a.IsLive);
+            builder.HasIndex(a => new { a.LocationId, a.Status });
         }
   
     }

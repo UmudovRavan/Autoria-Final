@@ -34,7 +34,6 @@ namespace AutoriaFinal.Persistence.Extensions
             services.AddScoped<ILocationRepository, LocationRepository>();
             services.AddScoped<ICarRepository, CarRepository>();
             services.AddScoped<IAuctionCarRepository, AuctionCarRepository>();
-            services.AddScoped<ILotMediaRepository, LotMediaRepository>();
             services.AddScoped<IBidRepository, BidRepository>();
             services.AddScoped<IAuctionWinnerRepository, AuctionWinnerRepository>();
 

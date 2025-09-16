@@ -28,14 +28,14 @@ namespace AutoriaFinal.Application.Services.Auctions
         private readonly IFileStorageService _fileStorageService;
         private readonly ILocationRepository _locationRepository;
         private readonly ILogger<CarService> _logger;
-        public CarService(
+        public CarService(  
       ICarRepository carRepository,
       ILocationRepository locationRepository,
       IFileStorageService fileStorageService,
       IMapper mapper,
       IUnitOfWork unitOfWork,
       ILogger<GenericService<Car, CarGetDto, CarDetailDto, CarCreateDto, CarUpdateDto>> baseLogger,
-      ILogger<CarService> logger)
+      ILogger<CarService> logger)   
       : base(carRepository, mapper, unitOfWork, baseLogger)
         {
             _carRepository = carRepository;

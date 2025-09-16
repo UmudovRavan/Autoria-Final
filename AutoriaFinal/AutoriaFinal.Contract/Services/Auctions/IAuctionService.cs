@@ -1,4 +1,5 @@
 ﻿using AutoriaFinal.Contract.Dtos.Auctions.Auction;
+using AutoriaFinal.Contract.Dtos.Auctions.AuctionCar;
 using AutoriaFinal.Domain.Entities.Auctions;
 using System;
 using System.Collections.Generic;
@@ -15,13 +16,89 @@ namespace AutoriaFinal.Contract.Services.Auctions
         AuctionCreateDto,
         AuctionUpdateDto>
     {
-        Task<IEnumerable<AuctionGetDto>> GetActiveAuctionsAsync();
-        Task<IEnumerable<AuctionGetDto>> GetUpcomingAuctionsAsync(DateTime from, DateTime to);
-        Task<IEnumerable<AuctionGetDto>> GetByLocationAsync(Guid locationId);
+        // ========== AUCTION HƏYAT TSİKLİ ==========
 
-        Task<bool> StartAuctionsAsync(Guid auctionId);
-        Task<bool> EndAuctionsAsync(Guid auctionId);
-        Task<bool> CancelAuctionsAsync(Guid auctionId);
-        Task<bool> SettleAuctionsAsync(Guid auctionId);
+        /// Auction başladıqda ilk maşının ən yüksək pre-bid-i ilə başlamalıdır
+        Task<AuctionDetailDto> StartAuctionAsync(Guid auctionId);
+
+        /// Timer bitdikdə və ya bütün maşınlar satıldıqda auction bitməlidir
+        Task<AuctionDetailDto> EndAuctionAsync(Guid auctionId);
+
+        /// Texniki problemlər və ya digər səbəblərə görə auction ləğv edilə bilər
+        Task<AuctionDetailDto> CancelAuctionAsync(Guid auctionId, string reason);
+
+        /// Copart sistemində auction vaxtı uzadıla bilər
+        Task<AuctionDetailDto> ExtendAuctionAsync(Guid auctionId, int additionalMinutes, string reason);
+
+        // ========== MAŞIN KEÇİDİ ==========
+
+        /// Hər maşının 10 saniyəlik timer-ı bitdikdə növbəti maşına keçməlidir
+        Task<AuctionDetailDto> MoveToNextCarAsync(Guid auctionId);
+
+        /// Timer bitdikdə həmin maşının qalib və statusu müəyyənləşməlidir
+        Task<AuctionCarDetailDto> EndCarAuctionAsync(Guid auctionCarId);
+
+        /// Auction-da hansı maşının hal-hazırda satıldığını bilmək lazımdır
+        Task<AuctionDetailDto> SetCurrentCarAsync(Guid auctionId, string lotNumber);
+
+        // ========== REAL-TIME STATUS ==========
+
+        /// Dashboard-da və timer service-də aktiv auction-ları izləmək üçün
+        Task<IEnumerable<AuctionGetDto>> GetActiveAuctionsAsync();
+
+        /// Real-time connection-lar üçün lazımdır
+        Task<IEnumerable<AuctionGetDto>> GetLiveAuctionsAsync();
+
+        /// Timer service bu auction-ları avtomatik başlatmalıdır
+        Task<IEnumerable<AuctionGetDto>> GetAuctionsReadyToStartAsync();
+
+        /// Real-time UI yeniləmələri üçün lazımdır
+        Task<AuctionDetailDto> GetAuctionCurrentStateAsync(Guid auctionId);
+
+        // ========== AUCTİON CAR İDARƏETMƏSİ ==========
+
+        /// Satıcılar auction-a maşınlarını əlavə edə bilməlidirlər
+        Task<AuctionCarDetailDto> AddCarToAuctionAsync(AuctionCarCreateDto dto);
+
+        /// Səhvən əlavə edilmiş maşınları silmək üçün
+        Task<bool> RemoveCarFromAuctionAsync(Guid auctionCarId);
+
+        /// Yalnız pre-bid-i olan maşınlar auction-a buraxıla bilər
+        Task<IEnumerable<AuctionCarGetDto>> GetCarsReadyForAuctionAsync(Guid auctionId);
+
+        // ========== TİMER VƏ SCHEDULER DƏSTƏYİ ==========
+
+        /// Timer service real-time timer göstərmək üçün bu məlumatı istifadə edir
+        Task<AuctionTimerInfo> GetAuctionTimerInfoAsync(Guid auctionId);
+
+        /// Hər yeni bid-də 10 saniyəlik timer yenidən başlamalıdır
+        Task ResetAuctionTimerAsync(Guid auctionId);
+
+        /// Timer service bu auction-ları avtomatik bitirməlidir
+        Task<IEnumerable<AuctionGetDto>> GetExpiredAuctionsAsync();
+
+        // ========== STATİSTİKA VƏ HESABATLAR ==========
+
+        /// Admin dashboard və hesabatlar üçün lazımdır
+        Task<AuctionStatisticsDto> GetAuctionStatisticsAsync(Guid auctionId);
+
+        /// Müxtəlif yerlərdə keçirilən auction-ları göstərmək üçün
+        Task<IEnumerable<AuctionGetDto>> GetAuctionsByLocationAsync(Guid locationId);
     }
+
+    // ========== HELPER CLASS-LAR ==========
+
+    /// Real-time timer göstərmək üçün lazımdır
+    public class AuctionTimerInfo
+    {
+        public Guid AuctionId { get; set; }
+        public string? CurrentCarLotNumber { get; set; }
+        public DateTime? LastBidTime { get; set; }
+        public int TimerSeconds { get; set; }
+        public int RemainingSeconds { get; set; }
+        public bool IsExpired { get; set; }
+        public DateTime? CarStartTime { get; set; }
+    }
+
+
 }
