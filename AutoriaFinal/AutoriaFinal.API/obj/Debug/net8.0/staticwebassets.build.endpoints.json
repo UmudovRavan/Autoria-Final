@@ -29,7 +29,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 11 Sep 2025 15:01:58 GMT"
+          "Value": "Wed, 17 Sep 2025 12:52:11 GMT"
         }
       ],
       "EndpointProperties": [
@@ -74,7 +74,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 11 Sep 2025 15:01:58 GMT"
+          "Value": "Wed, 17 Sep 2025 12:52:11 GMT"
         }
       ],
       "EndpointProperties": [
@@ -111,7 +111,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Fri, 12 Sep 2025 10:48:45 GMT"
+          "Value": "Wed, 17 Sep 2025 12:52:11 GMT"
         }
       ],
       "EndpointProperties": [
@@ -156,7 +156,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Fri, 12 Sep 2025 10:48:45 GMT"
+          "Value": "Wed, 17 Sep 2025 12:52:11 GMT"
         }
       ],
       "EndpointProperties": [
@@ -193,7 +193,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 16 Sep 2025 16:04:51 GMT"
+          "Value": "Wed, 17 Sep 2025 12:52:11 GMT"
         }
       ],
       "EndpointProperties": [
@@ -238,13 +238,341 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 16 Sep 2025 16:04:51 GMT"
+          "Value": "Wed, 17 Sep 2025 12:52:11 GMT"
         }
       ],
       "EndpointProperties": [
         {
           "Name": "integrity",
           "Value": "sha256-MwndOl4Mxj6qrEAX3/ktRQnF89bzyKBZcF/Ai7Vtb2c="
+        }
+      ]
+    },
+    {
+      "Route": "logs/log-20250917.30w4f7sbc5.txt",
+      "AssetFile": "logs/log-20250917.txt",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "45109"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"A+awRxgWugA4bHRsmw08lFR9kx92ZQI1UrLf2km6oxM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 17 Sep 2025 19:11:31 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "30w4f7sbc5"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-A+awRxgWugA4bHRsmw08lFR9kx92ZQI1UrLf2km6oxM="
+        },
+        {
+          "Name": "label",
+          "Value": "logs/log-20250917.txt"
+        }
+      ]
+    },
+    {
+      "Route": "logs/log-20250917.txt",
+      "AssetFile": "logs/log-20250917.txt",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "45109"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"A+awRxgWugA4bHRsmw08lFR9kx92ZQI1UrLf2km6oxM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 17 Sep 2025 19:11:31 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-A+awRxgWugA4bHRsmw08lFR9kx92ZQI1UrLf2km6oxM="
+        }
+      ]
+    },
+    {
+      "Route": "logs/log-20250917_001.cx2ptvrg9y.txt",
+      "AssetFile": "logs/log-20250917_001.txt",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "2092"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"EKQO9pWwKsUfcIG/cPty0jN8ZxbqRGhRbsK6KHbB53s=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 17 Sep 2025 19:11:46 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "cx2ptvrg9y"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-EKQO9pWwKsUfcIG/cPty0jN8ZxbqRGhRbsK6KHbB53s="
+        },
+        {
+          "Name": "label",
+          "Value": "logs/log-20250917_001.txt"
+        }
+      ]
+    },
+    {
+      "Route": "logs/log-20250917_001.txt",
+      "AssetFile": "logs/log-20250917_001.txt",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "2092"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"EKQO9pWwKsUfcIG/cPty0jN8ZxbqRGhRbsK6KHbB53s=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 17 Sep 2025 19:11:46 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-EKQO9pWwKsUfcIG/cPty0jN8ZxbqRGhRbsK6KHbB53s="
+        }
+      ]
+    },
+    {
+      "Route": "logs/log-20250917_002.h4hqjcuqx1.txt",
+      "AssetFile": "logs/log-20250917_002.txt",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "21574"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"zyN7gzX+5CzfVEVwiRlyaYD69LbLkQB5uBLdauMyVrY=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 17 Sep 2025 19:59:35 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "h4hqjcuqx1"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-zyN7gzX+5CzfVEVwiRlyaYD69LbLkQB5uBLdauMyVrY="
+        },
+        {
+          "Name": "label",
+          "Value": "logs/log-20250917_002.txt"
+        }
+      ]
+    },
+    {
+      "Route": "logs/log-20250917_002.txt",
+      "AssetFile": "logs/log-20250917_002.txt",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "21574"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"zyN7gzX+5CzfVEVwiRlyaYD69LbLkQB5uBLdauMyVrY=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 17 Sep 2025 19:59:35 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-zyN7gzX+5CzfVEVwiRlyaYD69LbLkQB5uBLdauMyVrY="
+        }
+      ]
+    },
+    {
+      "Route": "logs/log-20250918.qqjiltdeve.txt",
+      "AssetFile": "logs/log-20250918.txt",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "37956"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"ck1+Ln6TWIpzc6HHn4BIfbLP5vW4pjovPdHPiKw2EaM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 18 Sep 2025 14:03:29 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "qqjiltdeve"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-ck1+Ln6TWIpzc6HHn4BIfbLP5vW4pjovPdHPiKw2EaM="
+        },
+        {
+          "Name": "label",
+          "Value": "logs/log-20250918.txt"
+        }
+      ]
+    },
+    {
+      "Route": "logs/log-20250918.txt",
+      "AssetFile": "logs/log-20250918.txt",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "37956"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"ck1+Ln6TWIpzc6HHn4BIfbLP5vW4pjovPdHPiKw2EaM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 18 Sep 2025 14:03:29 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-ck1+Ln6TWIpzc6HHn4BIfbLP5vW4pjovPdHPiKw2EaM="
         }
       ]
     },
@@ -275,7 +603,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 09 Sep 2025 22:29:39 GMT"
+          "Value": "Wed, 17 Sep 2025 12:52:11 GMT"
         }
       ],
       "EndpointProperties": [
@@ -320,7 +648,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 09 Sep 2025 22:29:39 GMT"
+          "Value": "Wed, 17 Sep 2025 12:52:11 GMT"
         }
       ],
       "EndpointProperties": [
@@ -357,7 +685,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 09 Sep 2025 22:29:39 GMT"
+          "Value": "Wed, 17 Sep 2025 12:52:11 GMT"
         }
       ],
       "EndpointProperties": [
@@ -402,7 +730,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 09 Sep 2025 22:29:39 GMT"
+          "Value": "Wed, 17 Sep 2025 12:52:11 GMT"
         }
       ],
       "EndpointProperties": [
@@ -439,7 +767,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 09 Sep 2025 22:29:39 GMT"
+          "Value": "Wed, 17 Sep 2025 12:52:11 GMT"
         }
       ],
       "EndpointProperties": [
@@ -484,7 +812,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 09 Sep 2025 22:29:39 GMT"
+          "Value": "Wed, 17 Sep 2025 12:52:11 GMT"
         }
       ],
       "EndpointProperties": [
@@ -521,7 +849,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 09 Sep 2025 22:29:39 GMT"
+          "Value": "Wed, 17 Sep 2025 12:52:11 GMT"
         }
       ],
       "EndpointProperties": [
@@ -566,7 +894,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 09 Sep 2025 22:29:39 GMT"
+          "Value": "Wed, 17 Sep 2025 12:52:11 GMT"
         }
       ],
       "EndpointProperties": [
@@ -603,7 +931,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 09 Sep 2025 22:29:39 GMT"
+          "Value": "Wed, 17 Sep 2025 12:52:11 GMT"
         }
       ],
       "EndpointProperties": [
@@ -648,7 +976,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 09 Sep 2025 22:29:39 GMT"
+          "Value": "Wed, 17 Sep 2025 12:52:11 GMT"
         }
       ],
       "EndpointProperties": [

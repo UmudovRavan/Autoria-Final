@@ -1,6 +1,10 @@
 wwwroot\logs\log-20250911.txt
 wwwroot\logs\log-20250912.txt
 wwwroot\logs\log-20250916.txt
+wwwroot\logs\log-20250917.txt
+wwwroot\logs\log-20250917_001.txt
+wwwroot\logs\log-20250917_002.txt
+wwwroot\logs\log-20250918.txt
 wwwroot\uploads\photos\2e5b9480-6ee8-4bbf-909e-308a1c1e9f22.jpeg
 wwwroot\uploads\photos\43cbde98-e67f-4cc1-b00a-f4ce40e3b42f.jpeg
 wwwroot\uploads\photos\fde45668-a7e5-4c1b-a8c7-7d7471c6afc5.jpeg

@@ -17,6 +17,7 @@ namespace AutoriaFinal.Contract.Services.Auctions
         AuctionUpdateDto>
     {
         // ========== AUCTION HƏYAT TSİKLİ ==========
+        Task<AuctionDetailDto> AddAuctionAsync(AuctionCreateDto dto, Guid currentUserId);
 
         /// Auction başladıqda ilk maşının ən yüksək pre-bid-i ilə başlamalıdır
         Task<AuctionDetailDto> StartAuctionAsync(Guid auctionId);
@@ -55,16 +56,7 @@ namespace AutoriaFinal.Contract.Services.Auctions
         /// Real-time UI yeniləmələri üçün lazımdır
         Task<AuctionDetailDto> GetAuctionCurrentStateAsync(Guid auctionId);
 
-        // ========== AUCTİON CAR İDARƏETMƏSİ ==========
-
-        /// Satıcılar auction-a maşınlarını əlavə edə bilməlidirlər
-        Task<AuctionCarDetailDto> AddCarToAuctionAsync(AuctionCarCreateDto dto);
-
-        /// Səhvən əlavə edilmiş maşınları silmək üçün
-        Task<bool> RemoveCarFromAuctionAsync(Guid auctionCarId);
-
-        /// Yalnız pre-bid-i olan maşınlar auction-a buraxıla bilər
-        Task<IEnumerable<AuctionCarGetDto>> GetCarsReadyForAuctionAsync(Guid auctionId);
+        
 
         // ========== TİMER VƏ SCHEDULER DƏSTƏYİ ==========
 

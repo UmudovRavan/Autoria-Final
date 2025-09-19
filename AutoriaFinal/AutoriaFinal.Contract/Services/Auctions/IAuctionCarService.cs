@@ -81,5 +81,21 @@ namespace AutoriaFinal.Contract.Services.Auctions
         /// Satılmayan maşınları alır
         Task<IEnumerable<AuctionCarGetDto>> GetUnsoldCarsAsync(Guid auctionId);
         #endregion
+
+        #region Query and Navigation Methods
+       
+        // Auction-a aid bütün maşınları göstərmək üçün        
+        Task<IEnumerable<AuctionCarGetDto>> GetCarsByAuctionIdAsync(Guid auctionId);
+
+       
+        // URL ilə maşın axtarışı (/lot/LOT001)
+        Task<AuctionCarDetailDto?> GetCarByLotNumberAsync(string lotNumber);
+
+        // Hal-hazırda canlı auction-da olan maşını tapmaq
+        Task<AuctionCarDetailDto?> GetActiveCarForAuctionAsync(Guid auctionId);
+
+        // "Next Car" düyməsi üçün mütləq lazım
+        Task<AuctionCarDetailDto?> GetNextCarForAuctionAsync(Guid auctionId, string currentLotNumber);
+        #endregion
     }
 }

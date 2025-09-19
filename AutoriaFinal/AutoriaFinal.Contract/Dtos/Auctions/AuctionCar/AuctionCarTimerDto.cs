@@ -15,5 +15,8 @@ namespace AutoriaFinal.Contract.Dtos.Auctions.AuctionCar
         public DateTime? LastBidTime { get; set; }
         public DateTime? NextTimeoutAt { get; set; }
         public bool IsActive { get; set; }
+        public bool ShowFinalCall { get; set; }
+        public bool IsInCriticalTime { get; set; }
+        public string TimerStatus => IsExpired ? "EXPIRED" : IsInCriticalTime ? "CRITICAL" : "NORMAL";  
     }
 }

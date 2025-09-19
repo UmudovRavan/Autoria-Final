@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoriaFinal.Contract.Dtos.Auctions.Auction;
+using AutoriaFinal.Contract.Dtos.Auctions.AuctionCar;
 using AutoriaFinal.Contract.Dtos.Auctions.Car;
 using AutoriaFinal.Contract.Dtos.Auctions.Location;
 using AutoriaFinal.Contract.Dtos.Identity;
@@ -64,6 +65,24 @@ namespace AutoriaFinal.Application.Profiles
                 .ForMember(dest => dest.UniqueBidders, opt => opt.Ignore())
                 .ForMember(dest => dest.AuctionDuration, opt => opt.Ignore())
                 .ReverseMap();
+            #endregion
+            #region AuctionCar
+            CreateMap<AuctionCarCreateDto, AuctionCar>()
+               .ForMember(dest => dest.Id, opt => opt.Ignore())
+               .ForMember(dest => dest.HammerPrice, opt => opt.Ignore())
+               .ForMember(dest => dest.CurrentPrice, opt => opt.Ignore())
+               .ForMember(dest => dest.IsReserveMet, opt => opt.Ignore())
+               .ForMember(dest => dest.IsActive, opt => opt.Ignore())
+               .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+               .ForMember(dest => dest.UpdatedAtUtc, opt => opt.Ignore())
+               .ReverseMap();
+
+            CreateMap<AuctionCar, AuctionCarGetDto>().ReverseMap();
+
+            CreateMap<AuctionCar, AuctionCarDetailDto>().ReverseMap();
+
+            CreateMap<AuctionCarUpdateDto, AuctionCar>().ReverseMap();
+            CreateMap<AuctionCar, AuctionCarTimerDto>().ReverseMap();
             #endregion
             #region Car
             // ✅ Siyahı görünüşü

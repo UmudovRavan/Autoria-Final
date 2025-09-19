@@ -18,7 +18,7 @@ namespace AutoriaFinal.Domain.Entities.Auctions
 
         public BidStatus Status { get; set; } = BidStatus.Placed;
         public DateTime PlacedAtUtc { get; set; } = DateTime.UtcNow;
-        public BidType BidType { get; set; } = BidType.Regular; // Bid növü
+        public BidType BidType { get; set; } // Bid növü
         public string? Notes { get; set; }                       // Bid haqqında qeydlər
         public DateTime? ValidUntil { get; set; }               // Proxy bid-lər üçün etibarlılıq müddəti
         public DateTime? ProcessedAt { get; set; }              // Bid-in işləndiyi vaxt
