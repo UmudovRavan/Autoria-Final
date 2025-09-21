@@ -24,6 +24,7 @@ namespace AutoriaFinal.Application.Extensions
             #region Auctions
             services.AddScoped<IAuctionService, AuctionService>();
             services.AddScoped<IAuctionCarService, AuctionCarService>();
+            services.AddScoped<IBidService, BidService>();
 
             services.AddScoped<ICarService, CarService>();
             services.AddScoped<ILocationService, LocationService>();

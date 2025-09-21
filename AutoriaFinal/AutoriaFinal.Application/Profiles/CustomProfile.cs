@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoriaFinal.Contract.Dtos.Auctions.Auction;
 using AutoriaFinal.Contract.Dtos.Auctions.AuctionCar;
+using AutoriaFinal.Contract.Dtos.Auctions.Bid;
 using AutoriaFinal.Contract.Dtos.Auctions.Car;
 using AutoriaFinal.Contract.Dtos.Auctions.Location;
 using AutoriaFinal.Contract.Dtos.Identity;
@@ -83,6 +84,32 @@ namespace AutoriaFinal.Application.Profiles
 
             CreateMap<AuctionCarUpdateDto, AuctionCar>().ReverseMap();
             CreateMap<AuctionCar, AuctionCarTimerDto>().ReverseMap();
+            #endregion
+            #region Bids
+            CreateMap<BidCreateDto, Bid>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.Status, opt => opt.Ignore())
+                .ForMember(dest => dest.PlacedAtUtc, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedAtUtc, opt => opt.Ignore())
+                .ReverseMap();
+
+            CreateMap<BidUpdateDto, Bid>().ReverseMap();
+
+            CreateMap<Bid, BidGetDto>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+                .ForMember(dest => dest.BidType, opt => opt.MapFrom(src => src.BidType.ToString()))
+                .ReverseMap();
+
+            CreateMap<Bid, BidDetailDto>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+                .ForMember(dest => dest.BidType, opt => opt.MapFrom(src => src.BidType.ToString()))
+                .ReverseMap();
+
+            CreateMap<Bid, BidHistoryDto>().ReverseMap();
+            CreateMap<Bid, BidStatsDto>().ReverseMap();
+            CreateMap<Bid, BidSummaryDto>().ReverseMap();
+            CreateMap<Bid, ProxyBidDto>().ReverseMap();
             #endregion
             #region Car
             // ✅ Siyahı görünüşü

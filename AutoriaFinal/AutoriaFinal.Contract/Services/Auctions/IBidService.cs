@@ -30,7 +30,7 @@ namespace AutoriaFinal.Contract.Services.Auctions
         Task<BidDetailDto> PlaceProxyBidAsync(ProxyBidDto dto);
 
         // ========== BID VALİDASİYASI ==========
-
+            
         /// UI-də istifadəçiyə bid vermək mümkün olub-olmadığını göstərmək üçün
         Task<BidValidationResult> ValidateBidAsync(BidCreateDto dto);
 

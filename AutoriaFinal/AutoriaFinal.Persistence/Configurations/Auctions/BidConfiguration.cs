@@ -88,7 +88,7 @@ namespace AutoriaFinal.Persistence.Configurations.Auctions
             builder.HasIndex(b => new { b.AuctionCarId, b.IsPreBid }); // Pre-bid-ləri tapmaq üçün
             builder.HasIndex(b => new { b.AuctionCarId, b.PlacedAtUtc }); // Tarixə görə sıralama üçün
             builder.HasIndex(b => b.Status); // Status-a görə filter üçün
-            builder.HasIndex(b => b.BidType); // Bid növünə görə filter üçün
+            builder.HasIndex((System.Linq.Expressions.Expression<Func<Bid, object?>>)(b => b.BidType)); // Bid növünə görə filter üçün
             builder.HasIndex(b => new { b.UserId, b.PlacedAtUtc }); // İstifadəçinin bid tarixçəsi üçün
             builder.HasIndex(b => b.ValidUntil); // Proxy bid-lərin etibarlılığı üçün
             builder.HasIndex(b => b.ParentBidId); // Child bid-ləri tapmaq üçün

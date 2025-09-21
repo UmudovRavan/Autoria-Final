@@ -2733,6 +2733,689 @@
         }
       }
     },
+    "/api/Bid/prebid": {
+      "post": {
+        "tags": [
+          "Bid"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlacePreBidRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlacePreBidRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlacePreBidRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BidDetailDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BidDetailDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BidDetailDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Bid/live": {
+      "post": {
+        "tags": [
+          "Bid"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlaceLiveBidRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlaceLiveBidRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlaceLiveBidRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BidDetailDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BidDetailDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BidDetailDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Bid/proxy": {
+      "post": {
+        "tags": [
+          "Bid"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlaceProxyBidRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlaceProxyBidRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlaceProxyBidRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BidDetailDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BidDetailDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BidDetailDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Bid/proxy/{bidId}": {
+      "delete": {
+        "tags": [
+          "Bid"
+        ],
+        "parameters": [
+          {
+            "name": "bidId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Bid/{id}": {
+      "get": {
+        "tags": [
+          "Bid"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BidDetailDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BidDetailDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BidDetailDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Bid/auction-car/{auctionCarId}/history": {
+      "get": {
+        "tags": [
+          "Bid"
+        ],
+        "parameters": [
+          {
+            "name": "auctionCarId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BidHistoryDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BidHistoryDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BidHistoryDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Bid/auction-car/{auctionCarId}/recent": {
+      "get": {
+        "tags": [
+          "Bid"
+        ],
+        "parameters": [
+          {
+            "name": "auctionCarId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BidGetDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BidGetDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BidGetDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Bid/auction-car/{auctionCarId}/stats": {
+      "get": {
+        "tags": [
+          "Bid"
+        ],
+        "parameters": [
+          {
+            "name": "auctionCarId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BidStatsDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BidStatsDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BidStatsDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Bid/auction-car/{auctionCarId}/highest": {
+      "get": {
+        "tags": [
+          "Bid"
+        ],
+        "parameters": [
+          {
+            "name": "auctionCarId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BidDetailDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BidDetailDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BidDetailDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Bid/auction-car/{auctionCarId}/minimum": {
+      "get": {
+        "tags": [
+          "Bid"
+        ],
+        "parameters": [
+          {
+            "name": "auctionCarId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "number",
+                  "format": "double"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "number",
+                  "format": "double"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "number",
+                  "format": "double"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Bid/my-bids": {
+      "get": {
+        "tags": [
+          "Bid"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BidGetDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BidGetDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BidGetDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Bid/my-proxy-bids/{auctionCarId}": {
+      "get": {
+        "tags": [
+          "Bid"
+        ],
+        "parameters": [
+          {
+            "name": "auctionCarId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BidDetailDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BidDetailDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BidDetailDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Bid/my-summary/{auctionId}": {
+      "get": {
+        "tags": [
+          "Bid"
+        ],
+        "parameters": [
+          {
+            "name": "auctionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BidSummaryDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BidSummaryDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BidSummaryDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Bid/validate": {
+      "post": {
+        "tags": [
+          "Bid"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateBidRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateBidRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateBidRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BidValidationResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BidValidationResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BidValidationResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Bid/can-bid/{auctionCarId}": {
+      "get": {
+        "tags": [
+          "Bid"
+        ],
+        "parameters": [
+          {
+            "name": "auctionCarId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Bid/notify-auction-event": {
+      "post": {
+        "tags": [
+          "Bid"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuctionEventRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuctionEventRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuctionEventRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Car": {
       "get": {
         "tags": [
@@ -3479,6 +4162,23 @@
         },
         "additionalProperties": false
       },
+      "AuctionEventRequest": {
+        "type": "object",
+        "properties": {
+          "auctionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "eventType": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "AuctionExtendRequest": {
         "required": [
           "reason"
@@ -4069,6 +4769,72 @@
         },
         "additionalProperties": false
       },
+      "BidHistoryDto": {
+        "type": "object",
+        "properties": {
+          "auctionCarId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "lotNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "carInfo": {
+            "type": "string",
+            "nullable": true
+          },
+          "totalBids": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "uniqueBidders": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "startingPrice": {
+            "type": "number",
+            "format": "double"
+          },
+          "winningPrice": {
+            "type": "number",
+            "format": "double"
+          },
+          "priceIncrease": {
+            "type": "number",
+            "format": "double"
+          },
+          "auctionStartTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "auctionEndTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "auctionDuration": {
+            "type": "string",
+            "format": "date-span",
+            "nullable": true
+          },
+          "bids": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BidGetDto"
+            },
+            "nullable": true
+          },
+          "topBidders": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BidderSummaryDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "BidStatsDto": {
         "type": "object",
         "properties": {
@@ -4159,6 +4925,188 @@
           "trendDirection": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "BidSummaryDto": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "userName": {
+            "type": "string",
+            "nullable": true
+          },
+          "userDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "auctionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "auctionName": {
+            "type": "string",
+            "nullable": true
+          },
+          "totalBids": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "preBids": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "liveBids": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "proxyBids": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "winningBids": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalBidAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "highestBidAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "lowestBidAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "averageBidAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "firstBidTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastBidTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "biddingDuration": {
+            "type": "string",
+            "format": "date-span"
+          },
+          "winRate": {
+            "type": "number",
+            "format": "double"
+          },
+          "averageWinAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "auctionCarsParticipated": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "BidTypeDto": {
+        "enum": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "BidValidationResult": {
+        "type": "object",
+        "properties": {
+          "isValid": {
+            "type": "boolean"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "minimumBidAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "currentHighestBid": {
+            "type": "number",
+            "format": "double"
+          },
+          "suggestedBidAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "requiresPreBid": {
+            "type": "boolean"
+          },
+          "auctionActive": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "BidderSummaryDto": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "userName": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "bidCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "highestBid": {
+            "type": "number",
+            "format": "double"
+          },
+          "totalBidAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "firstBidTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastBidTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isWinner": {
+            "type": "boolean"
+          },
+          "rank": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -4472,6 +5420,63 @@
         },
         "additionalProperties": false
       },
+      "PlaceLiveBidRequest": {
+        "type": "object",
+        "properties": {
+          "auctionCarId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PlacePreBidRequest": {
+        "type": "object",
+        "properties": {
+          "auctionCarId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PlaceProxyBidRequest": {
+        "type": "object",
+        "properties": {
+          "auctionCarId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "startAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "maxAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "isPreBid": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "ProblemDetails": {
         "type": "object",
         "properties": {
@@ -4572,6 +5577,34 @@
             "minimum": 0,01,
             "type": "number",
             "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ValidateBidRequest": {
+        "type": "object",
+        "properties": {
+          "auctionCarId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "bidType": {
+            "$ref": "#/components/schemas/BidTypeDto"
+          },
+          "isPreBid": {
+            "type": "boolean"
+          },
+          "isProxy": {
+            "type": "boolean"
+          },
+          "proxyMax": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
           }
         },
         "additionalProperties": false

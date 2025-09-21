@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "Yqs/6Bmppa0XfXgC/pAp4cgpxGBp3Vh44iDHaNfgjLQ=",
+  "Hash": "hJy2cD7zSdOJkLc30hTJViSlfrd4TPseas3unT0VqvU=",
   "Source": "AutoriaFinal.API",
   "BasePath": "_content/AutoriaFinal.API",
   "Mode": "Default",
@@ -162,6 +162,27 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\logs\\log-20250918.txt"
+    },
+    {
+      "Identity": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\Autoria-Final\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\logs\\log-20250920.txt",
+      "SourceId": "AutoriaFinal.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\Autoria-Final\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\",
+      "BasePath": "_content/AutoriaFinal.API",
+      "RelativePath": "logs/log-20250920#[.{fingerprint}]?.txt",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "ut7ap5oa9p",
+      "Integrity": "IjMygw1kKn4+5lM/TJvdDCj2Hob0Mja58krIhO8Yzoc=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\logs\\log-20250920.txt"
     },
     {
       "Identity": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\Autoria-Final\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\uploads\\photos\\2e5b9480-6ee8-4bbf-909e-308a1c1e9f22.jpeg",
@@ -841,6 +862,88 @@
         {
           "Name": "integrity",
           "Value": "sha256-ck1+Ln6TWIpzc6HHn4BIfbLP5vW4pjovPdHPiKw2EaM="
+        }
+      ]
+    },
+    {
+      "Route": "logs/log-20250920.txt",
+      "AssetFile": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\Autoria-Final\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\logs\\log-20250920.txt",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1002"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"IjMygw1kKn4+5lM/TJvdDCj2Hob0Mja58krIhO8Yzoc=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 20 Sep 2025 10:59:04 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-IjMygw1kKn4+5lM/TJvdDCj2Hob0Mja58krIhO8Yzoc="
+        }
+      ]
+    },
+    {
+      "Route": "logs/log-20250920.ut7ap5oa9p.txt",
+      "AssetFile": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\Autoria-Final\\AutoriaFinal\\AutoriaFinal.API\\wwwroot\\logs\\log-20250920.txt",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1002"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"IjMygw1kKn4+5lM/TJvdDCj2Hob0Mja58krIhO8Yzoc=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 20 Sep 2025 10:59:04 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "ut7ap5oa9p"
+        },
+        {
+          "Name": "label",
+          "Value": "logs/log-20250920.txt"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-IjMygw1kKn4+5lM/TJvdDCj2Hob0Mja58krIhO8Yzoc="
         }
       ]
     },

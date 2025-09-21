@@ -1535,6 +1535,406 @@
     ]
   },
   {
+    "ContainingType": "AutoriaFinal.API.Controllers.Auctions.BidController",
+    "Method": "GetBidById",
+    "RelativePath": "api/Bid/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AutoriaFinal.Contract.Dtos.Auctions.Bid.BidDetailDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AutoriaFinal.API.Controllers.Auctions.BidController",
+    "Method": "GetHighestBid",
+    "RelativePath": "api/Bid/auction-car/{auctionCarId}/highest",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "auctionCarId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AutoriaFinal.Contract.Dtos.Auctions.Bid.BidDetailDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AutoriaFinal.API.Controllers.Auctions.BidController",
+    "Method": "GetBidHistory",
+    "RelativePath": "api/Bid/auction-car/{auctionCarId}/history",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "auctionCarId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AutoriaFinal.Contract.Dtos.Auctions.Bid.BidHistoryDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AutoriaFinal.API.Controllers.Auctions.BidController",
+    "Method": "GetMinimumBid",
+    "RelativePath": "api/Bid/auction-car/{auctionCarId}/minimum",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "auctionCarId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Decimal",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AutoriaFinal.API.Controllers.Auctions.BidController",
+    "Method": "GetRecentBids",
+    "RelativePath": "api/Bid/auction-car/{auctionCarId}/recent",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "auctionCarId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "count",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[AutoriaFinal.Contract.Dtos.Auctions.Bid.BidGetDto, AutoriaFinal.Contract, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AutoriaFinal.API.Controllers.Auctions.BidController",
+    "Method": "GetBidStats",
+    "RelativePath": "api/Bid/auction-car/{auctionCarId}/stats",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "auctionCarId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AutoriaFinal.Contract.Dtos.Auctions.Bid.BidStatsDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AutoriaFinal.API.Controllers.Auctions.BidController",
+    "Method": "CanUserPlaceBid",
+    "RelativePath": "api/Bid/can-bid/{auctionCarId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "auctionCarId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Boolean",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AutoriaFinal.API.Controllers.Auctions.BidController",
+    "Method": "PlaceLiveBid",
+    "RelativePath": "api/Bid/live",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "AutoriaFinal.API.Controllers.Auctions.BidController\u002BPlaceLiveBidRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AutoriaFinal.Contract.Dtos.Auctions.Bid.BidDetailDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AutoriaFinal.API.Controllers.Auctions.BidController",
+    "Method": "GetMyBids",
+    "RelativePath": "api/Bid/my-bids",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[AutoriaFinal.Contract.Dtos.Auctions.Bid.BidGetDto, AutoriaFinal.Contract, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AutoriaFinal.API.Controllers.Auctions.BidController",
+    "Method": "GetMyProxyBids",
+    "RelativePath": "api/Bid/my-proxy-bids/{auctionCarId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "auctionCarId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[AutoriaFinal.Contract.Dtos.Auctions.Bid.BidDetailDto, AutoriaFinal.Contract, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AutoriaFinal.API.Controllers.Auctions.BidController",
+    "Method": "GetMyBidSummary",
+    "RelativePath": "api/Bid/my-summary/{auctionId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "auctionId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AutoriaFinal.Contract.Dtos.Auctions.Bid.BidSummaryDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AutoriaFinal.API.Controllers.Auctions.BidController",
+    "Method": "NotifyAuctionEvent",
+    "RelativePath": "api/Bid/notify-auction-event",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "AutoriaFinal.API.Controllers.Auctions.BidController\u002BAuctionEventRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AutoriaFinal.API.Controllers.Auctions.BidController",
+    "Method": "PlacePreBid",
+    "RelativePath": "api/Bid/prebid",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "AutoriaFinal.API.Controllers.Auctions.BidController\u002BPlacePreBidRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AutoriaFinal.Contract.Dtos.Auctions.Bid.BidDetailDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AutoriaFinal.API.Controllers.Auctions.BidController",
+    "Method": "PlaceProxyBid",
+    "RelativePath": "api/Bid/proxy",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "AutoriaFinal.API.Controllers.Auctions.BidController\u002BPlaceProxyBidRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AutoriaFinal.Contract.Dtos.Auctions.Bid.BidDetailDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AutoriaFinal.API.Controllers.Auctions.BidController",
+    "Method": "CancelProxyBid",
+    "RelativePath": "api/Bid/proxy/{bidId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "bidId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AutoriaFinal.API.Controllers.Auctions.BidController",
+    "Method": "ValidateBid",
+    "RelativePath": "api/Bid/validate",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "AutoriaFinal.API.Controllers.Auctions.BidController\u002BValidateBidRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AutoriaFinal.Contract.Services.Auctions.BidValidationResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "AutoriaFinal.API.Controllers.Auctions.CarController",
     "Method": "GetAll",
     "RelativePath": "api/Car",

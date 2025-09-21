@@ -577,6 +577,88 @@
       ]
     },
     {
+      "Route": "logs/log-20250920.txt",
+      "AssetFile": "logs/log-20250920.txt",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1002"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"IjMygw1kKn4+5lM/TJvdDCj2Hob0Mja58krIhO8Yzoc=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 20 Sep 2025 10:59:04 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-IjMygw1kKn4+5lM/TJvdDCj2Hob0Mja58krIhO8Yzoc="
+        }
+      ]
+    },
+    {
+      "Route": "logs/log-20250920.ut7ap5oa9p.txt",
+      "AssetFile": "logs/log-20250920.txt",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1002"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"IjMygw1kKn4+5lM/TJvdDCj2Hob0Mja58krIhO8Yzoc=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 20 Sep 2025 10:59:04 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "ut7ap5oa9p"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-IjMygw1kKn4+5lM/TJvdDCj2Hob0Mja58krIhO8Yzoc="
+        },
+        {
+          "Name": "label",
+          "Value": "logs/log-20250920.txt"
+        }
+      ]
+    },
+    {
       "Route": "uploads/photos/2e5b9480-6ee8-4bbf-909e-308a1c1e9f22.fta5cmrg6r.jpeg",
       "AssetFile": "uploads/photos/2e5b9480-6ee8-4bbf-909e-308a1c1e9f22.jpeg",
       "Selectors": [],

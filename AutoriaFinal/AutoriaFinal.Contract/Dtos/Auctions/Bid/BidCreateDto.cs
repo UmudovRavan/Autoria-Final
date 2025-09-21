@@ -1,4 +1,5 @@
-﻿using AutoriaFinal.Domain.Enums.Bids;
+﻿
+using AutoriaFinal.Contract.Enums.Bids;
 using System;
 using System.ComponentModel.DataAnnotations;
 

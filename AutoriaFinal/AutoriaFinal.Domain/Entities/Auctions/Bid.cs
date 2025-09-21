@@ -195,10 +195,11 @@ namespace AutoriaFinal.Domain.Entities.Auctions
             var nextAmount = Math.Max(Amount + increment, requiredAmount);
             return nextAmount <= ProxyMax.Value;
         }
+        
 
-        
+
         /// Proxy bid üçün növbəti məbləği hesabla
-        
+
         public decimal CalculateNextProxyAmount(decimal currentHighestBid, decimal increment)
         {
             if (!IsProxy || !ProxyMax.HasValue) return 0;
@@ -238,6 +239,7 @@ namespace AutoriaFinal.Domain.Entities.Auctions
 
             MarkUpdated();
         }
+
     }
 
 }

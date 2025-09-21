@@ -121,7 +121,7 @@ namespace AutoriaFinal.Application.Services.Auctions
             return _mapper.Map<AuctionCarDetailDto>(updatedAuctionCar);
         }
 
-        // ✅ Bu metodu override edək DeleteAuctionCarAsync yerinə
+        //  Bu metodu override edək DeleteAuctionCarAsync yerinə
         public new async Task<bool> DeleteAsync(Guid id)
         {
             _logger.LogInformation("🗑️ Deleting auction car: {AuctionCarId}", id);

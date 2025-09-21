@@ -1,0 +1,131 @@
+[2025-09-21 14:05:38 WRN] The 'BidType' property 'BidType' on entity type 'Bid' is configured with a database-generated default, but has no configured sentinel value. The database-generated default will always be used for inserts when the property has the value '0', since this is the CLR default for the 'BidType' type. Consider using a nullable type, using a nullable backing field, or setting the sentinel value for the property to ensure the database default is used when, and only when, appropriate. See https://aka.ms/efcore-docs-default-values for more information.
+[2025-09-21 14:05:40 INF] 🎯 === AUTORIA AUCTION API STARTED ===
+[2025-09-21 14:05:40 INF] 🌐 Swagger UI: https://localhost:7249
+[2025-09-21 14:05:40 INF] 📡 SignalR Hub: https://localhost:7249/auctionHub
+[2025-09-21 14:05:40 INF] 💚 Health Check: https://localhost:7249/health
+[2025-09-21 14:05:40 INF] 📊 API Info: https://localhost:7249/api/info
+[2025-09-21 14:05:40 INF] 👨‍💻 Developer: ravanmu-coder
+[2025-09-21 14:19:48 WRN] The 'BidType' property 'BidType' on entity type 'Bid' is configured with a database-generated default, but has no configured sentinel value. The database-generated default will always be used for inserts when the property has the value '0', since this is the CLR default for the 'BidType' type. Consider using a nullable type, using a nullable backing field, or setting the sentinel value for the property to ensure the database default is used when, and only when, appropriate. See https://aka.ms/efcore-docs-default-values for more information.
+[2025-09-21 14:19:49 INF] 🎯 === AUTORIA AUCTION API STARTED ===
+[2025-09-21 14:19:49 INF] 🌐 Swagger UI: https://localhost:7249
+[2025-09-21 14:19:49 INF] 📡 SignalR Hub: https://localhost:7249/auctionHub
+[2025-09-21 14:19:49 INF] 💚 Health Check: https://localhost:7249/health
+[2025-09-21 14:19:49 INF] 📊 API Info: https://localhost:7249/api/info
+[2025-09-21 14:19:49 INF] 👨‍💻 Developer: ravanmu-coder
+[2025-09-21 14:20:01 INF] User connected: V6_YSaYSuC6UA5PRIhVPDQ, UserId: "00000000-0000-0000-0000-000000000000"
+[2025-09-21 14:20:01 WRN] You do not have a valid license key for the Lucky Penny software AutoMapper. This is allowed for development and testing scenarios. If you are running in production you are required to have a licensed version. Please visit https://luckypennysoftware.com to obtain a valid license.
+[2025-09-21 14:20:01 INF] Client connected: K8K32H3rNBZO3gDh9BZnLQ, User: "00000000-0000-0000-0000-000000000000"
+[2025-09-21 14:20:02 INF] Fetching all Auction records
+[2025-09-21 14:20:02 INF] Retrieved 3 Auction records
+[2025-09-21 14:20:02 INF] All auctions retrieved by Anonymous at "2025-09-21T10:20:02.6805320Z"
+[2025-09-21 14:20:02 INF] User "00000000-0000-0000-0000-000000000000" joined auction "40d3c3bc-ddc5-4d4b-8abb-4848995d953b"
+[2025-09-21 14:20:29 INF] Fetching all Auction records
+[2025-09-21 14:20:29 INF] Retrieved 3 Auction records
+[2025-09-21 14:20:29 INF] All auctions retrieved by Anonymous at "2025-09-21T10:20:29.4119991Z"
+[2025-09-21 14:20:29 INF] User "00000000-0000-0000-0000-000000000000" joined auction "40d3c3bc-ddc5-4d4b-8abb-4848995d953b"
+[2025-09-21 14:20:32 INF] Getting cars for auction: "40d3c3bc-ddc5-4d4b-8abb-4848995d953b"
+[2025-09-21 14:20:32 INF] 🔍 Getting all cars for auction: "40d3c3bc-ddc5-4d4b-8abb-4848995d953b"
+[2025-09-21 14:20:32 INF] ✅ Retrieved 0 cars for auction "40d3c3bc-ddc5-4d4b-8abb-4848995d953b"
+[2025-09-21 14:20:59 INF] Fetching all Auction records
+[2025-09-21 14:20:59 INF] Retrieved 3 Auction records
+[2025-09-21 14:20:59 INF] All auctions retrieved by Anonymous at "2025-09-21T10:20:59.7364867Z"
+[2025-09-21 14:20:59 INF] User "00000000-0000-0000-0000-000000000000" joined auction "40d3c3bc-ddc5-4d4b-8abb-4848995d953b"
+[2025-09-21 14:21:29 INF] Fetching all Auction records
+[2025-09-21 14:21:29 INF] Retrieved 3 Auction records
+[2025-09-21 14:21:29 INF] All auctions retrieved by Anonymous at "2025-09-21T10:21:29.7480536Z"
+[2025-09-21 14:21:29 INF] User "00000000-0000-0000-0000-000000000000" joined auction "40d3c3bc-ddc5-4d4b-8abb-4848995d953b"
+[2025-09-21 14:21:59 INF] Fetching all Auction records
+[2025-09-21 14:21:59 INF] Retrieved 3 Auction records
+[2025-09-21 14:21:59 INF] All auctions retrieved by Anonymous at "2025-09-21T10:21:59.7334222Z"
+[2025-09-21 14:21:59 INF] User "00000000-0000-0000-0000-000000000000" joined auction "40d3c3bc-ddc5-4d4b-8abb-4848995d953b"
+[2025-09-21 14:22:29 INF] Fetching all Auction records
+[2025-09-21 14:22:29 INF] Retrieved 3 Auction records
+[2025-09-21 14:22:29 INF] All auctions retrieved by Anonymous at "2025-09-21T10:22:29.7416803Z"
+[2025-09-21 14:22:29 INF] User "00000000-0000-0000-0000-000000000000" joined auction "40d3c3bc-ddc5-4d4b-8abb-4848995d953b"
+[2025-09-21 14:23:14 INF] Fetching all Auction records
+[2025-09-21 14:23:14 INF] Retrieved 3 Auction records
+[2025-09-21 14:23:14 INF] All auctions retrieved by Anonymous at "2025-09-21T10:23:14.7280777Z"
+[2025-09-21 14:23:14 INF] User "00000000-0000-0000-0000-000000000000" joined auction "40d3c3bc-ddc5-4d4b-8abb-4848995d953b"
+[2025-09-21 14:23:29 INF] Fetching all Auction records
+[2025-09-21 14:23:29 INF] Retrieved 3 Auction records
+[2025-09-21 14:23:29 INF] All auctions retrieved by Anonymous at "2025-09-21T10:23:29.3859033Z"
+[2025-09-21 14:23:29 INF] User "00000000-0000-0000-0000-000000000000" joined auction "40d3c3bc-ddc5-4d4b-8abb-4848995d953b"
+[2025-09-21 14:23:59 INF] Fetching all Auction records
+[2025-09-21 14:23:59 INF] Retrieved 3 Auction records
+[2025-09-21 14:23:59 INF] All auctions retrieved by Anonymous at "2025-09-21T10:23:59.7425796Z"
+[2025-09-21 14:23:59 INF] User "00000000-0000-0000-0000-000000000000" joined auction "40d3c3bc-ddc5-4d4b-8abb-4848995d953b"
+[2025-09-21 14:24:29 INF] Fetching all Auction records
+[2025-09-21 14:24:29 INF] Retrieved 3 Auction records
+[2025-09-21 14:24:29 INF] All auctions retrieved by Anonymous at "2025-09-21T10:24:29.7618093Z"
+[2025-09-21 14:24:29 INF] User "00000000-0000-0000-0000-000000000000" joined auction "40d3c3bc-ddc5-4d4b-8abb-4848995d953b"
+[2025-09-21 14:25:14 INF] Fetching all Auction records
+[2025-09-21 14:25:14 INF] Retrieved 3 Auction records
+[2025-09-21 14:25:14 INF] All auctions retrieved by Anonymous at "2025-09-21T10:25:14.7398932Z"
+[2025-09-21 14:25:14 INF] User "00000000-0000-0000-0000-000000000000" joined auction "40d3c3bc-ddc5-4d4b-8abb-4848995d953b"
+[2025-09-21 14:26:14 INF] Fetching all Auction records
+[2025-09-21 14:26:14 INF] Retrieved 3 Auction records
+[2025-09-21 14:26:14 INF] All auctions retrieved by Anonymous at "2025-09-21T10:26:14.7379717Z"
+[2025-09-21 14:26:14 INF] User "00000000-0000-0000-0000-000000000000" joined auction "40d3c3bc-ddc5-4d4b-8abb-4848995d953b"
+[2025-09-21 14:27:14 INF] Fetching all Auction records
+[2025-09-21 14:27:14 INF] Retrieved 3 Auction records
+[2025-09-21 14:27:14 INF] All auctions retrieved by Anonymous at "2025-09-21T10:27:14.7431972Z"
+[2025-09-21 14:27:14 INF] User "00000000-0000-0000-0000-000000000000" joined auction "40d3c3bc-ddc5-4d4b-8abb-4848995d953b"
+[2025-09-21 14:28:14 INF] Fetching all Auction records
+[2025-09-21 14:28:14 INF] Retrieved 3 Auction records
+[2025-09-21 14:28:14 INF] All auctions retrieved by Anonymous at "2025-09-21T10:28:14.7467915Z"
+[2025-09-21 14:28:14 INF] User "00000000-0000-0000-0000-000000000000" joined auction "40d3c3bc-ddc5-4d4b-8abb-4848995d953b"
+[2025-09-21 14:29:14 INF] Fetching all Auction records
+[2025-09-21 14:29:14 INF] Retrieved 3 Auction records
+[2025-09-21 14:29:14 INF] All auctions retrieved by Anonymous at "2025-09-21T10:29:14.7604325Z"
+[2025-09-21 14:29:14 INF] User "00000000-0000-0000-0000-000000000000" joined auction "40d3c3bc-ddc5-4d4b-8abb-4848995d953b"
+[2025-09-21 14:30:14 INF] Fetching all Auction records
+[2025-09-21 14:30:14 INF] Retrieved 3 Auction records
+[2025-09-21 14:30:14 INF] All auctions retrieved by Anonymous at "2025-09-21T10:30:14.7341563Z"
+[2025-09-21 14:30:14 INF] User "00000000-0000-0000-0000-000000000000" joined auction "40d3c3bc-ddc5-4d4b-8abb-4848995d953b"
+[2025-09-21 14:31:14 INF] Fetching all Auction records
+[2025-09-21 14:31:14 INF] Retrieved 3 Auction records
+[2025-09-21 14:31:14 INF] All auctions retrieved by Anonymous at "2025-09-21T10:31:14.7432451Z"
+[2025-09-21 14:31:14 INF] User "00000000-0000-0000-0000-000000000000" joined auction "40d3c3bc-ddc5-4d4b-8abb-4848995d953b"
+[2025-09-21 14:32:14 INF] Fetching all Auction records
+[2025-09-21 14:32:14 INF] Retrieved 3 Auction records
+[2025-09-21 14:32:14 INF] All auctions retrieved by Anonymous at "2025-09-21T10:32:14.7449863Z"
+[2025-09-21 14:32:14 INF] User "00000000-0000-0000-0000-000000000000" joined auction "40d3c3bc-ddc5-4d4b-8abb-4848995d953b"
+[2025-09-21 14:33:14 INF] Fetching all Auction records
+[2025-09-21 14:33:14 INF] Retrieved 3 Auction records
+[2025-09-21 14:33:14 INF] All auctions retrieved by Anonymous at "2025-09-21T10:33:14.7450845Z"
+[2025-09-21 14:33:14 INF] User "00000000-0000-0000-0000-000000000000" joined auction "40d3c3bc-ddc5-4d4b-8abb-4848995d953b"
+[2025-09-21 14:34:14 INF] Fetching all Auction records
+[2025-09-21 14:34:14 INF] Retrieved 3 Auction records
+[2025-09-21 14:34:14 INF] All auctions retrieved by Anonymous at "2025-09-21T10:34:14.7415731Z"
+[2025-09-21 14:34:14 INF] User "00000000-0000-0000-0000-000000000000" joined auction "40d3c3bc-ddc5-4d4b-8abb-4848995d953b"
+[2025-09-21 14:35:14 INF] Fetching all Auction records
+[2025-09-21 14:35:14 INF] Retrieved 3 Auction records
+[2025-09-21 14:35:14 INF] All auctions retrieved by Anonymous at "2025-09-21T10:35:14.7450337Z"
+[2025-09-21 14:35:14 INF] User "00000000-0000-0000-0000-000000000000" joined auction "40d3c3bc-ddc5-4d4b-8abb-4848995d953b"
+[2025-09-21 14:36:14 INF] Fetching all Auction records
+[2025-09-21 14:36:14 INF] Retrieved 3 Auction records
+[2025-09-21 14:36:14 INF] All auctions retrieved by Anonymous at "2025-09-21T10:36:14.7511193Z"
+[2025-09-21 14:36:14 INF] User "00000000-0000-0000-0000-000000000000" joined auction "40d3c3bc-ddc5-4d4b-8abb-4848995d953b"
+[2025-09-21 14:37:14 INF] Fetching all Auction records
+[2025-09-21 14:37:14 INF] Retrieved 3 Auction records
+[2025-09-21 14:37:14 INF] All auctions retrieved by Anonymous at "2025-09-21T10:37:14.7304121Z"
+[2025-09-21 14:37:14 INF] User "00000000-0000-0000-0000-000000000000" joined auction "40d3c3bc-ddc5-4d4b-8abb-4848995d953b"
+[2025-09-21 14:38:14 INF] Fetching all Auction records
+[2025-09-21 14:38:14 INF] Retrieved 3 Auction records
+[2025-09-21 14:38:14 INF] All auctions retrieved by Anonymous at "2025-09-21T10:38:14.7493967Z"
+[2025-09-21 14:38:14 INF] User "00000000-0000-0000-0000-000000000000" joined auction "40d3c3bc-ddc5-4d4b-8abb-4848995d953b"
+[2025-09-21 14:39:14 INF] Fetching all Auction records
+[2025-09-21 14:39:14 INF] Retrieved 3 Auction records
+[2025-09-21 14:39:14 INF] All auctions retrieved by Anonymous at "2025-09-21T10:39:14.7300495Z"
+[2025-09-21 14:39:14 INF] User "00000000-0000-0000-0000-000000000000" joined auction "40d3c3bc-ddc5-4d4b-8abb-4848995d953b"
+[2025-09-21 14:40:14 INF] Fetching all Auction records
+[2025-09-21 14:40:14 INF] Retrieved 3 Auction records
+[2025-09-21 14:40:14 INF] All auctions retrieved by Anonymous at "2025-09-21T10:40:14.7445335Z"
+[2025-09-21 14:40:14 INF] User "00000000-0000-0000-0000-000000000000" joined auction "40d3c3bc-ddc5-4d4b-8abb-4848995d953b"
+[2025-09-21 14:50:28 WRN] The 'BidType' property 'BidType' on entity type 'Bid' is configured with a database-generated default, but has no configured sentinel value. The database-generated default will always be used for inserts when the property has the value '0', since this is the CLR default for the 'BidType' type. Consider using a nullable type, using a nullable backing field, or setting the sentinel value for the property to ensure the database default is used when, and only when, appropriate. See https://aka.ms/efcore-docs-default-values for more information.
+[2025-09-21 14:50:29 INF] 🎯 === AUTORIA AUCTION API STARTED ===
+[2025-09-21 14:50:29 INF] 🌐 Swagger UI: https://localhost:7249
+[2025-09-21 14:50:29 INF] 📡 SignalR Hub: https://localhost:7249/auctionHub
+[2025-09-21 14:50:29 INF] 💚 Health Check: https://localhost:7249/health
+[2025-09-21 14:50:29 INF] 📊 API Info: https://localhost:7249/api/info
+[2025-09-21 14:50:29 INF] 👨‍💻 Developer: ravanmu-coder

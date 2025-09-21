@@ -84,6 +84,18 @@
       <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-ck1\u002BLn6TWIpzc6HHn4BIfbLP5vW4pjovPdHPiKw2EaM="}]]]></EndpointProperties>
       <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"37956"},{"Name":"Content-Type","Value":"text/plain"},{"Name":"ETag","Value":"\u0022ck1\u002BLn6TWIpzc6HHn4BIfbLP5vW4pjovPdHPiKw2EaM=\u0022"},{"Name":"Last-Modified","Value":"Thu, 18 Sep 2025 14:03:29 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/AutoriaFinal.API/logs/log-20250920.txt">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\logs\log-20250920.txt'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-IjMygw1kKn4\u002B5lM/TJvdDCj2Hob0Mja58krIhO8Yzoc="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"1002"},{"Name":"Content-Type","Value":"text/plain"},{"Name":"ETag","Value":"\u0022IjMygw1kKn4\u002B5lM/TJvdDCj2Hob0Mja58krIhO8Yzoc=\u0022"},{"Name":"Last-Modified","Value":"Sat, 20 Sep 2025 10:59:04 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/AutoriaFinal.API/logs/log-20250920.ut7ap5oa9p.txt">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\logs\log-20250920.txt'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"ut7ap5oa9p"},{"Name":"integrity","Value":"sha256-IjMygw1kKn4\u002B5lM/TJvdDCj2Hob0Mja58krIhO8Yzoc="},{"Name":"label","Value":"_content/AutoriaFinal.API/logs/log-20250920.txt"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"1002"},{"Name":"Content-Type","Value":"text/plain"},{"Name":"ETag","Value":"\u0022IjMygw1kKn4\u002B5lM/TJvdDCj2Hob0Mja58krIhO8Yzoc=\u0022"},{"Name":"Last-Modified","Value":"Sat, 20 Sep 2025 10:59:04 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/AutoriaFinal.API/uploads/photos/2e5b9480-6ee8-4bbf-909e-308a1c1e9f22.fta5cmrg6r.jpeg">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\photos\2e5b9480-6ee8-4bbf-909e-308a1c1e9f22.jpeg'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
