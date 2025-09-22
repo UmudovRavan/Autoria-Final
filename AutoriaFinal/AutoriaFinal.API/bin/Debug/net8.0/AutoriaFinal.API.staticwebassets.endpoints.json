@@ -3,6 +3,88 @@
   "ManifestType": "Build",
   "Endpoints": [
     {
+      "Route": "logs/autoria-log-20250922.90jbq9dj5u.txt",
+      "AssetFile": "logs/autoria-log-20250922.txt",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "395724"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"Bx3egBsoQNLqJWIPCPdhpYiFXQX1jy3aYkh5E5/fmPk=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 22 Sep 2025 19:59:42 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "90jbq9dj5u"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-Bx3egBsoQNLqJWIPCPdhpYiFXQX1jy3aYkh5E5/fmPk="
+        },
+        {
+          "Name": "label",
+          "Value": "logs/autoria-log-20250922.txt"
+        }
+      ]
+    },
+    {
+      "Route": "logs/autoria-log-20250922.txt",
+      "AssetFile": "logs/autoria-log-20250922.txt",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "395724"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"Bx3egBsoQNLqJWIPCPdhpYiFXQX1jy3aYkh5E5/fmPk=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 22 Sep 2025 19:59:42 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-Bx3egBsoQNLqJWIPCPdhpYiFXQX1jy3aYkh5E5/fmPk="
+        }
+      ]
+    },
+    {
       "Route": "logs/log-20250911.almj0kdp7x.txt",
       "AssetFile": "logs/log-20250911.txt",
       "Selectors": [],
@@ -655,6 +737,170 @@
         {
           "Name": "label",
           "Value": "logs/log-20250920.txt"
+        }
+      ]
+    },
+    {
+      "Route": "logs/log-20250921.04ugqcpmfx.txt",
+      "AssetFile": "logs/log-20250921.txt",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "76864"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"kOkkoEFdtgCcUBbO+XFx5W+WIvK8WjS/xhXFqFGaT14=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sun, 21 Sep 2025 13:57:30 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "04ugqcpmfx"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-kOkkoEFdtgCcUBbO+XFx5W+WIvK8WjS/xhXFqFGaT14="
+        },
+        {
+          "Name": "label",
+          "Value": "logs/log-20250921.txt"
+        }
+      ]
+    },
+    {
+      "Route": "logs/log-20250921.txt",
+      "AssetFile": "logs/log-20250921.txt",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "76864"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"kOkkoEFdtgCcUBbO+XFx5W+WIvK8WjS/xhXFqFGaT14=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sun, 21 Sep 2025 13:57:30 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-kOkkoEFdtgCcUBbO+XFx5W+WIvK8WjS/xhXFqFGaT14="
+        }
+      ]
+    },
+    {
+      "Route": "logs/log-20250922.txt",
+      "AssetFile": "logs/log-20250922.txt",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "68772"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"crGBdV7B6WVRjkj5ZJsbAufG+Dh4um86mfByNlbUpr8=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 22 Sep 2025 10:20:08 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-crGBdV7B6WVRjkj5ZJsbAufG+Dh4um86mfByNlbUpr8="
+        }
+      ]
+    },
+    {
+      "Route": "logs/log-20250922.ulyd1w61h4.txt",
+      "AssetFile": "logs/log-20250922.txt",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "68772"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"crGBdV7B6WVRjkj5ZJsbAufG+Dh4um86mfByNlbUpr8=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 22 Sep 2025 10:20:08 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "ulyd1w61h4"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-crGBdV7B6WVRjkj5ZJsbAufG+Dh4um86mfByNlbUpr8="
+        },
+        {
+          "Name": "label",
+          "Value": "logs/log-20250922.txt"
         }
       ]
     },

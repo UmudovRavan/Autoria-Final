@@ -148,31 +148,79 @@ namespace AutoriaFinal.Application.Profiles
             #endregion
 
             #region Identity
-            #region Register
+
+            //  Register
             CreateMap<RegisterDto, ApplicationUser>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
+                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Phone))
+                .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.DateOfBirth))
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
                 .ReverseMap();
-            #endregion
-            #region AuthResponse
+
+            //  Login
+            CreateMap<LoginDto, ApplicationUser>()
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ReverseMap();
+
+            //  Forgot Password
+            CreateMap<ForgotPasswordDto, ApplicationUser>()
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ReverseMap();
+
+            //  Reset Password
+            CreateMap<ResetPasswordDto, ApplicationUser>()
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ReverseMap();
+
+            //  Resend Confirmation
+            CreateMap<ResendConfirmationDto, ApplicationUser>()
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ReverseMap();
+
+            //  Update User
+            CreateMap<UpdateUserDto, ApplicationUser>()
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
+                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Phone))
+                .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.DateOfBirth))
+                .ForMember(dest => dest.ProfilePicture, opt => opt.MapFrom(src => src.ProfilePicture))
+                .ReverseMap();
+
+            //  User
+            CreateMap<ApplicationUser, UserDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
+                .ForMember(dest => dest.ProfilePicture, opt => opt.MapFrom(src => src.ProfilePicture))
+                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
+                .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.DateOfBirth))
+                .ReverseMap();
+
+            //  Auth Response
             CreateMap<ApplicationUser, AuthResponseDto>()
-              .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id))
-              .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
-              .ForMember(dest => dest.Token, opt => opt.Ignore())
-              .ForMember(dest => dest.ExpiresAt, opt => opt.Ignore())
-              .ReverseMap();
-            #endregion
-            #region Token
+                .ForMember(dest => dest.User, opt => opt.MapFrom(src => src))
+                .ForMember(dest => dest.Token, opt => opt.Ignore())
+                .ForMember(dest => dest.ExpiresAt, opt => opt.Ignore())
+                .ReverseMap();
+
+            //  Token Generation
             CreateMap<TokenGenerationRequest, AuthResponseDto>()
-               .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
-               .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+               .ForMember(dest => dest.User, opt => opt.Ignore())
                .ForMember(dest => dest.Token, opt => opt.Ignore())
                .ForMember(dest => dest.ExpiresAt, opt => opt.MapFrom(src => src.ExpiresAt))
                .ReverseMap();
+
+            //  Validate Token (Request & Response)
+            CreateMap<ValidateTokenRequest, ValidateTokenResponse>()
+                .ReverseMap();
+
             #endregion
-            
 
-
-
-            #endregion
 
         }
     }

@@ -11,7 +11,7 @@ namespace AutoriaFinal.API.Controllers.Auctions
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class AuctionController : ControllerBase
     {
         private readonly IAuctionService _auctionService;
@@ -41,7 +41,6 @@ namespace AutoriaFinal.API.Controllers.Auctions
         }
 
         [HttpGet("{id:guid}")]
-        [AllowAnonymous]
         [ProducesResponseType(typeof(AuctionDetailDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<AuctionDetailDto>> GetAuctionById(Guid id)
@@ -51,7 +50,7 @@ namespace AutoriaFinal.API.Controllers.Auctions
         }
 
         [HttpPost]
-        [AllowAnonymous] // Test üçün - production-da [Authorize(Roles = "Seller,Admin")] edin
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(AuctionDetailDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<AuctionDetailDto>> CreateAuction([FromBody] AuctionCreateDto dto)
@@ -109,8 +108,7 @@ namespace AutoriaFinal.API.Controllers.Auctions
 
         #region Auction Main LifeCycle Methods
         [HttpPost("{id:guid}/start")]
-        [AllowAnonymous] // Test üçün - production-da
-        //[Authorize(Roles = "Admin,AuctionManager")]
+        [Authorize(Roles = "Admin,AuctionManager")]
         [ProducesResponseType(typeof(AuctionDetailDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
