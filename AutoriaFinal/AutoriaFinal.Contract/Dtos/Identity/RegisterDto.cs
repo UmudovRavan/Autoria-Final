@@ -49,7 +49,7 @@ namespace AutoriaFinal.Contract.Dtos.Identity
         // ✅ OPTIONAL FIELDS
         [Phone(ErrorMessage = "Düzgün telefon nömrəsi daxil edin")]
         [StringLength(20, ErrorMessage = "Telefon nömrəsi maksimum 20 simvol ola bilər")]
-        public string? Phone { get; set; }
+        public string Phone { get; set; }
 
         [DataType(DataType.Date)]
         public DateTime? DateOfBirth { get; set; }

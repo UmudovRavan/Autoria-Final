@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { apiClient } from '../lib/api';
+import { useLanguage } from '../hooks/useLanguage.tsx';
 
 export default function ConfirmEmail() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState<string>('');
+  const { t } = useLanguage();
 
   useEffect(() => {
     const userId = searchParams.get('userId') || undefined;
@@ -18,7 +20,7 @@ export default function ConfirmEmail() {
       try {
         await apiClient.confirmEmail({ userId, token, redirect });
         setStatus('success');
-        setMessage('Email confirmed successfully. Redirecting to login...');
+        setMessage(t('auth.confirmEmail.success'));
         setTimeout(() => navigate('/login'), 1500);
       } catch (err: any) {
         setStatus('error');

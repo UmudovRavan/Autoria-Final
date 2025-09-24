@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.tsx';
-import { Gavel, Eye, EyeOff, AlertCircle, Check } from 'lucide-react';
+import { useLanguage } from '../hooks/useLanguage.tsx';
+import { Gavel, Eye, EyeOff, AlertCircle, Check, User, Building2, Zap, ArrowRight, Mail, CheckCircle, Loader2, Globe } from 'lucide-react';
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -11,11 +12,11 @@ export default function Register() {
     confirmPassword: '',
     firstName: '',
     lastName: '',
-    role: 'Member', // Changed default role
+    role: 'Member',
     acceptTerms: false,
-    phone: '',
     dateOfBirth: '',
-    allowMarketing: false,
+    phone: '',
+    isOver18: false,
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -23,14 +24,16 @@ export default function Register() {
   const [isLoading, setIsLoading] = useState(false);
 
   const { register } = useAuth();
+  const { language, setLanguage, t } = useLanguage();
   const navigate = useNavigate();
   const [toast, setToast] = useState<string | null>(null);
+  const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
 
   const passwordRequirements = [
-    { label: 'At least 8 characters', check: (pwd: string) => pwd.length >= 8 },
-    { label: 'Contains uppercase letter', check: (pwd: string) => /[A-Z]/.test(pwd) },
-    { label: 'Contains lowercase letter', check: (pwd: string) => /[a-z]/.test(pwd) },
-    { label: 'Contains number', check: (pwd: string) => /\d/.test(pwd) },
+    { label: '8+ characters', check: (pwd: string) => pwd.length >= 8 },
+    { label: 'Uppercase', check: (pwd: string) => /[A-Z]/.test(pwd) },
+    { label: 'Lowercase', check: (pwd: string) => /[a-z]/.test(pwd) },
+    { label: 'Number', check: (pwd: string) => /\d/.test(pwd) },
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -47,10 +50,15 @@ export default function Register() {
       return;
     }
 
+    if (!formData.isOver18) {
+      setError('You must be 18 years or older to register');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      await register({
+      const registerData = {
         userName: formData.userName,
         email: formData.email,
         password: formData.password,
@@ -61,13 +69,20 @@ export default function Register() {
         acceptTerms: formData.acceptTerms,
         phone: formData.phone || undefined,
         dateOfBirth: formData.dateOfBirth || undefined,
-        allowMarketing: formData.allowMarketing,
-      });
-      setToast(`Confirmation email sent to ${formData.email}`);
+        allowMarketing: false,
+      };
+      
+      console.log('Register page - Sending data:', registerData);
+      const response = await register(registerData);
+      console.log('Register page - Response:', response);
+      // Show success animation
+      setShowSuccessAnimation(true);
+      
+      // Hide animation and navigate after 5 seconds
       setTimeout(() => {
-        setToast(null);
+        setShowSuccessAnimation(false);
         navigate('/login');
-      }, 1500);
+      }, 5000);
     } catch (err: any) {
       setError(err.message || 'Registration failed. Please try again.');
     } finally {
@@ -75,128 +90,206 @@ export default function Register() {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
       ...prev,
-      [e.target.name]: e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value
+      [e.target.name]: e.target.type === 'checkbox' ? e.target.checked : e.target.value
     }));
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        {/* Logo */}
-        <div className="flex justify-center">
-          <div className="bg-blue-600 p-3 rounded-xl">
-            <Gavel className="h-8 w-8 text-white" />
+    <div className="h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-900 flex items-center justify-center p-3">
+      <div className="w-full max-w-sm">
+        {/* Language Selector */}
+        <div className="mb-4 flex justify-end">
+          <div className="relative">
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value as 'az' | 'en')}
+              className="bg-white/25 border border-white/40 rounded-lg px-3 py-1.5 text-white text-sm focus:bg-white/35 focus:border-blue-400 focus:outline-none transition-all duration-300 shadow-lg appearance-none pr-8"
+            >
+              <option value="az" className="bg-slate-800 text-white">{t('language.azerbaijani')}</option>
+              <option value="en" className="bg-slate-800 text-white">{t('language.english')}</option>
+            </select>
+            <Globe className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white pointer-events-none" />
           </div>
         </div>
         
-        <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
-          Create your account
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Join the auction and start bidding
+        {/* Main Card */}
+        <div className="bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 p-6">
+          {/* Header */}
+          <div className="text-center mb-5">
+            <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl mb-2 shadow-lg">
+              <Gavel className="h-6 w-6 text-white" />
+            </div>
+            <h1 className="text-xl font-bold text-white mb-1">
+              {t('auth.register.title')}
+            </h1>
+            <p className="text-blue-100 text-xs">
+              {t('auth.register.subtitle')}
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow-xl sm:rounded-2xl sm:px-10">
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="space-y-3">
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <div className="flex items-center">
-                  <AlertCircle className="h-5 w-5 text-red-400 mr-2" />
-                  <span className="text-sm text-red-800">{error}</span>
+              <div className="bg-red-500/10 border border-red-400/50 rounded-xl p-3 shadow-lg backdrop-blur-sm">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0">
+                    <div className="w-6 h-6 bg-red-500/20 rounded-full flex items-center justify-center">
+                      <AlertCircle className="h-4 w-4 text-red-400" />
+                    </div>
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-sm font-semibold text-red-200 mb-1">
+                      Validation Error
+                    </h3>
+                    <p className="text-xs text-red-300 leading-relaxed">{error}</p>
+                  </div>
                 </div>
               </div>
             )}
 
+            {/* Name Fields */}
+            <div className="grid grid-cols-2 gap-2">
             <div>
-            <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">First name</label>
-            <input id="firstName" name="firstName" type="text" required value={formData.firstName} onChange={handleChange} className="block w-full rounded-lg border border-gray-300 px-3 py-3 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm" placeholder="Your first name" />
+                <input 
+                  name="firstName" 
+                  type="text" 
+                  required 
+                  value={formData.firstName} 
+                  onChange={handleChange} 
+                  className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-blue-200 focus:bg-white/20 focus:border-blue-400 focus:outline-none transition-all duration-200 text-sm" 
+                  placeholder={t('auth.register.firstName')} 
+                />
+          </div>
+          <div>
+                <input 
+                  name="lastName" 
+                  type="text" 
+                  required 
+                  value={formData.lastName} 
+                  onChange={handleChange} 
+                  className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-blue-200 focus:bg-white/20 focus:border-blue-400 focus:outline-none transition-all duration-200 text-sm" 
+                  placeholder={t('auth.register.lastName')} 
+                />
+              </div>
           </div>
 
+            {/* Username */}
           <div>
-            <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">Last name</label>
-            <input id="lastName" name="lastName" type="text" required value={formData.lastName} onChange={handleChange} className="block w-full rounded-lg border border-gray-300 px-3 py-3 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm" placeholder="Your last name" />
-          </div>
-
-          <div>
-              <label htmlFor="userName" className="block text-sm font-medium text-gray-700 mb-2">
-                Username
-              </label>
               <input
-                id="userName"
                 name="userName"
                 type="text"
                 required
                 value={formData.userName}
                 onChange={handleChange}
-                className="block w-full rounded-lg border border-gray-300 px-3 py-3 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
-                placeholder="Choose a username"
+                className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-blue-200 focus:bg-white/20 focus:border-blue-400 focus:outline-none transition-all duration-200 text-sm"
+                placeholder={t('auth.register.username')}
               />
             </div>
 
+            {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email address
-              </label>
               <input
-                id="email"
                 name="email"
                 type="email"
-                autoComplete="email"
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className="block w-full rounded-lg border border-gray-300 px-3 py-3 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
-                placeholder="Enter your email"
+                className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-blue-200 focus:bg-white/20 focus:border-blue-400 focus:outline-none transition-all duration-200 text-sm"
+                placeholder={t('auth.register.email')}
               />
             </div>
 
+            {/* Date of Birth */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
-              <div className="flex items-center space-x-4">
-                <label className="flex items-center">
+              <input
+                name="dateOfBirth"
+                type="date"
+                value={formData.dateOfBirth}
+                onChange={handleChange}
+                className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-blue-200 focus:bg-white/20 focus:border-blue-400 focus:outline-none transition-all duration-200 text-sm"
+              />
+            </div>
+
+            {/* Phone Number */}
+            <div>
+              <input
+                name="phone"
+                type="tel"
+                value={formData.phone}
+                onChange={handleChange}
+                className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-blue-200 focus:bg-white/20 focus:border-blue-400 focus:outline-none transition-all duration-200 text-sm"
+                placeholder={t('auth.register.phone')}
+              />
+            </div>
+
+            {/* Role Selection */}
+            <div>
+              <div className="grid grid-cols-2 gap-2">
+                <label className={`relative flex cursor-pointer rounded-lg p-2 border transition-all duration-200 ${
+                  formData.role === 'Member' 
+                    ? 'border-blue-400 bg-blue-500/20' 
+                    : 'border-white/20 bg-white/5 hover:bg-white/10'
+                }`}>
                   <input
                     type="radio"
                     name="role"
                     value="Member"
                     checked={formData.role === 'Member'}
                     onChange={handleChange}
-                    className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    className="sr-only"
                   />
-                  <span className="ml-2 text-sm text-gray-700">Member</span>
+                  <div className="flex items-center justify-center w-full">
+                    <User className={`h-3 w-3 mr-1 ${
+                      formData.role === 'Member' ? 'text-blue-300' : 'text-blue-200'
+                    }`} />
+                    <span className={`text-xs font-medium ${
+                      formData.role === 'Member' ? 'text-white' : 'text-blue-200'
+                    }`}>
+                      {t('auth.register.member')}
+                    </span>
+                  </div>
                 </label>
-                <label className="flex items-center">
+                
+                <label className={`relative flex cursor-pointer rounded-lg p-2 border transition-all duration-200 ${
+                  formData.role === 'Seller' 
+                    ? 'border-blue-400 bg-blue-500/20' 
+                    : 'border-white/20 bg-white/5 hover:bg-white/10'
+                }`}>
                   <input
                     type="radio"
                     name="role"
                     value="Seller"
                     checked={formData.role === 'Seller'}
                     onChange={handleChange}
-                    className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    className="sr-only"
                   />
-                  <span className="ml-2 text-sm text-gray-700">Seller</span>
+                  <div className="flex items-center justify-center w-full">
+                    <Building2 className={`h-3 w-3 mr-1 ${
+                      formData.role === 'Seller' ? 'text-blue-300' : 'text-blue-200'
+                    }`} />
+                    <span className={`text-xs font-medium ${
+                      formData.role === 'Seller' ? 'text-white' : 'text-blue-200'
+                    }`}>
+                      {t('auth.register.seller')}
+                    </span>
+                  </div>
                 </label>
               </div>
             </div>
 
+            {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                Password
-              </label>
               <div className="relative">
                 <input
-                  id="password"
                   name="password"
                   type={showPassword ? 'text' : 'password'}
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="block w-full rounded-lg border border-gray-300 px-3 py-3 pr-10 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
-                  placeholder="Create a password"
+                  className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 pr-10 text-white placeholder-blue-200 focus:bg-white/20 focus:border-blue-400 focus:outline-none transition-all duration-200 text-sm"
+                  placeholder={t('auth.register.password')}
                 />
                 <button
                   type="button"
@@ -204,59 +297,45 @@ export default function Register() {
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                    <EyeOff className="h-3 w-3 text-blue-200 hover:text-white transition-colors" />
                   ) : (
-                    <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                    <Eye className="h-3 w-3 text-blue-200 hover:text-white transition-colors" />
                   )}
                 </button>
               </div>
               
               {/* Password Requirements */}
               {formData.password && (
-                <div className="mt-2 space-y-1">
+                <div className="mt-1 flex flex-wrap gap-1">
                   {passwordRequirements.map((requirement, index) => (
-                    <div key={index} className="flex items-center text-xs">
-                      <Check 
-                        className={`h-3 w-3 mr-2 ${
+                    <div key={index} className={`flex items-center text-xs px-1.5 py-0.5 rounded ${
                           requirement.check(formData.password) 
-                            ? 'text-green-500' 
-                            : 'text-gray-300'
-                        }`}
-                      />
-                      <span 
-                        className={
+                        ? 'bg-green-500/20 text-green-300' 
+                        : 'bg-white/10 text-blue-200'
+                    }`}>
+                      <Check className={`h-2 w-2 mr-1 ${
                           requirement.check(formData.password)
-                            ? 'text-green-600'
-                            : 'text-gray-500'
-                        }
-                      >
+                          ? 'text-green-400' 
+                          : 'text-blue-300'
+                      }`} />
                         {requirement.label}
-                      </span>
                     </div>
                   ))}
                 </div>
               )}
             </div>
 
-          <div>
-            <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-700 mb-2">Date of birth</label>
-            <input id="dateOfBirth" name="dateOfBirth" type="date" value={formData.dateOfBirth} onChange={handleChange} className="block w-full rounded-lg border border-gray-300 px-3 py-3 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm" />
-          </div>
-
+            {/* Confirm Password */}
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                Confirm password
-              </label>
               <div className="relative">
                 <input
-                  id="confirmPassword"
                   name="confirmPassword"
                   type={showConfirmPassword ? 'text' : 'password'}
                   required
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className="block w-full rounded-lg border border-gray-300 px-3 py-3 pr-10 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
-                  placeholder="Confirm your password"
+                  className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 pr-10 text-white placeholder-blue-200 focus:bg-white/20 focus:border-blue-400 focus:outline-none transition-all duration-200 text-sm"
+                  placeholder={t('auth.register.confirmPassword')}
                 />
                 <button
                   type="button"
@@ -264,76 +343,135 @@ export default function Register() {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
                   {showConfirmPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                    <EyeOff className="h-3 w-3 text-blue-200 hover:text-white transition-colors" />
                   ) : (
-                    <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                    <Eye className="h-3 w-3 text-blue-200 hover:text-white transition-colors" />
                   )}
                 </button>
               </div>
             </div>
 
-            <div>
+            {/* Terms and Age Confirmation */}
+            <div className="space-y-2">
+              <div className="flex items-start">
+                <input 
+                  id="acceptTerms" 
+                  name="acceptTerms" 
+                  type="checkbox" 
+                  checked={formData.acceptTerms} 
+                  onChange={handleChange} 
+                  className="h-3 w-3 mt-0.5 text-blue-500 border-white/20 rounded focus:ring-blue-500 bg-white/10" 
+                />
+                <label htmlFor="acceptTerms" className="ml-2 text-xs text-blue-200">
+                  I agree to the <Link to="/terms" className="text-blue-300 hover:text-white font-medium">Terms</Link> and <Link to="/privacy" className="text-blue-300 hover:text-white font-medium">Privacy</Link>
+                </label>
+              </div>
+              
+              <div className="flex items-start">
+                <input 
+                  id="isOver18" 
+                  name="isOver18" 
+                  type="checkbox" 
+                  checked={formData.isOver18} 
+                  onChange={handleChange} 
+                  className="h-3 w-3 mt-0.5 text-blue-500 border-white/20 rounded focus:ring-blue-500 bg-white/10" 
+                />
+                <label htmlFor="isOver18" className="ml-2 text-xs text-blue-200">
+                  {t('auth.register.isOver18')}
+                </label>
+              </div>
+            </div>
+
+            {/* Submit Button */}
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex w-full justify-center rounded-lg bg-blue-600 py-3 px-4 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-blue-400 disabled:cursor-not-allowed transition-colors"
+              className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-200 transform hover:scale-[1.02] flex items-center justify-center text-sm relative overflow-hidden"
               >
                 {isLoading ? (
-                  <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
-                    Creating account...
-                  </div>
-                ) : (
-                  'Create account'
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  <span>{t('auth.register.createAccount')}...</span>
+                  {/* Loading overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-indigo-500/20 animate-pulse"></div>
+                </>
+              ) : (
+                <>
+                  <Zap className="h-3 w-3 mr-1" />
+                  {t('auth.register.createAccount')}
+                  <ArrowRight className="h-3 w-3 ml-1" />
+                </>
                 )}
               </button>
-            </div>
           </form>
 
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="bg-white px-2 text-gray-500">Already have an account?</span>
-              </div>
-            </div>
-
-            <div className="mt-6">
+          {/* Sign In Link */}
+          <div className="mt-4 text-center">
+            <p className="text-xs text-blue-200">
+              {t('auth.register.haveAccount')}{' '}
               <Link
                 to="/login"
-                className="flex w-full justify-center rounded-lg border border-gray-300 bg-white py-3 px-4 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 transition-colors"
+                className="font-semibold text-white hover:text-blue-300 transition-colors"
               >
-                Sign in instead
+                {t('auth.register.signIn')}
               </Link>
+            </p>
+          </div>
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input id="acceptTerms" name="acceptTerms" type="checkbox" checked={formData.acceptTerms} onChange={handleChange} className="h-4 w-4 text-blue-600 border-gray-300 rounded" />
-              <label htmlFor="acceptTerms" className="ml-2 block text-sm text-gray-700">
-                I agree to the Terms and Privacy Policy
-              </label>
+      {/* Toast Notification */}
+      {toast && (
+        <div className="fixed top-4 right-4 bg-green-500/10 border border-green-400/50 rounded-xl p-4 shadow-2xl backdrop-blur-sm z-50 transform transition-all duration-300 max-w-sm">
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              <div className="w-6 h-6 bg-green-500/20 rounded-full flex items-center justify-center">
+                <Check className="h-4 w-4 text-green-400" />
+              </div>
             </div>
-            <div className="flex items-center">
-              <input id="allowMarketing" name="allowMarketing" type="checkbox" checked={formData.allowMarketing} onChange={handleChange} className="h-4 w-4 text-blue-600 border-gray-300 rounded" />
-              <label htmlFor="allowMarketing" className="ml-2 block text-sm text-gray-700">
-                Receive updates and marketing emails
-              </label>
+            <div className="ml-3">
+              <h3 className="text-sm font-semibold text-green-200 mb-1">
+                Success!
+              </h3>
+              <p className="text-xs text-green-300 leading-relaxed">{toast}</p>
             </div>
           </div>
+        </div>
+      )}
 
-          <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
-            <input id="phone" name="phone" type="tel" value={formData.phone} onChange={handleChange} className="block w-full rounded-lg border border-gray-300 px-3 py-3 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm" placeholder="Optional phone" />
+      {/* Success Animation Overlay */}
+      {showSuccessAnimation && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="bg-gradient-to-br from-green-500/20 to-blue-500/20 border border-green-400/50 rounded-2xl p-8 shadow-2xl backdrop-blur-sm max-w-md mx-4 transform transition-all duration-500 scale-100">
+            <div className="text-center">
+              {/* Animated Check Icon */}
+              <div className="relative mb-6">
+                <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
+                  <CheckCircle className="h-12 w-12 text-green-400 animate-bounce" />
+                </div>
+                <div className="absolute inset-0 w-20 h-20 bg-green-400/30 rounded-full mx-auto animate-ping"></div>
+              </div>
+              
+              {/* Success Message */}
+              <h2 className="text-2xl font-bold text-white mb-3 animate-fade-in">
+                {t('auth.register.success.title')}
+              </h2>
+              <div className="bg-white/10 border border-white/20 rounded-xl p-4 mb-4">
+                <div className="flex items-center justify-center mb-2">
+                  <Mail className="h-5 w-5 text-blue-400 mr-2" />
+                  <span className="text-sm font-semibold text-blue-200">{t('auth.register.success.message')}</span>
+                </div>
+                <p className="text-xs text-blue-300 leading-relaxed">
+                  {t('auth.register.success.details')}
+                </p>
+              </div>
+              
+              {/* Countdown */}
+              <div className="text-xs text-blue-300">
+                {t('auth.register.success.countdown').replace('Saniyə', '5').replace('seconds', '5')}
           </div>
         </div>
       </div>
-      {toast && (
-        <div className="fixed top-4 right-4 bg-green-600 text-white px-4 py-3 rounded-lg shadow-lg">
-          {toast}
         </div>
       )}
     </div>

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.tsx';
-import { Gavel, Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { useLanguage } from '../hooks/useLanguage.tsx';
+import { Gavel, Eye, EyeOff, AlertCircle, LogIn, ArrowRight, Loader2, Globe } from 'lucide-react';
 import { apiClient } from '../lib/api';
 
 export default function Login() {
@@ -14,6 +15,7 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
 
   const { login } = useAuth();
+  const { language, setLanguage, t } = useLanguage();
   const navigate = useNavigate();
   const [warning, setWarning] = useState<string | null>(null);
 
@@ -50,91 +52,114 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        {/* Logo */}
-        <div className="flex justify-center">
-          <div className="bg-blue-600 p-3 rounded-xl">
-            <Gavel className="h-8 w-8 text-white" />
+    <div className="h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-900 flex items-center justify-center p-3">
+      <div className="w-full max-w-sm">
+        {/* Language Selector */}
+        <div className="mb-4 flex justify-end">
+          <div className="relative">
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value as 'az' | 'en')}
+              className="bg-white/25 border border-white/40 rounded-lg px-3 py-1.5 text-white text-sm focus:bg-white/35 focus:border-blue-400 focus:outline-none transition-all duration-300 shadow-lg appearance-none pr-8"
+            >
+              <option value="az" className="bg-slate-800 text-white">{t('language.azerbaijani')}</option>
+              <option value="en" className="bg-slate-800 text-white">{t('language.english')}</option>
+            </select>
+            <Globe className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white pointer-events-none" />
           </div>
         </div>
-        
-        <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
-          Welcome to Autoria
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Sign in to your auction account
-        </p>
-      </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow-xl sm:rounded-2xl sm:px-10">
-          <form className="space-y-6" onSubmit={handleSubmit}>
+        {/* Main Card */}
+        <div className="bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 p-6">
+          {/* Header */}
+          <div className="text-center mb-5">
+            <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl mb-2 shadow-lg">
+              <Gavel className="h-6 w-6 text-white" />
+            </div>
+            <h1 className="text-xl font-bold text-white mb-1">
+              {t('auth.login.title')}
+            </h1>
+            <p className="text-blue-100 text-xs">
+              {t('auth.login.subtitle')}
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-3">
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <div className="flex items-center">
-                  <AlertCircle className="h-5 w-5 text-red-400 mr-2" />
-                  <span className="text-sm text-red-800">{error}</span>
+              <div className="bg-red-500/10 border border-red-400/50 rounded-xl p-3 shadow-lg backdrop-blur-sm">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0">
+                    <div className="w-6 h-6 bg-red-500/20 rounded-full flex items-center justify-center">
+                      <AlertCircle className="h-4 w-4 text-red-400" />
+                    </div>
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-sm font-semibold text-red-200 mb-1">
+                      Login Failed
+                    </h3>
+                    <p className="text-xs text-red-300 leading-relaxed">{error}</p>
+                  </div>
                 </div>
               </div>
             )}
             {warning && (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                <div className="flex items-center">
-                  <AlertCircle className="h-5 w-5 text-yellow-500 mr-2" />
-                  <span className="text-sm text-yellow-800">{warning}</span>
-                </div>
-                <div className="mt-2 text-sm">
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      try {
-                        await apiClient.resendConfirmation(formData.email);
-                        setWarning('Confirmation email resent. Please check your inbox.');
-                      } catch (_) {
-                        setWarning('Could not resend email. Try again later.');
-                      }
-                    }}
-                    className="text-blue-600 hover:text-blue-700"
-                  >
-                    Resend confirmation email
-                  </button>
+              <div className="bg-yellow-500/10 border border-yellow-400/50 rounded-xl p-3 shadow-lg backdrop-blur-sm">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0">
+                    <div className="w-6 h-6 bg-yellow-500/20 rounded-full flex items-center justify-center">
+                      <AlertCircle className="h-4 w-4 text-yellow-400" />
+                    </div>
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-sm font-semibold text-yellow-200 mb-1">
+                      Email Not Confirmed
+                    </h3>
+                    <p className="text-xs text-yellow-300 leading-relaxed mb-2">{warning}</p>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        try {
+                          await apiClient.resendConfirmation(formData.email);
+                          setWarning('Confirmation email resent. Please check your inbox.');
+                        } catch (_) {
+                          setWarning('Could not resend email. Try again later.');
+                        }
+                      }}
+                      className="text-xs bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-200 px-2 py-1 rounded-lg transition-colors"
+                    >
+                      Resend confirmation email
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
 
+            {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email address
-              </label>
               <input
-                id="email"
                 name="email"
                 type="email"
                 autoComplete="email"
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className="block w-full rounded-lg border border-gray-300 px-3 py-3 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
-                placeholder="Enter your email"
+                className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-blue-200 focus:bg-white/20 focus:border-blue-400 focus:outline-none transition-all duration-200 text-sm"
+                placeholder={t('auth.login.email')}
               />
             </div>
 
+            {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                Password
-              </label>
               <div className="relative">
                 <input
-                  id="password"
                   name="password"
                   type={showPassword ? 'text' : 'password'}
                   autoComplete="current-password"
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="block w-full rounded-lg border border-gray-300 px-3 py-3 pr-10 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
-                  placeholder="Enter your password"
+                  className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 pr-10 text-white placeholder-blue-200 focus:bg-white/20 focus:border-blue-400 focus:outline-none transition-all duration-200 text-sm"
+                  placeholder={t('auth.login.password')}
                 />
                 <button
                   type="button"
@@ -142,52 +167,54 @@ export default function Login() {
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                    <EyeOff className="h-3 w-3 text-blue-200 hover:text-white transition-colors" />
                   ) : (
-                    <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                    <Eye className="h-3 w-3 text-blue-200 hover:text-white transition-colors" />
                   )}
                 </button>
               </div>
             </div>
 
-            <div>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="flex w-full justify-center rounded-lg bg-blue-600 py-3 px-4 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-blue-400 disabled:cursor-not-allowed transition-colors"
-              >
-                {isLoading ? (
-                  <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
-                    Signing in...
-                  </div>
-                ) : (
-                  'Sign in'
-                )}
-              </button>
-            </div>
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-200 transform hover:scale-[1.02] flex items-center justify-center text-sm relative overflow-hidden"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  <span>{t('auth.login.signIn')}...</span>
+                  {/* Loading overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-blue-600/20 animate-pulse"></div>
+                </>
+              ) : (
+                <>
+                  <LogIn className="h-3 w-3 mr-1" />
+                  {t('auth.login.signIn')}
+                  <ArrowRight className="h-3 w-3 ml-1" />
+                </>
+              )}
+            </button>
           </form>
 
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="bg-white px-2 text-gray-500">New to Autoria?</span>
-              </div>
-            </div>
-
-            <div className="mt-6">
+          {/* Links */}
+          <div className="mt-4 space-y-2">
+            <div className="text-center">
               <Link
                 to="/register"
-                className="flex w-full justify-center rounded-lg border border-gray-300 bg-white py-3 px-4 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 transition-colors"
+                className="text-xs text-blue-200 hover:text-white transition-colors font-medium"
               >
-                Create an account
+                {t('auth.login.noAccount')} {t('auth.login.register')}
               </Link>
-              <div className="mt-4 text-center">
-                <Link to="/forgot-password" className="text-sm text-blue-600 hover:text-blue-700">Forgot your password?</Link>
-              </div>
+            </div>
+            <div className="text-center">
+              <Link 
+                to="/forgot-password" 
+                className="text-xs text-blue-300 hover:text-white transition-colors"
+              >
+                {t('auth.login.forgotPassword')}
+              </Link>
             </div>
           </div>
         </div>

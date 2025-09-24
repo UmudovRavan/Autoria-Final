@@ -12,7 +12,11 @@ import {
   PlaceLiveBidRequest,
   PlaceProxyBidRequest,
   AuctionTimerInfo,
-  BidValidationResult
+  BidValidationResult,
+  VehicleSearchParams,
+  VehicleSearchResult,
+  VehicleSearchItem,
+  VehicleFilters
 } from '../types/api';
 
 const API_BASE_URL = 'https://localhost:7249/api';
@@ -84,16 +88,22 @@ class ApiClient {
       method: 'POST',
       body: JSON.stringify(credentials),
     });
-    this.setToken(response.token);
+    if (response.token) {
+      this.setToken(response.token);
+    }
     return response;
   }
 
   async register(userData: RegisterDto): Promise<AuthResponseDto> {
+    console.log('API Client - Sending register data:', userData);
     const response = await this.request<AuthResponseDto>('/Auth/register', {
       method: 'POST',
       body: JSON.stringify(userData),
     });
-    this.setToken(response.token);
+    console.log('API Client - Received response:', response);
+    if (response.token) {
+      this.setToken(response.token);
+    }
     return response;
   }
 
@@ -255,6 +265,110 @@ class ApiClient {
 
   async canBid(auctionCarId: string): Promise<boolean> {
     return this.request<boolean>(`/Bid/can-bid/${auctionCarId}`);
+  }
+
+  // Vehicle Finder endpoints - using real API endpoints
+  async searchVehicles(searchParams: VehicleSearchParams): Promise<VehicleSearchResult> {
+    const queryParams = new URLSearchParams();
+    
+    if (searchParams.condition) queryParams.append('condition', searchParams.condition);
+    if (searchParams.type) queryParams.append('type', searchParams.type);
+    if (searchParams.minOdometer) queryParams.append('minOdometer', searchParams.minOdometer.toString());
+    if (searchParams.maxOdometer) queryParams.append('maxOdometer', searchParams.maxOdometer.toString());
+    if (searchParams.minYear) queryParams.append('minYear', searchParams.minYear.toString());
+    if (searchParams.maxYear) queryParams.append('maxYear', searchParams.maxYear.toString());
+    if (searchParams.damageType) queryParams.append('damageType', searchParams.damageType);
+    if (searchParams.make) queryParams.append('make', searchParams.make);
+    if (searchParams.model) queryParams.append('model', searchParams.model);
+    if (searchParams.location) queryParams.append('location', searchParams.location);
+    if (searchParams.vin) queryParams.append('vin', searchParams.vin);
+    if (searchParams.lotNumber) queryParams.append('lotNumber', searchParams.lotNumber);
+    if (searchParams.page) queryParams.append('page', searchParams.page.toString());
+    if (searchParams.pageSize) queryParams.append('pageSize', searchParams.pageSize.toString());
+
+    // Use the real AuctionCar endpoint with pagination
+    const response = await this.request<AuctionCarGetDto[]>(`/AuctionCar?${queryParams.toString()}`);
+    
+    // Transform the response to match VehicleSearchResult interface
+    const vehicles: VehicleSearchItem[] = response.map(car => ({
+      id: car.id,
+      auctionId: car.auctionId,
+      carId: car.carId,
+      lotNumber: car.lotNumber,
+      currentPrice: car.currentPrice,
+      minPreBid: car.minPreBid,
+      winnerStatus: car.winnerStatus,
+      isActive: car.isActive,
+      bidCount: car.bidCount,
+      lastBidTime: car.lastBidTime,
+      isReserveMet: car.isReserveMet,
+      reservePrice: car.reservePrice,
+      carMake: car.carMake,
+      carModel: car.carModel,
+      carYear: car.carYear,
+      carImage: car.carImage,
+      carVin: undefined,
+      carOdometer: undefined,
+      carCondition: undefined,
+      carType: undefined,
+      carDamageType: undefined,
+      carLocation: undefined,
+      auctionName: undefined,
+      auctionStartTime: undefined,
+      auctionEndTime: undefined
+    }));
+
+    return {
+      vehicles,
+      totalCount: vehicles.length,
+      page: searchParams.page || 1,
+      pageSize: searchParams.pageSize || 12,
+      totalPages: Math.ceil(vehicles.length / (searchParams.pageSize || 12))
+    };
+  }
+
+  async getVehicleFilters(): Promise<VehicleFilters> {
+    // Get all auction cars to extract unique values for filters
+    const allCars = await this.request<AuctionCarGetDto[]>('/AuctionCar');
+    
+    const makes = [...new Set(allCars.map(car => car.carMake).filter(Boolean))] as string[];
+    const years = allCars.map(car => car.carYear).filter(Boolean) as number[];
+    
+    return {
+      conditions: ['All', 'Used', 'Salvage'],
+      types: ['Sedan', 'SUV', 'Truck', 'Coupe', 'Convertible', 'Hatchback'],
+      damageTypes: ['None', 'Front End', 'Rear End', 'Side', 'All Over', 'Water/Flood'],
+      makes,
+      locations: ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix'],
+      yearRange: {
+        min: Math.min(...years),
+        max: Math.max(...years)
+      },
+      odometerRange: {
+        min: 0,
+        max: 300000
+      }
+    };
+  }
+
+  async getVehicleMakes(): Promise<string[]> {
+    const allCars = await this.request<AuctionCarGetDto[]>('/AuctionCar');
+    return [...new Set(allCars.map(car => car.carMake).filter(Boolean))] as string[];
+  }
+
+  async getVehicleModels(make: string): Promise<string[]> {
+    const allCars = await this.request<AuctionCarGetDto[]>('/AuctionCar');
+    return [...new Set(
+      allCars
+        .filter(car => car.carMake === make)
+        .map(car => car.carModel)
+        .filter(Boolean)
+    )] as string[];
+  }
+
+  async getVehicleLocations(): Promise<string[]> {
+    // Return static locations for now, can be enhanced with real data
+    return ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix'];
   }
 }
 

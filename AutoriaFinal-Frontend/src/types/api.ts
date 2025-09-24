@@ -169,11 +169,30 @@ export interface BidDetailDto {
   isFromMobileDevice: boolean;
 }
 
+export interface UserDto {
+  id: string;
+  userName?: string;
+  email?: string;
+  emailConfirmed: boolean;
+  roles?: string[];
+  createdAt?: string;
+  updatedAt?: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  dateOfBirth?: string;
+  allowMarketing: boolean;
+}
+
 export interface AuthResponseDto {
-  userId: string;
-  email: string;
-  token: string;
+  isSuccess: boolean;
+  message?: string;
+  token?: string;
   expiresAt: string;
+  user?: UserDto;
+  loginInfo?: any;
+  refreshToken?: string;
+  errors?: string[];
 }
 
 export interface LoginDto {
@@ -233,4 +252,74 @@ export interface BidValidationResult {
   suggestedBidAmount: number;
   requiresPreBid: boolean;
   auctionActive: boolean;
+}
+
+// Vehicle Finder interfaces
+export interface VehicleSearchParams {
+  condition?: string;
+  type?: string;
+  minOdometer?: number;
+  maxOdometer?: number;
+  minYear?: number;
+  maxYear?: number;
+  damageType?: string;
+  make?: string;
+  model?: string;
+  location?: string;
+  vin?: string;
+  lotNumber?: string;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface VehicleSearchResult {
+  vehicles: VehicleSearchItem[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export interface VehicleSearchItem {
+  id: string;
+  auctionId: string;
+  carId: string;
+  lotNumber: string;
+  currentPrice: number;
+  minPreBid: number;
+  winnerStatus?: string;
+  isActive: boolean;
+  bidCount: number;
+  lastBidTime?: string;
+  isReserveMet: boolean;
+  reservePrice?: number;
+  carMake?: string;
+  carModel?: string;
+  carYear?: number;
+  carImage?: string;
+  carVin?: string;
+  carOdometer?: number;
+  carCondition?: string;
+  carType?: string;
+  carDamageType?: string;
+  carLocation?: string;
+  auctionName?: string;
+  auctionStartTime?: string;
+  auctionEndTime?: string;
+}
+
+export interface VehicleFilters {
+  conditions: string[];
+  types: string[];
+  damageTypes: string[];
+  makes: string[];
+  locations: string[];
+  yearRange: {
+    min: number;
+    max: number;
+  };
+  odometerRange: {
+    min: number;
+    max: number;
+  };
 }

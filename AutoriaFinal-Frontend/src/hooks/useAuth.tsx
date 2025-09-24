@@ -45,9 +45,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const register = async (userData: RegisterDto) => {
     try {
+      console.log('useAuth - Register data:', userData);
       const response = await apiClient.register(userData);
+      console.log('useAuth - Register response:', response);
       setUser(response);
       localStorage.setItem('user_data', JSON.stringify(response));
+      console.log('useAuth - User set to:', response);
     } catch (error) {
       throw error;
     }

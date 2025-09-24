@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './hooks/useAuth.tsx';
+import { LanguageProvider } from './hooks/useLanguage.tsx';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -16,13 +17,15 @@ import ConfirmEmail from './pages/ConfirmEmail';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Profile from './pages/Profile';
+import VehicleFinder from './pages/VehicleFinder';
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <Layout>
-          <Routes>
+    <LanguageProvider>
+      <AuthProvider>
+        <Router>
+          <Layout>
+            <Routes>
             {/* Public routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
@@ -66,12 +69,19 @@ function App() {
               </ProtectedRoute>
             } />
             
+            <Route path="/vehicle-finder" element={
+              <ProtectedRoute>
+                <VehicleFinder />
+              </ProtectedRoute>
+            } />
+            
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </Layout>
-      </Router>
-    </AuthProvider>
+            </Routes>
+          </Layout>
+        </Router>
+      </AuthProvider>
+    </LanguageProvider>
   );
 }
 

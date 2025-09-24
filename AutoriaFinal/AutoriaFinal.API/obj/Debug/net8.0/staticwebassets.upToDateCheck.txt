@@ -1,4 +1,6 @@
 wwwroot\logs\autoria-log-20250922.txt
+wwwroot\logs\autoria-log-20250923.txt
+wwwroot\logs\autoria-log-20250924.txt
 wwwroot\logs\log-20250911.txt
 wwwroot\logs\log-20250912.txt
 wwwroot\logs\log-20250916.txt
