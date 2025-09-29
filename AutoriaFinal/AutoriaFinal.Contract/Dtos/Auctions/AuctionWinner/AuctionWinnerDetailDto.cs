@@ -15,6 +15,7 @@ namespace AutoriaFinal.Contract.Dtos.Auctions.AuctionWinner
 
         //  Yeni property-lər
         public DateTime? WinnerConfirmedAt { get; set; }
+        public int PaymentReminderCount { get; set; } = 0;
         public DateTime? PaymentDueDate { get; set; }
         public string? Notes { get; set; }
         public DateTime CreatedAt { get; set; }

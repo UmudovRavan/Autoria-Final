@@ -204,7 +204,7 @@ namespace AutoriaFinal.Persistence.Migrations
                     b.Property<DateTime>("AssignedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 9, 22, 12, 27, 39, 920, DateTimeKind.Utc).AddTicks(5823));
+                        .HasDefaultValue(new DateTime(2025, 9, 26, 18, 48, 50, 762, DateTimeKind.Utc).AddTicks(1485));
 
                     b.Property<Guid>("AuctionCarId")
                         .HasColumnType("uniqueidentifier");
@@ -500,6 +500,10 @@ namespace AutoriaFinal.Persistence.Migrations
                         .HasMaxLength(2)
                         .HasColumnType("nvarchar(2)");
 
+                    b.Property<string>("OwnerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("PhotoUrls")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -538,6 +542,8 @@ namespace AutoriaFinal.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("LocationId");
+
+                    b.HasIndex("OwnerId");
 
                     b.HasIndex("Vin")
                         .IsUnique();
@@ -1475,7 +1481,15 @@ namespace AutoriaFinal.Persistence.Migrations
                         .HasForeignKey("LocationId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("AutoriaFinal.Domain.Entities.Identity.ApplicationUser", "Owner")
+                        .WithMany("Cars")
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Location");
+
+                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("AutoriaFinal.Domain.Entities.Billing.Payment", b =>
@@ -1594,6 +1608,11 @@ namespace AutoriaFinal.Persistence.Migrations
                     b.Navigation("Payments");
 
                     b.Navigation("Transactions");
+                });
+
+            modelBuilder.Entity("AutoriaFinal.Domain.Entities.Identity.ApplicationUser", b =>
+                {
+                    b.Navigation("Cars");
                 });
 
             modelBuilder.Entity("AutoriaFinal.Domain.Entities.Support.SupportTicket", b =>

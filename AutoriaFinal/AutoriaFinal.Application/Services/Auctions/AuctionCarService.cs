@@ -319,7 +319,7 @@ namespace AutoriaFinal.Application.Services.Auctions
             _logger.LogInformation("Pre-bid check for car {AuctionCarId}: {PreBidCount} pre-bids, Pre-bid requirement: OPTIONAL",
                 auctionCarId, preBidCount);
 
-            return true;
+            return hasRequiredPreBids;
         }
         public async Task<BidDetailDto?> GetHighestPreBidAsync(Guid auctionCarId)
         {

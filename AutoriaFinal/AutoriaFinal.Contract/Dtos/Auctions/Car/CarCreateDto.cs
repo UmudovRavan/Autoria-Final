@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,28 +11,27 @@ namespace AutoriaFinal.Contract.Dtos.Auctions.Car
 {
     public class CarCreateDto
     {
-        public string Vin { get; set; } = default!;
+        [Required]
+        [StringLength(17)]
+        public string Vin { get; set; }
+
+        [Required]
         public int Year { get; set; }
-        public string Make { get; set; } = default!;
-        public string Model { get; set; } = default!;
-        public string? BodyStyle { get; set; }
-        public string? Color { get; set; }
-        public Guid LocationId { get; set; }
-        public int? Odometer { get; set; }
-        public string OdometerUnit { get; set; } = "km";
 
-        public FuelType Fuel { get; set; }
-        public Transmission Transmission { get; set; }
-        public DriveTrain DriveTrain { get; set; }
-        public CarCondition Condition { get; set; }
-        public bool HasKeys { get; set; }
-        public DamageType PrimaryDamage { get; set; }
-        public DamageType SecondaryDamage { get; set; }
-        public TitleType TitleType { get; set; }
-        public string? TitleState { get; set; }
-        public decimal? EstimatedRetailValue { get; set; }
+        [Required]
+        [StringLength(100)]
+        public string Make { get; set; }
 
+        [Required]
+        [StringLength(100)]
+        public string Model { get; set; }
+
+        public string BodyStyle { get; set; }
+        public string Color { get; set; }
+
+        public Guid LocationId { get; set; }    
         public IFormFile? Image { get; set; }
         public string? ImagePath { get; set; }
+        public string? OwnerId { get; set; }
     }
 }

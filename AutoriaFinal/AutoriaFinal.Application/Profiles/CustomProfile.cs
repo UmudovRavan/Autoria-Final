@@ -86,58 +86,91 @@ namespace AutoriaFinal.Application.Profiles
             CreateMap<AuctionCar, AuctionCarTimerDto>().ReverseMap();
             #endregion
             #region Bids
+            // Create
             CreateMap<BidCreateDto, Bid>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.Id, opt => opt.Ignore()) // Entity-də yaranır
+                .ForMember(dest => dest.PlacedAtUtc, opt => opt.Ignore()) // Service səviyyəsində set edilir
                 .ForMember(dest => dest.Status, opt => opt.Ignore())
-                .ForMember(dest => dest.PlacedAtUtc, opt => opt.Ignore())
-                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
-                .ForMember(dest => dest.UpdatedAtUtc, opt => opt.Ignore())
                 .ReverseMap();
 
-            CreateMap<BidUpdateDto, Bid>().ReverseMap();
+            // Update
+            CreateMap<BidUpdateDto, Bid>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.PlacedAtUtc, opt => opt.Ignore())
+                .ForMember(dest => dest.Status, opt => opt.Ignore())
+                .ReverseMap();
 
+            // Get (siyahı üçün)
             CreateMap<Bid, BidGetDto>()
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
                 .ForMember(dest => dest.BidType, opt => opt.MapFrom(src => src.BidType.ToString()))
                 .ReverseMap();
 
+            // Detail (detallı görünüş üçün)
             CreateMap<Bid, BidDetailDto>()
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
                 .ForMember(dest => dest.BidType, opt => opt.MapFrom(src => src.BidType.ToString()))
                 .ReverseMap();
 
+            // History (auction üzrə bütün tarixçəni çıxarmaq üçün)
             CreateMap<Bid, BidHistoryDto>().ReverseMap();
-            CreateMap<Bid, BidStatsDto>().ReverseMap();
-            CreateMap<Bid, BidSummaryDto>().ReverseMap();
-            CreateMap<Bid, ProxyBidDto>().ReverseMap();
+            CreateMap<BidderSummaryDto, ApplicationUser>().ReverseMap();
+
+            // Stats
+            CreateMap<BidStatsDto, Bid>().ReverseMap();
+
+            // Summary (istifadəçi üzrə ümumi bid statistika)
+            CreateMap<BidSummaryDto, Bid>().ReverseMap();
+
+            // ProxyBid
+            CreateMap<ProxyBidDto, Bid>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.PlacedAtUtc, opt => opt.Ignore())
+                .ForMember(dest => dest.Status, opt => opt.Ignore())
+                .ReverseMap();
+
             #endregion
             #region Car
-            // ✅ Siyahı görünüşü
-            CreateMap<Car, CarGetDto>().ReverseMap();
+            CreateMap<Car, CarGetDto>()
+      .ForMember(dest => dest.ImagePath, opt => opt.MapFrom(src =>
+          !string.IsNullOrEmpty(src.PhotoUrls)
+              ? src.PhotoUrls.Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault()
+              : src.PhotoUrls))
+      .ForMember(dest => dest.OwnerId, opt => opt.MapFrom(src => src.OwnerId != null ? src.OwnerId.ToString() : null))
+      .ForMember(dest => dest.LocationId, opt => opt.MapFrom(src => src.LocationId))
+      .ReverseMap()
+      .ForMember(src => src.PhotoUrls, opt => opt.Ignore())
+      .ForMember(src => src.PhotoUrls, opt => opt.Ignore())
+      .ForMember(src => src.OwnerId, opt => opt.Ignore());
 
-            // ✅ Detallı görünüş
             CreateMap<Car, CarDetailDto>()
-                .ForMember(dest => dest.PhotoUrls,
-                    opt => opt.MapFrom(src => src.PhotoUrls))
-                .ForMember(dest => dest.VideoUrls,
-                    opt => opt.MapFrom(src => src.VideoUrls))
-                .ReverseMap();
+                .ForMember(dest => dest.PhotoUrls, opt => opt.MapFrom(src => src.PhotoUrls))
+                .ForMember(dest => dest.VideoUrls, opt => opt.MapFrom(src => src.VideoUrls))
+                 .ForMember(dest => dest.PrimaryDamage, opt => opt.MapFrom(src => src.PrimaryDamage))
+                  .ForMember(dest => dest.SecondaryDamage, opt => opt.MapFrom(src => src.SecondaryDamage))
+                .ReverseMap()
+                .ForMember(src => src.PhotoUrls, opt => opt.Ignore())
+                .ForMember(src => src.VideoUrls, opt => opt.Ignore())
+                .ForMember(src => src.Location, opt => opt.Ignore());
 
-            // ✅ Create DTO → Entity
             CreateMap<CarCreateDto, Car>()
-                .ForMember(dest => dest.PhotoUrls,
-                    opt => opt.Ignore())   // şəkil upload sonra yazılır
-                .ForMember(dest => dest.VideoUrls,
-                    opt => opt.Ignore())
-                .ReverseMap();
+                .ForMember(dest => dest.PhotoUrls, opt => opt.Ignore())
+                .ForMember(dest => dest.VideoUrls, opt => opt.Ignore())
+                .ForMember(dest => dest.PhotoUrls, opt => opt.Ignore())
+                .ForMember(dest => dest.OwnerId, opt => opt.Ignore())
+                .ForMember(dest => dest.LocationId, opt => opt.MapFrom(src => src.LocationId))
+                .ReverseMap()
+                .ForMember(src => src.Image, opt => opt.Ignore())
+                .ForMember(src => src.ImagePath, opt => opt.Ignore());
 
-            // ✅ Update DTO → Entity
             CreateMap<CarUpdateDto, Car>()
-                .ForMember(dest => dest.PhotoUrls,
-                    opt => opt.Ignore())
-                .ForMember(dest => dest.VideoUrls,
-                    opt => opt.Ignore())
-                .ReverseMap();
+                .ForMember(dest => dest.PhotoUrls, opt => opt.Ignore())
+                .ForMember(dest => dest.VideoUrls, opt => opt.Ignore())
+                .ForMember(dest => dest.PhotoUrls, opt => opt.Ignore())
+                .ForMember(dest => dest.OwnerId, opt => opt.Ignore())
+                .ReverseMap()
+                .ForMember(src => src.ImageCar, opt => opt.Ignore());
+
             #endregion
             #region Location
             CreateMap<Location, LocationGetDto>().ReverseMap();

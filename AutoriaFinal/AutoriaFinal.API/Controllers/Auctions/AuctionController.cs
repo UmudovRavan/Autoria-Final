@@ -254,7 +254,7 @@ namespace AutoriaFinal.API.Controllers.Auctions
         }
 
         [HttpGet("ready-to-start")]
-        [Authorize(Roles = "Admin,System")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(IEnumerable<AuctionGetDto>), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<AuctionGetDto>>> GetAuctionsReadyToStart()
         {

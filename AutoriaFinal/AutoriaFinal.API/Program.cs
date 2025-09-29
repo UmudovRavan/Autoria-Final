@@ -16,6 +16,7 @@ using AutoriaFinal.API.ExceptionHandler;
 using AutoriaFinal.API.Hubs;
 using AutoriaFinal.Infrastructure.Services.Token;
 using AutoriaFinal.Infrastructure.Services.Email;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace AutoriaFinal.API
 {
@@ -76,11 +77,17 @@ namespace AutoriaFinal.API
 
             // ✅ DbContext
             builder.Services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("AutoriaDb")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("AutoriaDbContext")));
+
 
             // ✅ Repository & Application services
             builder.Services.AddRepositoriesRegistration();
             builder.Services.AddServiceRegistration();
+            // ✅ Multipart limits
+            builder.Services.Configure<FormOptions>(options =>
+            {
+                options.MultipartBodyLengthLimit = 1024L * 1024L * 1024L; // 1 GB
+            });
 
             // ✅ Email Service
             builder.Services.Configure<EmailSettings>(

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "812nUTu7mp0=",
+  "dgSpecHash": "PWhcCHoI7g0=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\Autoria-Final\\Autoria-Final\\AutoriaFinal\\AutoriaFinal.API\\AutoriaFinal.API.csproj",
+  "projectFilePath": "C:\\Users\\Ravan\\Desktop\\AutoriaFinalProject\\Autoria-Final\\AutoriaFinal\\AutoriaFinal.API\\AutoriaFinal.API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Ravan\\.nuget\\packages\\automapper\\15.0.1\\automapper.15.0.1.nupkg.sha512",
     "C:\\Users\\Ravan\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",

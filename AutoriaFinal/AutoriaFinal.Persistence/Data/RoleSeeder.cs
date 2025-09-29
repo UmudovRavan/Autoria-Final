@@ -128,6 +128,9 @@ namespace AutoriaFinal.Persistence.Data
                 }
                 else
                 {
+
+                }
+                {
                     var errors = string.Join(", ", result.Errors.Select(e => e.Description));
                     Console.WriteLine($"❌ Failed to create admin user: {errors}");
                 }

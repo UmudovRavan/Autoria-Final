@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AutoriaFinal.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+11177c3061c580ff9256b3115e7d427b3494fbd6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0cb27369bf4478bef3a2c14d1704836ca2d5e18f")]
 [assembly: System.Reflection.AssemblyProductAttribute("AutoriaFinal.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AutoriaFinal.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

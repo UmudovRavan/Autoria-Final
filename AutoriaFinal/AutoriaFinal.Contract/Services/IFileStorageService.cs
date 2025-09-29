@@ -9,7 +9,7 @@ namespace AutoriaFinal.Contract.Services
 {
     public interface IFileStorageService
     {
-        Task<string> SaveFileAsync(IFormFile file, string folder);
+        Task<string> SaveFileAsync(IFormFile file, string folder, string? fileName = null);
         Task DeleteFileAsync(string filePath);
     }
 }

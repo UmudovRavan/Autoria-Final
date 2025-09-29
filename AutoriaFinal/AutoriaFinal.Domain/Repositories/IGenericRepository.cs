@@ -9,6 +9,7 @@ namespace AutoriaFinal.Domain.Repositories
 {
     public interface IGenericRepository<TEntity> where TEntity : BaseEntity, new()
     {
+        IQueryable<TEntity> GetQueryable();
         Task<IEnumerable<TEntity>> GetAllAsync();
         Task<TEntity?> GetByIdAsync(Guid id);
         Task<TEntity> AddAsync(TEntity entity);

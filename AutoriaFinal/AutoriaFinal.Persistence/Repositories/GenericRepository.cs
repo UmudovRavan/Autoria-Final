@@ -26,6 +26,7 @@ namespace AutoriaFinal.Persistence.Repositories
             return entity;
         }
 
+
         public async Task<bool> DeleteAsync(Guid id)
         {
             var entity = await GetByIdAsync(id);
@@ -43,6 +44,11 @@ namespace AutoriaFinal.Persistence.Repositories
         public async Task<TEntity?> GetByIdAsync(Guid id)
         {
             return await _dbSet.FirstOrDefaultAsync(e => e.Id == id);
+        }
+
+        public IQueryable<TEntity> GetQueryable()
+        {
+            return _dbSet.AsQueryable();
         }
 
         public async Task<TEntity> UpdateAsync(TEntity entity)

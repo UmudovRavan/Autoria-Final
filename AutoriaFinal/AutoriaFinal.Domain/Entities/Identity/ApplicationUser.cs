@@ -1,4 +1,5 @@
 ﻿using AutoriaFinal.Domain.Entities.Abstractions;
+using AutoriaFinal.Domain.Entities.Auctions;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -39,6 +40,8 @@ namespace AutoriaFinal.Domain.Entities.Identity
         public int FailedLoginAttempts { get; set; } = 0;
         public DateTime? LastFailedLogin { get; set; }
         public DateTime? PasswordChangedAt { get; set; }
+
+        public ICollection<Car> Cars { get; set; } = new List<Car>();
 
         //  COMPUTED PROPERTIES
         public string FullName => $"{FirstName} {LastName}".Trim();

@@ -9,13 +9,12 @@ namespace AutoriaFinal.Contract.Dtos.Auctions.Car
     public class CarGetDto
     {
         public Guid Id { get; set; }
-        public string Vin { get; set; } = default!;
+        public string Vin { get; set; }
         public int Year { get; set; }
-        public string Make { get; set; } = default!;
-        public string Model { get; set; } = default!;
-        public string? Color { get; set; }
-        public int? Odometer { get; set; }
-        public string OdometerUnit { get; set; } = "km";
-        public string? PhotoUrl { get; set; }
+        public string Make { get; set; }
+        public string Model { get; set; }
+        public string ImagePath { get; set; }
+        public string OwnerId { get; set; } // string owner
+        public Guid? LocationId { get; set; }
     }
 }

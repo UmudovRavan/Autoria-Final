@@ -62,6 +62,11 @@ namespace AutoriaFinal.Persistence.Configurations.Auctions
                    .HasForeignKey(c => c.LocationId)
                    .OnDelete(DeleteBehavior.Restrict)
                    .IsRequired(false);
+            builder.HasOne(c => c.Owner)
+          .WithMany(u => u.Cars)   // ApplicationUser içində ICollection<Car> Cars əlavə et
+          .HasForeignKey(c => c.OwnerId)
+          .OnDelete(DeleteBehavior.Cascade)  // user silinsə, onun maşınları da silinsin
+          .IsRequired();
         }
     }
 }

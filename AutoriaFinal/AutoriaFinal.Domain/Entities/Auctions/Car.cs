@@ -1,4 +1,5 @@
 ﻿using AutoriaFinal.Domain.Entities.Abstractions;
+using AutoriaFinal.Domain.Entities.Identity;
 using AutoriaFinal.Domain.Enums.VehicleEnums;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,8 @@ namespace AutoriaFinal.Domain.Entities.Auctions
 {
     public class Car : BaseEntity
     {
+        public string OwnerId { get;  set; }  = default!;
+        public ApplicationUser Owner { get; set; } = default!;
         public string Vin { get; private set; } = default!;
         public int Year { get; private set; }
         public string Make { get; private set; } = default!;
@@ -25,8 +28,8 @@ namespace AutoriaFinal.Domain.Entities.Auctions
         public CarCondition Condition { get; private set; } = CarCondition.Unknown;
         public bool HasKeys { get; private set; }
 
-        public DamageType PrimaryDamage { get; private set; } = DamageType.Unknown;
-        public DamageType SecondaryDamage { get; private set; } = DamageType.Unknown;
+        public DamageType PrimaryDamage { get;  set; } = DamageType.Unknown;
+        public DamageType SecondaryDamage { get;  set; } = DamageType.Unknown;
 
         public TitleType TitleType { get; private set; } = TitleType.Unknown;
         public string? TitleState { get; private set; }

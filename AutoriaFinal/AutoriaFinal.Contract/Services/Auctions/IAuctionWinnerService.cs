@@ -1,6 +1,7 @@
 ﻿using AutoriaFinal.Contract.Dtos.Auctions.AuctionWinner;
 using AutoriaFinal.Domain.Entities.Auctions;
 using AutoriaFinal.Domain.Enums.AuctionEnums;
+using AutoriaFinal.Domain.Repositories.Auctions;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -14,130 +15,88 @@ namespace AutoriaFinal.Contract.Services.Auctions
         AuctionWinnerCreateDto,
         AuctionWinnerUpdateDto>
     {
-        // ========== WINNER ASSIGNMENT VƏ CONFIRMATION ==========
+        #region Winner Assignment & Management
 
-        
-        /// Auction bitdikdə ən yüksək bid verəni qalib təyin edir
-        /// Bu metod auction timer bitdikdə avtomatik çağrılır
-       
-        Task<AuctionWinnerDetailDto> AssignWinnerAsync(Guid auctionCarId, Guid winningBidId);
-
-        
-        /// Seller winner-i təsdiq edir
-        ///  Copart sistemində seller mütləq təsdiqləməlidir
-        
-        Task<AuctionWinnerDetailDto> ConfirmWinnerAsync(Guid winnerId, Guid sellerId, string? confirmationNotes = null);
-
-        
-        /// Seller winner-i rədd edir
-        /// Rədd edildikdə re-auction və ya second chance başlayır
-       
-        Task<AuctionWinnerDetailDto> RejectWinnerAsync(Guid winnerId, Guid sellerId, string rejectionReason);
-
-        // ========== PAYMENT MANAGEMENT ==========
-
-       
-        /// Ödəniş qəbul edildiyi zaman işarələyir
-        
-        Task<AuctionWinnerDetailDto> ProcessPaymentAsync(Guid winnerId, decimal paidAmount, string? paymentReference = null, string? notes = null);
-
-        /// Payment failure işarələ
-       
-        Task<AuctionWinnerDetailDto> MarkPaymentFailedAsync(Guid winnerId, string failureReason);
-
-        /// Payment due date uzatma
-        Task<AuctionWinnerDetailDto> ExtendPaymentDueDateAsync(Guid winnerId, int additionalDays, string reason, Guid extendedByUserId);
-
-        // ========== SORĞULAR VƏ AXTARIŞ ==========
-
-        /// AuctionCar üçün winner-i al
-        Task<AuctionWinnerDetailDto?> GetByAuctionCarIdAsync(Guid auctionCarId);
-
-        /// İstifadəçinin bütün qazandığı auction-ları al
-        Task<IEnumerable<AuctionWinnerGetDto>> GetUserWinningsAsync(Guid userId);
-        /// İstifadəçinin ödənilməmiş winner-lərini al
-        Task<IEnumerable<AuctionWinnerGetDto>> GetUserUnpaidWinnersAsync(Guid userId);
-
-        /// Seller-in satışlarını al
-        Task<IEnumerable<AuctionWinnerGetDto>> GetSellerSalesAsync(Guid sellerId);
-
-        /// Müəyyən auction üçün bütün winner-ləri al
+        Task<AuctionWinnerDetailDto> AssignWinnerAsync(Guid auctionCarId);
+        Task<AuctionWinnerDetailDto> AssignWinnerManuallyAsync(Guid auctionCarId, Guid userId, Guid winningBidId, decimal amount);
+        Task<AuctionWinnerDetailDto?> AssignSecondChanceWinnerAsync(Guid auctionCarId, Guid originalWinnerId);
+        Task<AuctionWinnerDetailDto?> GetWinnerByIdAsync(Guid winnerId);
+        Task<AuctionWinnerDetailDto?> GetWinnerByAuctionCarIdAsync(Guid auctionCarId);
+        Task<IEnumerable<AuctionWinnerGetDto>> GetUserWinnersAsync(Guid userId);
         Task<IEnumerable<AuctionWinnerGetDto>> GetWinnersByAuctionAsync(Guid auctionId);
 
-        // ========== PAYMENT TRACKING VƏ OVERDüE MANAGEMENT ==========
-        /// Müddəti keçmiş ödənişləri al
+        #endregion
+
+        #region Payment Processing & Tracking
+
+        Task<AuctionWinnerDetailDto> RecordPaymentAsync(Guid winnerId, decimal amount, string? paymentReference = null, string? notes = null);
+        Task<AuctionWinnerDetailDto> RecordPartialPaymentAsync(Guid winnerId, decimal amount, string? paymentReference = null, string? notes = null);
+        Task<bool> IsPaymentOverdueAsync(Guid winnerId);
+        Task<decimal> GetRemainingPaymentAmountAsync(Guid winnerId);
+        Task<decimal> GetPaymentProgressAsync(Guid winnerId);
+        Task<AuctionWinnerDetailDto> ExtendPaymentDueDateAsync(Guid winnerId, int additionalDays, string reason, Guid extendedByUserId);
         Task<IEnumerable<AuctionWinnerGetDto>> GetOverduePaymentsAsync();
+        Task<IEnumerable<AuctionWinnerGetDto>> GetUnpaidWinnersAsync(Guid userId);
+        Task<IEnumerable<AuctionWinnerGetDto>> GetWinnersByPaymentStatusAsync(PaymentStatus paymentStatus);
 
-        /// Payment reminder göndərəcək winner-ləri al
+        #endregion
+
+        #region Seller Confirmation Process
+
+        Task<AuctionWinnerDetailDto> ConfirmWinnerAsync(Guid winnerId, Guid confirmedByUserId, string? confirmationNotes = null);
+        Task<AuctionWinnerDetailDto> RejectWinnerAsync(Guid winnerId, Guid rejectedByUserId, string rejectionReason);
+        Task<AuctionWinnerDetailDto> CancelWinnerAsync(Guid winnerId, string? reason = null, Guid? cancelledByUserId = null);
+        Task<IEnumerable<AuctionWinnerGetDto>> GetPendingConfirmationsBySellerAsync(Guid sellerId);
+        Task<IEnumerable<AuctionWinnerGetDto>> GetRejectedWinnersBySellerAsync(Guid sellerId);
+        Task<IEnumerable<AuctionWinnerGetDto>> GetSellerSalesAsync(Guid sellerId);
+
+        #endregion
+
+        #region Notification & Reminder Management
+
+        Task<bool> SendPaymentReminderAsync(Guid winnerId);
+        Task<int> SendBulkPaymentRemindersAsync(int daysBefore = 2);
         Task<IEnumerable<AuctionWinnerGetDto>> GetWinnersForPaymentReminderAsync(int daysBefore = 2);
+        Task RecordPaymentReminderSentAsync(Guid winnerId);
 
-        /// Payment status-a görə winner-ləri al
-        Task<IEnumerable<AuctionWinnerGetDto>> GetWinnersByPaymentStatusAsync(string paymentStatus);
+        #endregion
 
-        /// Payment reminder göndərmə qeydiyyatı
-        Task<bool> RecordPaymentReminderSentAsync(Guid winnerId);
+        #region Business Analytics & Statistics
 
-        // ========== RE-AUCTION VƏ SECOND CHANCE ==========
+        Task<decimal> GetUserSuccessRateAsync(Guid userId);
+        Task<TimeSpan> GetUserAveragePaymentTimeAsync(Guid userId);
+        Task<decimal> GetTotalSalesAmountAsync(Guid auctionId);
+        Task<decimal> GetOverallCollectionRateAsync();
+        Task<IEnumerable<TopBuyerDto>> GetTopBuyersAsync(int count = 10);
+        Task<WinnerStatisticsDto> GetWinnerStatisticsAsync(Guid? auctionId = null, DateTime? fromDate = null, DateTime? toDate = null);
 
-        /// Re-auction başladır
-        Task<bool> InitiateReAuctionAsync(Guid auctionCarId, string reason);
+        #endregion
 
-        /// Second chance bid işləyir
-        Task<AuctionWinnerDetailDto?> ProcessSecondChanceBidAsync(Guid auctionCarId);
+        #region Re-auction & Second Chance Management
 
-        /// Re-auction üçün uyğun winner-ləri al
         Task<IEnumerable<AuctionWinnerGetDto>> GetCandidatesForReAuctionAsync();
+        Task<AuctionWinnerDetailDto?> GetSecondChanceCandidateAsync(Guid auctionCarId);
+        Task<bool> InitiateReAuctionAsync(Guid auctionCarId, string reason);
+        Task<bool> IsEligibleForReAuctionAsync(Guid winnerId);
 
-        // ========== COMPLETION VƏ DELIVERY ==========
+        #endregion
 
-        /// Satışı tamamlanmış olaraq işarələ
-        Task<AuctionWinnerDetailDto> CompleteSaleAsync(Guid winnerId, string? completionNotes = null);
+        #region Search & Filter Operations
 
-        /// Satışı ləğv edir
-        Task<AuctionWinnerDetailDto> CancelSaleAsync(Guid winnerId, string cancellationReason);
-
-        // ========== ANALYTICS VƏ REPORTİNG ==========
-
-        /// Winner success rate hesablayır
-        Task<WinnerAnalyticsDto> GetWinnerAnalyticsAsync(Guid userId, DateTime fromDate, DateTime toDate);
-
-        /// Payment performance hesabatı
-        Task<PaymentPerformanceDto> GetPaymentPerformanceAsync(DateTime fromDate, DateTime toDate);
-
-        /// Top buyer-ləri al
-        Task<IEnumerable<AuctionWinnerGetDto>> GetTopBuyersAsync(int count = 10);
-
-        // ========== SEARCH VƏ ADVANCED QUERİES ==========
-
-        /// Winner axtarışı (complex criteria ilə)
-        Task<IEnumerable<AuctionWinnerGetDto>> SearchWinnersAsync(WinnerSearchCriteria criteria);
-
-        /// Məbləğ aralığına görə winner-lər
+        Task<IEnumerable<AuctionWinnerGetDto>> SearchWinnersAsync(WinnerSearchCriteriaDto criteria);
         Task<IEnumerable<AuctionWinnerGetDto>> GetWinnersByAmountRangeAsync(decimal minAmount, decimal maxAmount);
+        Task<IEnumerable<AuctionWinnerGetDto>> GetPaidWinnersInPeriodAsync(DateTime fromDate, DateTime toDate);
+        Task<IEnumerable<AuctionWinnerGetDto>> GetPartiallyPaidWinnersAsync();
+        Task<IEnumerable<AuctionWinnerGetDto>> GetFailedPaymentWinnersAsync();
 
-        // ========== NOTIFICATION VƏ COMMUNİCATİON ==========
+        #endregion
 
-        /// Winner notification göndərir
-        Task<bool> SendWinnerNotificationAsync(Guid winnerId, WinnerNotificationType notificationType);
+        #region Bulk Operations & Maintenance
+
+        Task<int> MarkOverduePaymentsAsync();
+        Task<int> ArchiveCompletedWinnersAsync(DateTime cutoffDate);
+        Task<WinnerIntegrityReportDto> ValidateWinnerDataIntegrityAsync();
+
+        #endregion
     }
-
-    // ========== HELPER CLASSES VƏ ENUMS ==========
-
-    /// Winner axtarış kriteriyaları
-    public class WinnerSearchCriteria
-    {
-        public Guid? UserId { get; set; }
-        public Guid? AuctionId { get; set; }
-        public string? PaymentStatus { get; set; }
-        public DateTime? FromDate { get; set; }
-        public DateTime? ToDate { get; set; }
-        public decimal? MinAmount { get; set; }
-        public decimal? MaxAmount { get; set; }
-        public bool? IsOverdue { get; set; }
-        public string? CarMake { get; set; }
-        public string? CarModel { get; set; }
-        public bool? IsConfirmed { get; set; }
-        public bool? IsSecondChance { get; set; }
-    }
-
 }
