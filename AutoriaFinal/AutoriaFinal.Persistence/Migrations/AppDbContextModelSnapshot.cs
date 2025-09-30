@@ -204,7 +204,7 @@ namespace AutoriaFinal.Persistence.Migrations
                     b.Property<DateTime>("AssignedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 9, 26, 18, 48, 50, 762, DateTimeKind.Utc).AddTicks(1485));
+                        .HasDefaultValue(new DateTime(2025, 9, 30, 18, 24, 36, 262, DateTimeKind.Utc).AddTicks(2163));
 
                     b.Property<Guid>("AuctionCarId")
                         .HasColumnType("uniqueidentifier");

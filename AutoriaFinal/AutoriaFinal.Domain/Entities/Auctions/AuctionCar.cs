@@ -22,10 +22,10 @@ namespace AutoriaFinal.Domain.Entities.Auctions
         public bool IsReserveMet { get; set; }
 
         public decimal MinPreBid { get; set; }
-        public DateTime? LastBidTime { get; private set; } // Son bid vaxtı - timer üçün vacibdir
-        public int BidCount { get; private set; } = 0;      // Bu maşın üçün bid sayı
-        public bool IsActive { get; private set; } = false; // Hal-hazırda auction-da aktivdir
-        public DateTime? ActiveStartTime { get; private set; } // Bu maşının auction-da aktiv olduğu vaxt
+        public DateTime? LastBidTime { get;  set; } // Son bid vaxtı - timer üçün vacibdir
+        public int BidCount { get; set; } = 0;      // Bu maşın üçün bid sayı
+        public bool IsActive { get; set; } = false; // Hal-hazırda auction-da aktivdir
+        public DateTime? ActiveStartTime { get; set; } // Bu maşının auction-da aktiv olduğu vaxt
 
         public Car Car { get; set; } = default!;
         public Auction Auction { get; set; } = default!;

@@ -13,35 +13,35 @@ namespace AutoriaFinal.Domain.Entities.Auctions
     {
         public string OwnerId { get;  set; }  = default!;
         public ApplicationUser Owner { get; set; } = default!;
-        public string Vin { get; private set; } = default!;
-        public int Year { get; private set; }
-        public string Make { get; private set; } = default!;
-        public string Model { get; private set; } = default!;
-        public string? BodyStyle { get; private set; }
-        public string? Color { get; private set; }
-        public int? Odometer { get; private set; }
-        public string OdometerUnit { get; private set; } = "km"; // "mi"/"km"
+        public string Vin { get;  set; } = default!;
+        public int Year { get;  set; }
+        public string Make { get;  set; } = default!;
+        public string Model { get; set; } = default!;
+        public string? BodyStyle { get; set; }
+        public string? Color { get; set; }
+        public int? Odometer { get; set; }
+        public string OdometerUnit { get; set; } = "km"; // "mi"/"km"
 
-        public FuelType Fuel { get; private set; } = FuelType.Unknown;
-        public Transmission Transmission { get; private set; } = Transmission.Unknown;
-        public DriveTrain DriveTrain { get; private set; } = DriveTrain.Unknown;
-        public CarCondition Condition { get; private set; } = CarCondition.Unknown;
-        public bool HasKeys { get; private set; }
+        public FuelType Fuel { get; set; } = FuelType.Unknown;
+        public Transmission Transmission { get; set; } = Transmission.Unknown;
+        public DriveTrain DriveTrain { get; set; } = DriveTrain.Unknown;
+        public CarCondition Condition { get;     set; } = CarCondition.Unknown;
+        public bool HasKeys { get; set; }
 
         public DamageType PrimaryDamage { get;  set; } = DamageType.Unknown;
         public DamageType SecondaryDamage { get;  set; } = DamageType.Unknown;
 
-        public TitleType TitleType { get; private set; } = TitleType.Unknown;
-        public string? TitleState { get; private set; }
+        public TitleType TitleType { get; set; } = TitleType.Unknown;
+        public string? TitleState { get; set; }
 
-        public decimal? EstimatedRetailValue { get; private set; }
+        public decimal? EstimatedRetailValue { get; set; }
 
         public string PhotoUrls { get;  set; }= new string("");
         public string VideoUrls { get;  set; } = new string("");
-        public Guid? LocationId { get; private set; }
-        public Location? Location { get; private set; } = default!;
+        public Guid? LocationId { get; set; }
+        public Location? Location { get; set; } = default!;
 
-        public ICollection<Support.Document> Documents { get; private set; } = new List<Support.Document>();
+        public ICollection<Support.Document> Documents { get; set; } = new List<Support.Document>();
 
         #region Helper Methods
         public void SetOdometer(int? value, string unit)

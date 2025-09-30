@@ -302,7 +302,7 @@ class ApiClient {
     }, 0)
   }
 
-  // Auctions
+  // Auctions - Complete CRUD and lifecycle management
   async getAuctions(params?: {
     page?: number
     limit?: number
@@ -312,7 +312,7 @@ class ApiClient {
     dateTo?: string
   }) {
     try {
-      let endpoint = '/api/Auction'
+      let endpoint = '/api/auction'
       const queryParams = new URLSearchParams()
       
       if (params?.status) queryParams.append('status', params.status)
@@ -332,7 +332,7 @@ class ApiClient {
 
   async getAuctionById(id: string) {
     try {
-      return this.request<any>(`/api/Auction/${id}`)
+      return this.request<any>(`/api/auction/${id}`)
     } catch (error) {
       console.error('Error getting auction by ID:', error)
       throw error
@@ -341,7 +341,7 @@ class ApiClient {
 
   async createAuction(data: any) {
     try {
-      return this.request<any>('/api/Auction', {
+      return this.request<any>('/api/auction', {
         method: 'POST',
         body: JSON.stringify(data),
       })
@@ -353,7 +353,7 @@ class ApiClient {
 
   async updateAuction(id: string, data: any) {
     try {
-      return this.request<any>(`/api/Auction/${id}`, {
+      return this.request<any>(`/api/auction/${id}`, {
         method: 'PUT',
         body: JSON.stringify(data),
       })
@@ -365,11 +365,322 @@ class ApiClient {
 
   async deleteAuction(id: string) {
     try {
-      return this.request<void>(`/api/Auction/${id}`, {
+      return this.request<void>(`/api/auction/${id}`, {
         method: 'DELETE',
       })
     } catch (error) {
       console.error('Error deleting auction:', error)
+      throw error
+    }
+  }
+
+  // Auction lifecycle controls
+  async startAuction(id: string) {
+    try {
+      return this.request<any>(`/api/auction/${id}/start`, {
+        method: 'POST',
+      })
+    } catch (error) {
+      console.error('Error starting auction:', error)
+      throw error
+    }
+  }
+
+  async endAuction(id: string) {
+    try {
+      return this.request<any>(`/api/auction/${id}/end`, {
+        method: 'POST',
+      })
+    } catch (error) {
+      console.error('Error ending auction:', error)
+      throw error
+    }
+  }
+
+  async cancelAuction(id: string, reason: string) {
+    try {
+      return this.request<any>(`/api/auction/${id}/cancel`, {
+        method: 'POST',
+        body: JSON.stringify({ reason }),
+      })
+    } catch (error) {
+      console.error('Error cancelling auction:', error)
+      throw error
+    }
+  }
+
+  async extendAuction(id: string, minutes: number, reason: string) {
+    try {
+      return this.request<any>(`/api/auction/${id}/extend`, {
+        method: 'POST',
+        body: JSON.stringify({ minutes, reason }),
+      })
+    } catch (error) {
+      console.error('Error extending auction:', error)
+      throw error
+    }
+  }
+
+  async moveToNextCar(id: string) {
+    try {
+      return this.request<any>(`/api/auction/${id}/next-car`, {
+        method: 'POST',
+      })
+    } catch (error) {
+      console.error('Error moving to next car:', error)
+      throw error
+    }
+  }
+
+  async setCurrentCar(id: string, lotNumber: string) {
+    try {
+      return this.request<any>(`/api/auction/${id}/set-current-car`, {
+        method: 'POST',
+        body: JSON.stringify({ lotNumber }),
+      })
+    } catch (error) {
+      console.error('Error setting current car:', error)
+      throw error
+    }
+  }
+
+  async getAuctionTimer(id: string) {
+    try {
+      return this.request<any>(`/api/auction/${id}/timer`)
+    } catch (error) {
+      console.error('Error getting auction timer:', error)
+      throw error
+    }
+  }
+
+  // AuctionCar management
+  async getAuctionCars(params?: {
+    page?: number
+    limit?: number
+    auctionId?: string
+    status?: string
+  }) {
+    try {
+      let endpoint = '/api/auctioncar'
+      const queryParams = new URLSearchParams()
+      
+      if (params?.auctionId) queryParams.append('auctionId', params.auctionId)
+      if (params?.status) queryParams.append('status', params.status)
+      if (params?.page) queryParams.append('page', params.page.toString())
+      if (params?.limit) queryParams.append('limit', params.limit.toString())
+      
+      if (queryParams.toString()) {
+        endpoint += `?${queryParams.toString()}`
+      }
+      
+      return this.request<any[]>(endpoint)
+    } catch (error) {
+      console.error('Error getting auction cars:', error)
+      throw error
+    }
+  }
+
+  async getAuctionCarById(id: string) {
+    try {
+      return this.request<any>(`/api/auctioncar/${id}`)
+    } catch (error) {
+      console.error('Error getting auction car by ID:', error)
+      throw error
+    }
+  }
+
+  async getAuctionCarsByAuction(auctionId: string) {
+    try {
+      return this.request<any[]>(`/api/auctioncar/auction/${auctionId}`)
+    } catch (error) {
+      console.error('Error getting auction cars by auction:', error)
+      throw error
+    }
+  }
+
+  async getReadyCarsForAuction(auctionId: string) {
+    try {
+      return this.request<any[]>(`/api/auctioncar/auction/${auctionId}/ready`)
+    } catch (error) {
+      console.error('Error getting ready cars for auction:', error)
+      throw error
+    }
+  }
+
+  async getCarByLotNumber(lotNumber: string) {
+    try {
+      return this.request<any>(`/api/auctioncar/lot/${lotNumber}`)
+    } catch (error) {
+      console.error('Error getting car by lot number:', error)
+      throw error
+    }
+  }
+
+  async createAuctionCar(data: any) {
+    try {
+      console.log('Creating auction car with data:', data)
+      const result = await this.request<any>('/api/auctioncar', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      })
+      console.log('Auction car created successfully:', result)
+      return result
+    } catch (error) {
+      console.error('Error creating auction car:', error)
+      throw error
+    }
+  }
+
+  async addCarsToAuction(_auctionId: string, cars: any[]) {
+    try {
+      // Use individual POST /api/auctioncar calls since batch endpoint doesn't exist
+      const promises = cars.map(carData => 
+        this.request<any>(`/api/auctioncar`, {
+          method: 'POST',
+          body: JSON.stringify(carData),
+        })
+      )
+      return Promise.all(promises)
+    } catch (error) {
+      console.error('Error adding cars to auction:', error)
+      throw error
+    }
+  }
+
+  async updateAuctionCar(id: string, data: any) {
+    try {
+      return this.request<any>(`/api/auctioncar/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      })
+    } catch (error) {
+      console.error('Error updating auction car:', error)
+      throw error
+    }
+  }
+
+  async deleteAuctionCar(id: string) {
+    try {
+      return this.request<void>(`/api/auctioncar/${id}`, {
+        method: 'DELETE',
+      })
+    } catch (error) {
+      console.error('Error deleting auction car:', error)
+      throw error
+    }
+  }
+
+  // AuctionCar lifecycle controls
+  async prepareAuctionCar(id: string) {
+    try {
+      return this.request<any>(`/api/auctioncar/${id}/prepare`, {
+        method: 'POST',
+      })
+    } catch (error) {
+      console.error('Error preparing auction car:', error)
+      throw error
+    }
+  }
+
+  async activateAuctionCar(id: string) {
+    try {
+      return this.request<any>(`/api/auctioncar/${id}/activate`, {
+        method: 'POST',
+      })
+    } catch (error) {
+      console.error('Error activating auction car:', error)
+      throw error
+    }
+  }
+
+  async endAuctionCar(id: string) {
+    try {
+      return this.request<any>(`/api/auctioncar/${id}/end`, {
+        method: 'POST',
+      })
+    } catch (error) {
+      console.error('Error ending auction car:', error)
+      throw error
+    }
+  }
+
+  async markAuctionCarUnsold(id: string, reason: string) {
+    try {
+      return this.request<any>(`/api/auctioncar/${id}/mark-unsold`, {
+        method: 'POST',
+        body: JSON.stringify({ reason }),
+      })
+    } catch (error) {
+      console.error('Error marking auction car unsold:', error)
+      throw error
+    }
+  }
+
+  async updateAuctionCarPrice(id: string, newPrice: number) {
+    try {
+      return this.request<any>(`/api/auctioncar/${id}/price`, {
+        method: 'PUT',
+        body: JSON.stringify({ newPrice }),
+      })
+    } catch (error) {
+      console.error('Error updating auction car price:', error)
+      throw error
+    }
+  }
+
+  async setHammerPrice(id: string, hammerPrice: number) {
+    try {
+      return this.request<any>(`/api/auctioncar/${id}/hammer`, {
+        method: 'POST',
+        body: JSON.stringify({ hammerPrice }),
+      })
+    } catch (error) {
+      console.error('Error setting hammer price:', error)
+      throw error
+    }
+  }
+
+  async getAuctionCarTimer(id: string) {
+    try {
+      return this.request<any>(`/api/auctioncar/${id}/timer`)
+    } catch (error) {
+      console.error('Error getting auction car timer:', error)
+      throw error
+    }
+  }
+
+  async getAuctionCarPreBids(id: string) {
+    try {
+      return this.request<any[]>(`/api/auctioncar/${id}/pre-bids`)
+    } catch (error) {
+      console.error('Error getting auction car pre-bids:', error)
+      throw error
+    }
+  }
+
+  async getAuctionCarHighestBid(id: string) {
+    try {
+      return this.request<any>(`/api/auctioncar/${id}/pre-bids/highest`)
+    } catch (error) {
+      console.error('Error getting auction car highest bid:', error)
+      throw error
+    }
+  }
+
+  async getAuctionCarStats(id: string) {
+    try {
+      return this.request<any>(`/api/auctioncar/${id}/stats`)
+    } catch (error) {
+      console.error('Error getting auction car stats:', error)
+      throw error
+    }
+  }
+
+  async checkReserveMet(id: string) {
+    try {
+      return this.request<any>(`/api/auctioncar/${id}/reserve-met`)
+    } catch (error) {
+      console.error('Error checking reserve met:', error)
       throw error
     }
   }
@@ -857,7 +1168,7 @@ class ApiClient {
 
   async getLocationById(id: string) {
     try {
-      return this.request<any>(`/api/Location/${id}`)
+      return this.request<any>(`/api/location/${id}`)
     } catch (error) {
       console.error('Error getting location by ID:', error)
       return null

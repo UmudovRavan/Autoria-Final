@@ -7,7 +7,6 @@ namespace AutoriaFinal.Contract.Dtos.Auctions.AuctionCar
     {
         [Required(ErrorMessage = "Auction ID mütləqdir")]
         public Guid AuctionId { get; set; }
-
         [Required(ErrorMessage = "Car ID mütləqdir")]
         public Guid CarId { get; set; }
 

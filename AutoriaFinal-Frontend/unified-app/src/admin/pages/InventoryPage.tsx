@@ -17,6 +17,7 @@ import {
   Tag
 } from 'lucide-react'
 import { apiClient } from '../services/apiClient'
+import { CarDetailModal } from '../components/CarDetailModal'
 
 interface Vehicle {
   id: string
@@ -76,6 +77,8 @@ export function InventoryPage() {
   const [totalPages, setTotalPages] = useState(1)
   const [totalItems, setTotalItems] = useState(0)
   const [showMobileFilters, setShowMobileFilters] = useState(false)
+  const [showCarDetailModal, setShowCarDetailModal] = useState(false)
+  const [selectedVehicleId, setSelectedVehicleId] = useState<string | null>(null)
   
   const [filters, setFilters] = useState<Filters>({
     condition: '',
@@ -217,25 +220,9 @@ export function InventoryPage() {
     setCurrentPage(1)
   }
 
-  const handleViewDetails = async (vehicle: Vehicle) => {
-    try {
-      // Load detailed vehicle data and images
-      const [detailedVehicle, carImages] = await Promise.all([
-        apiClient.getVehicleById(vehicle.id),
-        apiClient.getCarImages(vehicle.id)
-      ])
-      
-      setSelectedVehicle({ 
-        ...vehicle, 
-        ...detailedVehicle,
-        imageUrls: carImages.length > 0 ? carImages : vehicle.imageUrls
-      })
-      setShowDetailDrawer(true)
-    } catch (error) {
-      console.error('Error loading vehicle details:', error)
-      setSelectedVehicle(vehicle)
-      setShowDetailDrawer(true)
-    }
+  const handleViewDetails = (vehicle: Vehicle) => {
+    setSelectedVehicleId(vehicle.id)
+    setShowCarDetailModal(true)
   }
 
   const getStatusBadgeColor = (status: string) => {
@@ -651,164 +638,6 @@ export function InventoryPage() {
             </div>
   )
 
-  const DetailDrawer = () => (
-        <div className="fixed inset-0 z-50 overflow-hidden">
-          <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setShowDetailDrawer(false)}></div>
-      <div className="absolute right-0 top-0 h-full w-full max-w-sm sm:max-w-md lg:max-w-2xl xl:max-w-4xl bg-white shadow-xl flex flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200">
-          <div className="flex-1 min-w-0">
-            <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900 truncate">
-              {selectedVehicle?.year} {selectedVehicle?.make} {selectedVehicle?.model}
-            </h3>
-            <p className="text-sm text-gray-600 mt-1 truncate">VIN: {selectedVehicle?.vin}</p>
-          </div>
-                <button 
-                  onClick={() => setShowDetailDrawer(false)}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
-                >
-            <X className="w-5 h-5" />
-                </button>
-              </div>
-              
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6">
-          {/* Images */}
-          <div className="mb-6">
-            <h4 className="text-lg font-medium text-gray-900 mb-4">Images</h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
-              {selectedVehicle?.imageUrls?.map((url, index) => (
-                <div key={index} className="relative h-24 sm:h-32 md:h-40 lg:h-48 bg-gray-100 rounded-lg overflow-hidden group">
-                  <img
-                    src={url}
-                    alt={`Vehicle image ${index + 1}`}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                          onError={(e) => {
-                      e.currentTarget.style.display = 'none'
-                      e.currentTarget.nextElementSibling?.classList.remove('hidden')
-                    }}
-                    onLoad={() => {
-                      console.log('Detail image loaded successfully:', url)
-                    }}
-                  />
-                  <div className={`absolute inset-0 bg-gray-200 flex items-center justify-center ${selectedVehicle?.imageUrls?.[index] ? 'hidden' : ''}`}>
-                    <div className="text-center text-gray-500">
-                      <div className="text-xs sm:text-sm font-medium">Image</div>
-                      <div className="text-xs">Failed</div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-              {(!selectedVehicle?.imageUrls || selectedVehicle.imageUrls.length === 0) && (
-                <div className="col-span-full h-32 sm:h-40 md:h-48 bg-gray-200 rounded-lg flex items-center justify-center">
-                  <div className="text-center text-gray-500">
-                    <div className="text-lg font-medium">No Images</div>
-                    <div className="text-sm">Available</div>
-                  </div>
-                </div>
-              )}
-                    </div>
-                  </div>
-              
-          {/* Metadata */}
-          <div className="space-y-4 sm:space-y-6">
-                  <div>
-              <h4 className="text-base sm:text-lg font-medium text-gray-900 mb-3 sm:mb-4">Vehicle Details</h4>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700">Year</label>
-                  <p className="text-xs sm:text-sm text-gray-900">{selectedVehicle?.year}</p>
-                  </div>
-                  <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700">Make</label>
-                  <p className="text-xs sm:text-sm text-gray-900">{selectedVehicle?.make}</p>
-                  </div>
-                <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700">Model</label>
-                  <p className="text-xs sm:text-sm text-gray-900">{selectedVehicle?.model}</p>
-                </div>
-                  <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700">VIN</label>
-                  <p className="text-xs sm:text-sm text-gray-900 font-mono break-all">{selectedVehicle?.vin}</p>
-                  </div>
-                  <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700">Odometer</label>
-                  <p className="text-xs sm:text-sm text-gray-900">{selectedVehicle?.odometer?.toLocaleString()} {selectedVehicle?.odometerUnit}</p>
-                    </div>
-                <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700">Condition</label>
-                  <p className="text-xs sm:text-sm text-gray-900">{selectedVehicle?.condition}</p>
-                  </div>
-                <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700">Damage Type</label>
-                  <p className="text-xs sm:text-sm text-gray-900">{selectedVehicle?.damageType}</p>
-                </div>
-                  <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700">Body Style</label>
-                  <p className="text-xs sm:text-sm text-gray-900">{selectedVehicle?.bodyStyle}</p>
-                  </div>
-                  <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700">Color</label>
-                  <p className="text-xs sm:text-sm text-gray-900">{selectedVehicle?.color}</p>
-                </div>
-                <div className="sm:col-span-2 lg:col-span-3">
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700">Status</label>
-                  <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${getStatusBadgeColor(selectedVehicle?.status || '')}`}>
-                    {selectedVehicle?.status}
-                  </span>
-                </div>
-                  </div>
-                </div>
-
-                  <div>
-              <h4 className="text-base sm:text-lg font-medium text-gray-900 mb-3 sm:mb-4">Owner & Location</h4>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700">Owner</label>
-                  <p className="text-xs sm:text-sm text-gray-900">{selectedVehicle?.ownerName}</p>
-                  </div>
-                  <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700">Location</label>
-                  <p className="text-xs sm:text-sm text-gray-900">{selectedVehicle?.locationName}</p>
-                    </div>
-                  </div>
-                </div>
-
-            {selectedVehicle?.description && (
-                <div>
-                <h4 className="text-base sm:text-lg font-medium text-gray-900 mb-3 sm:mb-4">Description</h4>
-                <p className="text-xs sm:text-sm text-gray-900">{selectedVehicle.description}</p>
-              </div>
-            )}
-          </div>
-                </div>
-
-        {/* Footer */}
-        <div className="flex flex-col sm:flex-row items-center justify-between p-4 sm:p-6 border-t border-gray-200 gap-3 sm:gap-0">
-          <div className="text-xs sm:text-sm text-gray-500">
-            Created: {selectedVehicle?.createdAt ? new Date(selectedVehicle.createdAt).toLocaleDateString() : 'Unknown'}
-          </div>
-          <div className="flex items-center gap-2 sm:gap-3">
-            <button 
-              onClick={() => setShowDetailDrawer(false)}
-              className="px-3 sm:px-4 py-2 text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-xs sm:text-sm"
-            >
-              Close
-            </button>
-            <button 
-              className="px-3 sm:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
-              disabled
-              title="Coming soon"
-            >
-              <Settings className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span className="hidden sm:inline">Prepare for Auction</span>
-              <span className="sm:hidden">Prepare</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -1047,8 +876,18 @@ export function InventoryPage() {
         </div>
       )}
 
-      {/* Detail Drawer */}
-      {showDetailDrawer && selectedVehicle && <DetailDrawer />}
+      {/* Car Detail Modal */}
+      {showCarDetailModal && selectedVehicleId && (
+        <CarDetailModal
+          isOpen={showCarDetailModal}
+          onClose={() => {
+            setShowCarDetailModal(false)
+            setSelectedVehicleId(null)
+          }}
+          vehicleId={selectedVehicleId}
+          vehicleData={vehicles.find(v => v.id === selectedVehicleId)}
+        />
+      )}
     </div>
   )
 }
