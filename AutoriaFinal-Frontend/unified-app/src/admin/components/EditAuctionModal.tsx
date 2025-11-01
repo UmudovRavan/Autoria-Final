@@ -127,9 +127,17 @@ export function EditAuctionModal({ isOpen, onClose, auctionId, onSuccess }: Edit
   const loadLocations = async () => {
     try {
       const data = await apiClient.getLocations()
-      setLocations(data || [])
+      // Handle both array and paged response formats
+      if (Array.isArray(data)) {
+        setLocations(data)
+      } else if (data && data.items && Array.isArray(data.items)) {
+        setLocations(data.items)
+      } else {
+        setLocations([])
+      }
     } catch (err) {
       console.error('Error loading locations:', err)
+      setLocations([])
     }
   }
 
@@ -432,7 +440,7 @@ export function EditAuctionModal({ isOpen, onClose, auctionId, onSuccess }: Edit
                   required
                 >
                   <option value="">Select a location</option>
-                  {locations.map((location) => (
+                  {Array.isArray(locations) && locations.map((location) => (
                     <option key={location.id} value={location.id}>
                       {location.name} - {location.city}
                     </option>

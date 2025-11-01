@@ -15,33 +15,46 @@ namespace AutoriaFinal.Domain.Entities.Auctions
         public DateTime EndTimeUtc { get; set; }
         public AuctionStatus Status { get; set; } = AuctionStatus.Draft;
 
-        public decimal MinBidIncrement { get; set; } = 100; // hər klikdə artım
-        public decimal? StartPrice { get; set; }            // ən yüksək pre-bid ilə başlayacaq
-        public int TimerSeconds { get; set; } = 10;         // hər klikdə 10 saniyə reset
-        public string? CurrentCarLotNumber { get;  set; }    // Hazırda auction-da olan maşının lot nömrəsi
-        public bool IsLive { get;  set; } = false;          // Auction canlı yayımda olub-olmadığı
-        public int ExtendedCount { get;  set; } = 0;        // Auction neçə dəfə uzaldılıb
-        public int MaxCarDurationMinutes { get;  set; } = 30; // Hər maşın üçün maksimum auction vaxtı (dəqiqə)
-        public DateTime? CurrentCarStartTime { get;  set; }   // Cari maşının auction başlama vaxtı
+        public DateTime? PreBidStartTimeUtc { get; set; } // Pre-bid toplanma başlama vaxtı
+        public DateTime? PreBidEndTimeUtc { get; set; }   // Pre-bid toplanma bitmə vaxtı
+
+        public decimal MinBidIncrement { get; set; } = 100;
+        public decimal? StartPrice { get; set; }
+        public int TimerSeconds { get; set; } = 30; 
+        public string? CurrentCarLotNumber { get; set; }
+        public bool IsLive { get; set; } = false;
+        public int ExtendedCount { get; set; } = 0;
+        public int MaxCarDurationMinutes { get; set; } = 30;
+        public DateTime? CurrentCarStartTime { get; set; }
+
+        public int TotalCarsCount { get; set; } = 0;
+        public int CarsWithPreBidsCount { get; set; } = 0;
+        public bool AutoStart { get; set; } = true; // Background service tərəfindən avtomatik start
 
         public Guid? CreatedByUserId { get; set; }
         public Location Location { get; set; } = default!;
         public ICollection<AuctionCar> AuctionCars { get; set; } = new List<AuctionCar>();
-        public Auction() { } 
 
+        public Auction() { }
+                        
+        #region Rich Data model
         public static Auction Create(
             string name,
             Guid locationId,
             Guid createdByUserId,
             DateTime startTime,
-            int timerSeconds = 10,
-            decimal minBidIncrement = 100)
+            int timerSeconds = 30, 
+            decimal minBidIncrement = 100,
+            bool autoStart = true)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("Auction adı boş ola bilməz", nameof(name));
 
-            if (startTime <= DateTime.UtcNow)
-                throw new ArgumentException("Auction başlama vaxtı gələcəkdə olmalıdır", nameof(startTime));
+            if (startTime <= DateTime.UtcNow.AddMinutes(30)) // Minimum 30 dəqiqə əvvəlcədən
+                throw new ArgumentException("Auction başlama vaxtı minimum 30 dəqiqə sonra olmalıdır", nameof(startTime));
+
+            var preBidStart = DateTime.UtcNow.AddMinutes(5); 
+            var preBidEnd = startTime.AddMinutes(-30); 
 
             return new Auction
             {
@@ -50,119 +63,179 @@ namespace AutoriaFinal.Domain.Entities.Auctions
                 LocationId = locationId,
                 CreatedByUserId = createdByUserId,
                 StartTimeUtc = startTime,
+                EndTimeUtc = startTime.AddHours(4), 
+                PreBidStartTimeUtc = preBidStart,
+                PreBidEndTimeUtc = preBidEnd,
                 TimerSeconds = timerSeconds,
                 MinBidIncrement = minBidIncrement,
+                AutoStart = autoStart,
                 CreatedAt = DateTime.UtcNow
             };
         }
 
-        public void SetStartTime(DateTime start)
-        {
-            if (Status != AuctionStatus.Draft && Status != AuctionStatus.Scheduled)
-                throw new InvalidOperationException("Start time yalnız Draft və ya Scheduled vəziyyətdə təyin oluna bilər.");
-
-            StartTimeUtc = start;
-            Status = AuctionStatus.Scheduled;
-            MarkUpdated();
-        }
-
+        // Schedule with validation
         public void Schedule(DateTime start, DateTime end)
         {
-            if (Status != AuctionStatus.Draft && Status != AuctionStatus.Scheduled)
-                throw new InvalidOperationException("Auction yalnız Draft və ya Scheduled vəziyyətdə planlana bilər.");
+            if (Status != AuctionStatus.Draft)
+                throw new InvalidOperationException("Yalnız Draft auction schedule edilə bilər.");
+
+            if (start <= DateTime.UtcNow.AddMinutes(15))
+                throw new InvalidOperationException("Auction minimum 15 dəqiqə sonra başlamalıdır.");
 
             if (start >= end)
                 throw new InvalidOperationException("Başlama vaxtı bitmə vaxtından əvvəl olmalıdır.");
 
             StartTimeUtc = start;
             EndTimeUtc = end;
+            PreBidStartTimeUtc = DateTime.UtcNow.AddMinutes(2);
+            PreBidEndTimeUtc = start.AddMinutes(-15);
+
             Status = AuctionStatus.Scheduled;
             MarkUpdated();
         }
 
-        public void Start()
+        // Ready for pre-bids
+        public void MakeReady()
         {
             if (Status != AuctionStatus.Scheduled)
-                throw new InvalidOperationException("Auction yalnız Scheduled vəziyyətdə start edilə bilər.");
+                throw new InvalidOperationException("Yalnız Scheduled auction Ready edilə bilər.");
 
-            Status = AuctionStatus.Running;
-            IsLive = true;
-            var firstCarWithPreBids = AuctionCars
-                .Where(ac => ac.Bids.Any(b => b.IsPreBid))
-                .OrderBy(ac => ac.LotNumber)
-                .FirstOrDefault();
+            if (AuctionCars.Count < 1)
+                throw new InvalidOperationException("Auction-da minimum 1 maşın olmalıdır.");
 
-            var firstCar = firstCarWithPreBids ?? AuctionCars
-                .OrderBy(ac => ac.LotNumber)
-                .FirstOrDefault();
+            Status = AuctionStatus.Ready;
+            TotalCarsCount = AuctionCars.Count;
 
-            if (firstCar != null)
+            foreach (var car in AuctionCars.Where(c => c.AuctionCondition == AuctionCarCondition.PreAuction))
             {
-                CurrentCarLotNumber = firstCar.LotNumber;
-                CurrentCarStartTime = DateTime.UtcNow;
-                if (firstCarWithPreBids != null)
-                {
-                    var highestPreBid = firstCar.Bids
-                        .Where(b => b.IsPreBid)
-                        .OrderByDescending(b => b.Amount)
-                        .FirstOrDefault();
-
-                    if (highestPreBid != null)
-                    {
-                        SetStartPrice(highestPreBid.Amount);
-                        firstCar.UpdateCurrentPrice(highestPreBid.Amount);
-                    }
-                }
+                car.AuctionCondition = AuctionCarCondition.ReadyForAuction;
+                car.MarkUpdated();
             }
 
             MarkUpdated();
         }
+        public void Start()
+        {
+            if (Status != AuctionStatus.Ready && Status != AuctionStatus.Scheduled)
+                throw new InvalidOperationException("Auction yalnız Ready və ya Scheduled vəziyyətdə start edilə bilər.");
 
+            if (AuctionCars.Count < 1) 
+                throw new InvalidOperationException("Auction-da minimum 1 maşın olmalıdır.");
 
-        // Növbəti maşına keçmək üçün metod
+            if (Status == AuctionStatus.Scheduled)
+            {
+                MakeReady();
+            }
+
+            Status = AuctionStatus.Running;
+            IsLive = true;
+            var firstCar = SelectFirstCarToStart();
+            if (firstCar != null)
+            {
+                ActivateFirstCar(firstCar);
+            }
+
+            MarkUpdated();
+        }
+        private AuctionCar? SelectFirstCarToStart()
+        {
+            var carWithPreBids = AuctionCars
+                .Where(ac => ac.Bids.Any(b => b.IsPreBid))
+                .OrderByDescending(ac => ac.Bids.Where(b => b.IsPreBid).Max(b => b.Amount))
+                .ThenBy(ac => ac.LotNumber)
+                .FirstOrDefault();
+
+            if (carWithPreBids != null)
+                return carWithPreBids;
+
+            return AuctionCars.OrderBy(ac => ac.LotNumber).FirstOrDefault();
+        }
+
+        private void ActivateFirstCar(AuctionCar car)
+        {
+            CurrentCarLotNumber = car.LotNumber;
+            CurrentCarStartTime = DateTime.UtcNow;
+
+            car.AuctionCondition = AuctionCarCondition.LiveAuction;
+            car.MarkAsActive();
+
+            // Pre-bid varsa ən yüksəyini götür
+            var highestPreBid = car.Bids
+                .Where(b => b.IsPreBid && b.Status == BidStatus.Placed)
+                .OrderByDescending(b => b.Amount)
+                .FirstOrDefault();
+
+            if (highestPreBid != null)
+            {
+                SetStartPrice(highestPreBid.Amount);
+                car.UpdateCurrentPrice(highestPreBid.Amount);
+            }
+            else
+            {
+                SetStartPrice(car.StartPrice); 
+                car.UpdateCurrentPrice(car.StartPrice);
+            }
+        }
+
         public void MoveToNextCar()
         {
             if (Status != AuctionStatus.Running)
                 throw new InvalidOperationException("Yalnız işləyən auction-da maşın dəyişdirilə bilər.");
 
+            // Cari maşını deaktiv et
             var currentCar = AuctionCars.FirstOrDefault(ac => ac.LotNumber == CurrentCarLotNumber);
-            if (currentCar == null)
-                throw new InvalidOperationException("Cari maşın tapılmadı.");
+            currentCar?.MarkAsInactive();
 
-            // Növbəti maşını tap
-            // Növbəti maşını tap - pre-bid şərti isteğe bağlı
-            var nextCar = AuctionCars
-                .Where(ac => string.Compare(ac.LotNumber, CurrentCarLotNumber) > 0)
-                .OrderBy(ac => ac.LotNumber)
-                .FirstOrDefault();
+            var nextCar = FindNextCar();
 
             if (nextCar != null)
             {
-                CurrentCarLotNumber = nextCar.LotNumber;
-                CurrentCarStartTime = DateTime.UtcNow;
-
-                // ✅ Yalnız pre-bid varsa qiyməti təyin et
-                var highestPreBid = nextCar.Bids
-                    .Where(b => b.IsPreBid)
-                    .OrderByDescending(b => b.Amount)
-                    .FirstOrDefault();
-
-                if (highestPreBid != null)
-                {
-                    SetStartPrice(highestPreBid.Amount);
-                    nextCar.UpdateCurrentPrice(highestPreBid.Amount);
-                }
-                else
-                {
-                    // Pre-bid yoxdursa, MinPreBid ilə başlat
-                    SetStartPrice(nextCar.MinPreBid);
-                    nextCar.UpdateCurrentPrice(nextCar.MinPreBid);
-                }
+                ActivateNextCar(nextCar);
+            }
+            else
+            {
+                End();
             }
 
             MarkUpdated();
         }
 
+        private AuctionCar? FindNextCar()
+        {
+            // Hələ auction olmamış maşınları tap
+            var remainingCars = AuctionCars
+                .Where(ac => ac.WinnerStatus == AuctionWinnerStatus.Pending)
+                .Where(ac => string.Compare(ac.LotNumber, CurrentCarLotNumber) > 0)
+                .OrderBy(ac => ac.LotNumber);
+
+            return remainingCars.FirstOrDefault();
+        }
+
+        private void ActivateNextCar(AuctionCar car)
+        {
+            CurrentCarLotNumber = car.LotNumber;
+            CurrentCarStartTime = DateTime.UtcNow;
+
+            car.AuctionCondition = AuctionCarCondition.LiveAuction;
+            car.MarkAsActive();
+
+            // Pre-bid varsa ən yüksəyini götür
+            var highestPreBid = car.Bids
+                .Where(b => b.IsPreBid && b.Status == BidStatus.Placed)
+                .OrderByDescending(b => b.Amount)
+                .FirstOrDefault();
+
+            if (highestPreBid != null)
+            {
+                SetStartPrice(highestPreBid.Amount);
+                car.UpdateCurrentPrice(highestPreBid.Amount);
+            }
+            else
+            {
+                SetStartPrice(car.StartPrice);
+                car.UpdateCurrentPrice(car.StartPrice);
+            }
+        }
         public void End()
         {
             if (Status != AuctionStatus.Running)
@@ -173,13 +246,17 @@ namespace AutoriaFinal.Domain.Entities.Auctions
             EndTimeUtc = DateTime.UtcNow;
             CurrentCarLotNumber = null;
             CurrentCarStartTime = null;
+
+            // Statistikalar
+            CarsWithPreBidsCount = AuctionCars.Count(ac => ac.Bids.Any(b => b.IsPreBid));
+
             MarkUpdated();
         }
 
         public void SetStartPrice(decimal amount)
         {
-            if (Status != AuctionStatus.Scheduled && Status != AuctionStatus.Running)
-                throw new InvalidOperationException("StartPrice yalnız Scheduled və Running vəziyyətində təyin edilə bilər.");
+            if (Status != AuctionStatus.Scheduled && Status != AuctionStatus.Running && Status != AuctionStatus.Ready)
+                throw new InvalidOperationException("StartPrice yalnız Scheduled, Ready və Running vəziyyətində təyin edilə bilər.");
 
             if (amount <= 0)
                 throw new InvalidOperationException("StartPrice sıfırdan böyük olmalıdır.");
@@ -188,7 +265,22 @@ namespace AutoriaFinal.Domain.Entities.Auctions
             MarkUpdated();
         }
 
-        //  Auction vaxtını uzatmaq (Copart sistemində var)
+        public bool IsReadyToStart()
+        {
+            return Status == AuctionStatus.Ready &&
+                   StartTimeUtc <= DateTime.UtcNow &&
+                   AuctionCars.Any() &&
+                   AuctionCars.Count >= 2;
+        }
+
+        public bool IsReadyToMakeReady()
+        {
+            return Status == AuctionStatus.Scheduled &&
+                   PreBidStartTimeUtc.HasValue &&
+                   PreBidStartTimeUtc.Value <= DateTime.UtcNow &&
+                   AuctionCars.Any();
+        }
+
         public void ExtendAuction(int additionalMinutes)
         {
             if (Status != AuctionStatus.Running)
@@ -204,33 +296,13 @@ namespace AutoriaFinal.Domain.Entities.Auctions
 
         public void Cancel()
         {
-            if (Status == AuctionStatus.Ended)
-                throw new InvalidOperationException("Bitmiş auction ləğv edilə bilməz.");
+            if (Status == AuctionStatus.Ended || Status == AuctionStatus.Settled)
+                throw new InvalidOperationException("Bitmiş və ya yekunlaşmış auction ləğv edilə bilməz.");
 
             Status = AuctionStatus.Cancelled;
             IsLive = false;
             MarkUpdated();
         }
-
-        public void Settle()
-        {
-            if (Status != AuctionStatus.Ended)
-                throw new InvalidOperationException("Auction yalnız Ended vəziyyətdə yekunlaşdırıla bilər.");
-
-            Status = AuctionStatus.Settled;
-            MarkUpdated();
-        }
-
-        //  Auction-un cari maşınının vaxtının bitib-bitmədiyini yoxlamaq
-        public bool IsCurrentCarTimeExpired()
-        {
-            if (!CurrentCarStartTime.HasValue || Status != AuctionStatus.Running)
-                return false;
-
-            var timeElapsed = DateTime.UtcNow - CurrentCarStartTime.Value;
-            return timeElapsed.TotalMinutes >= MaxCarDurationMinutes;
-        }
-
-
+        #endregion
     }
 }

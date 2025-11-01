@@ -352,6 +352,49 @@ export interface AuctionWinnerDto {
   winningBid?: BidDetailDto;
 }
 
+// User Profile types
+export interface IUserProfile {
+  id: string;
+  userName?: string;
+  email?: string;
+  emailConfirmed: boolean;
+  roles?: string[];
+  createdAt: string;
+  lastLoginAt?: string;
+  firstName?: string;
+  lastName?: string;
+  profilePicture?: string;
+  phoneNumber?: string;
+  dateOfBirth?: string;
+  isActive: boolean;
+  fullName?: string;
+  age?: number;
+  primaryRole?: string;
+  isAdmin: boolean;
+  isSeller: boolean;
+  bio?: string;
+  city?: string;
+  country?: string;
+  timeZone?: string;
+  allowMarketing?: boolean;
+  preferredLanguage?: string;
+  passwordChangedAt?: string;
+}
+
+export interface IUpdateUserProfile {
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  dateOfBirth?: string;
+  profilePicture?: string;
+  bio?: string;
+  city?: string;
+  country?: string;
+  timeZone?: string;
+  allowMarketing?: boolean;
+  preferredLanguage?: string;
+}
+
 // Info types
 export interface InfoDto {
   version: string;

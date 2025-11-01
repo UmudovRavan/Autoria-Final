@@ -250,6 +250,86 @@ namespace AutoriaFinal.Persistence.Repositories.Auctions
                 .OrderByDescending(b => b.PlacedAtUtc)
                 .ToListAsync();
         }
+        public async Task<int> GetMaxSequenceNumberAsync(Guid auctionCarId)
+        {
+            var maxSequence = await _context.Bids
+                .Where(b => b.AuctionCarId == auctionCarId)
+                .MaxAsync(b => (int?)b.SequenceNumber);
+
+            return maxSequence ?? 0;
+        }
+
+        public async Task<bool> HasActiveProxyBidAsync(Guid userId, Guid auctionCarId)
+        {
+            return await _context.Bids
+                .AnyAsync(b => b.UserId == userId &&
+                              b.AuctionCarId == auctionCarId &&
+                              b.IsProxy &&
+                              b.Status == BidStatus.Placed &&
+                              (b.ValidUntil == null || b.ValidUntil > DateTime.UtcNow));
+        }
+
+        public async Task<IEnumerable<Bid>> GetProxyBidsAboveAmountAsync(Guid auctionCarId, decimal amount)
+        {
+            return await _context.Bids
+                .Include(b => b.AuctionCar)
+                .Where(b => b.AuctionCarId == auctionCarId &&
+                           b.IsProxy &&
+                           b.Status == BidStatus.Placed &&
+                           b.ProxyMax.HasValue &&
+                           b.ProxyMax.Value > amount &&
+                           (b.ValidUntil == null || b.ValidUntil > DateTime.UtcNow))
+                .OrderByDescending(b => b.ProxyMax)
+                .ToListAsync();
+        }
+        public async Task<IEnumerable<Bid>> GetByAuctionCarIdAsync(Guid auctionCarId)
+        {
+            try
+            {
+                return await _context.Bids
+                    .Where(b => b.AuctionCarId == auctionCarId && b.Status == BidStatus.Placed)
+                    .Include(b => b.AuctionCar)
+                    .OrderByDescending(b => b.PlacedAtUtc)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                return new List<Bid>();
+            }
+        }
+        public async Task<AuctionCar?> GetAuctionCarWithBidsAsync(Guid auctionCarId)
+        {
+            try
+            {
+                return await _context.AuctionCars
+                    .Where(ac => ac.Id == auctionCarId)
+                    .Include(ac => ac.Bids.Where(b => b.Status == BidStatus.Placed))
+                    .Include(ac => ac.Car)
+                    .Include(ac => ac.Auction)
+                    .Include(ac => ac.AuctionWinner)
+                    .FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<Bid>> GetBidsForCarAsync(Guid auctionCarId, int pageSize)
+        {
+            try
+            {
+                return await _context.Bids
+                    .Where(b => b.AuctionCarId == auctionCarId && b.Status == BidStatus.Placed)
+                    .OrderByDescending(b => b.PlacedAtUtc)
+                    .Take(pageSize)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                return new List<Bid>();
+            }
+        }
         #endregion
         #region Statistics and Analysis
         public async Task<IEnumerable<Bid>> GetTopBiddersAsync(Guid auctionId, int count = 10)

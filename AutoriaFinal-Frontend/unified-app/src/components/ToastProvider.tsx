@@ -13,7 +13,7 @@ export interface Toast {
 
 interface ToastContextType {
   toasts: Toast[];
-  addToast: (toast: Omit<Toast, 'id'>) => void;
+  addToast: (toast: Omit<Toast, 'id'>) => string; // Return toast ID
   removeToast: (id: string) => void;
   clearToasts: () => void;
 }
@@ -51,6 +51,8 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
         removeToast(id);
       }, newToast.duration);
     }
+
+    return id; // Return the toast ID for manual removal
   }, []);
 
   const removeToast = useCallback((id: string) => {

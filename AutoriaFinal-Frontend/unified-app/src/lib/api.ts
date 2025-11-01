@@ -16,7 +16,9 @@ import {
   VehicleSearchParams,
   VehicleSearchResult,
   VehicleSearchItem,
-  VehicleFilters
+  VehicleFilters,
+  IUserProfile,
+  IUpdateUserProfile
 } from '../types/api';
 
 const API_BASE_URL = 'https://localhost:7249';
@@ -24,6 +26,8 @@ const API_BASE_URL = 'https://localhost:7249';
 class ApiClient {
   private baseURL: string;
   private token: string | null = null;
+  private requestQueue: Map<string, Promise<any>> = new Map();
+  private lastRequestTime: Map<string, number> = new Map();
 
   constructor(baseURL: string = API_BASE_URL) {
     this.baseURL = baseURL;
@@ -45,6 +49,36 @@ class ApiClient {
 
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
+    const requestKey = `${options.method || 'GET'}:${endpoint}`;
+    
+    // Check if we have a pending request for this endpoint
+    if (this.requestQueue.has(requestKey)) {
+      console.log(`Request already pending for ${requestKey}, waiting...`);
+      return this.requestQueue.get(requestKey)!;
+    }
+
+    // Throttle requests - minimum 1 second between requests to same endpoint
+    const now = Date.now();
+    const lastTime = this.lastRequestTime.get(requestKey) || 0;
+    if (now - lastTime < 500) {
+      console.log(`Request throttled for ${requestKey}, too soon since last request`);
+      throw new Error('Request throttled - too soon since last request');
+    }
+
+    this.lastRequestTime.set(requestKey, now);
+
+    const requestPromise = this.makeRequest<T>(url, options);
+    this.requestQueue.set(requestKey, requestPromise);
+
+    try {
+      const result = await requestPromise;
+      return result;
+    } finally {
+      this.requestQueue.delete(requestKey);
+    }
+  }
+
+  private async makeRequest<T>(url: string, options: RequestInit = {}): Promise<T> {
     const config: RequestInit = {
       ...options,
       headers: {
@@ -73,10 +107,23 @@ class ApiClient {
         throw new Error('Access denied. You do not have permission to access this resource.');
       }
 
+      // Handle 404 gracefully for auction status endpoints
+      if (response.status === 404 && url.includes('/status')) {
+        console.log('📊 API: 404 on status endpoint - auction may be inactive/completed');
+        const errorText = await response.text();
+        const error = new Error(`API Error: ${response.status} - ${errorText}`);
+        (error as any).status = 404;
+        (error as any).isStatusEndpoint = true;
+        throw error;
+      }
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error(`API Error: ${response.status} - ${errorText}`);
-        throw new Error(`API Error: ${response.status} - ${errorText}`);
+        
+        const error = new Error(`API Error: ${response.status} - ${errorText}`);
+        (error as any).status = response.status;
+        throw error;
       }
 
       const contentType = response.headers.get('Content-Type');
@@ -178,14 +225,25 @@ class ApiClient {
     });
   }
 
-  async getProfile(): Promise<any> {
-    return this.request<any>('/api/Auth/profile');
+  async getProfile(): Promise<IUserProfile> {
+    return this.request<IUserProfile>('/api/Auth/profile');
   }
 
-  async updateProfile(update: any): Promise<any> {
-    return this.request<any>('/api/Auth/profile', {
+  async updateProfile(update: IUpdateUserProfile): Promise<IUserProfile> {
+    return this.request<IUserProfile>('/api/Auth/profile', {
       method: 'PUT',
       body: JSON.stringify(update),
+    });
+  }
+
+  async changePassword(passwordData: {
+    currentPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+  }): Promise<void> {
+    return this.request<void>('/api/Auth/change-password', {
+      method: 'POST',
+      body: JSON.stringify(passwordData),
     });
   }
 
@@ -202,8 +260,15 @@ class ApiClient {
   }
 
   // Auction endpoints
-  async getAuctions(): Promise<AuctionGetDto[]> {
-    return this.request<AuctionGetDto[]>('/api/Auction');
+  async getAuctions(params?: { limit?: number; page?: number }): Promise<AuctionGetDto[]> {
+    let url = '/api/Auction';
+    if (params?.limit) {
+      url += `?limit=${params.limit}`;
+    }
+    if (params?.page) {
+      url += `${params.limit ? '&' : '?'}page=${params.page}`;
+    }
+    return this.request<AuctionGetDto[]>(url);
   }
 
   async getLiveAuctions(): Promise<AuctionGetDto[]> {
@@ -234,8 +299,18 @@ class ApiClient {
     return this.request<any>(`/api/Auction/${id}/current-state`);
   }
 
+  async getAuctionStatus(id: string): Promise<{ activeCarId?: string; allFinished: boolean }> {
+    return this.request<{ activeCarId?: string; allFinished: boolean }>(`/api/auctions/${id}/status`);
+  }
+
   async getAuctionStatistics(id: string): Promise<any> {
-    return this.request<any>(`/api/Auction/${id}/statistics`);
+    try {
+      return await this.request<any>(`/api/Auction/${id}/statistics`);
+    } catch (error: any) {
+      // Statistics endpoint may require admin permissions
+      console.warn(`Statistics endpoint failed for auction ${id}:`, error.message);
+      return null;
+    }
   }
 
   async getAuctionsByLocation(locationId: string): Promise<AuctionGetDto[]> {
@@ -245,6 +320,17 @@ class ApiClient {
   // AuctionCar endpoints
   async getAuctionCars(auctionId: string): Promise<AuctionCarGetDto[]> {
     return this.request<AuctionCarGetDto[]>(`/api/AuctionCar/auction/${auctionId}`);
+  }
+
+  async getAllAuctionCars(): Promise<AuctionCarGetDto[]> {
+    return this.request<AuctionCarGetDto[]>('/api/AuctionCar');
+  }
+
+  async getBatchAuctionStatus(carIds: string[]): Promise<any[]> {
+    return this.request<any[]>('/api/Car/auction-status/batch', {
+      method: 'POST',
+      body: JSON.stringify({ carIds })
+    });
   }
 
   async getAuctionCar(id: string): Promise<AuctionCarDetailDto> {
@@ -271,16 +357,16 @@ class ApiClient {
     return this.request<AuctionCarGetDto[]>(`/api/AuctionCar/auction/${auctionId}/unsold`);
   }
 
-  async getNextMinimumBid(auctionCarId: string): Promise<number> {
-    return this.request<number>(`/api/AuctionCar/${auctionCarId}/next-min-bid`);
-  }
-
   async getAuctionCarStats(auctionCarId: string): Promise<any> {
     return this.request<any>(`/api/AuctionCar/${auctionCarId}/stats`);
   }
 
   async getAuctionCarFullDetails(auctionCarId: string): Promise<any> {
     return this.request<any>(`/api/AuctionCar/${auctionCarId}/full-details`);
+  }
+
+  async getNextMinimumBid(auctionCarId: string): Promise<{ nextMinimumBid: number }> {
+    return this.request<{ nextMinimumBid: number }>(`/api/AuctionCar/${auctionCarId}/next-min-bid`);
   }
 
   // Bid endpoints
@@ -417,6 +503,91 @@ class ApiClient {
 
   async getLocation(id: string): Promise<any> {
     return this.request<any>(`/api/Location/${id}`);
+  }
+
+  // Enhanced car photo methods with better error handling and caching
+  async getCarPhotos(id: string): Promise<any[]> {
+    try {
+      console.log(`Fetching car photos for ID: ${id}`);
+      const photos = await this.request<any[]>(`/api/Car/${id}/photos`);
+      console.log('Car photos received:', photos);
+      return photos || [];
+    } catch (error) {
+      console.warn(`Error fetching car photos ${id}:`, error);
+      // Return empty array instead of throwing error
+      return [];
+    }
+  }
+
+  // Image preloading utility
+  async preloadImages(urls: string[]): Promise<void> {
+    const preloadPromises = urls.map(url => {
+      return new Promise<void>((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve();
+        img.onerror = () => reject(new Error(`Failed to preload image: ${url}`));
+        img.src = url;
+      });
+    });
+
+    try {
+      await Promise.allSettled(preloadPromises);
+      console.log(`Preloaded ${urls.length} images`);
+    } catch (error) {
+      console.warn('Some images failed to preload:', error);
+    }
+  }
+
+  // Enhanced car data fetching with image processing
+  async getCarWithImages(id: string): Promise<any> {
+    try {
+      console.log(`Fetching car with images for ID: ${id}`);
+      const carData = await this.request<any>(`/api/Car/${id}`);
+      console.log('Car data received:', carData);
+      
+      // Process PhotoUrls to ensure consistent format
+      if (carData.photoUrls) {
+        if (typeof carData.photoUrls === 'string') {
+          // Convert semicolon-separated string to array
+          carData.photoUrls = carData.photoUrls.split(';').filter((url: string) => url.trim() !== '');
+        }
+        console.log('Processed PhotoUrls:', carData.photoUrls);
+      }
+      
+      return carData;
+    } catch (error) {
+      console.error(`Error fetching car with images ${id}:`, error);
+      throw error;
+    }
+  }
+
+  // Auction stats endpoint
+  async getAuctionStats(auctionId: string): Promise<any> {
+    try {
+      console.log(`Fetching auction stats for ID: ${auctionId}`);
+      const stats = await this.request<any>(`/api/auction/${auctionId}/stats`);
+      console.log('Auction stats received:', stats);
+      return stats;
+    } catch (error) {
+      console.warn(`Error fetching auction stats ${auctionId}:`, error);
+      // Return null instead of throwing error
+      return null;
+    }
+  }
+
+  // Auction car bids endpoint
+  async getAuctionCarBids(auctionCarId: string): Promise<any[]> {
+    try {
+      console.log(`Fetching bids for auction car ID: ${auctionCarId}`);
+      // Try the correct endpoint first
+      const bids = await this.request<any[]>(`/api/Bid/auction-car/${auctionCarId}/recent?count=50`);
+      console.log('Auction car bids received:', bids);
+      return bids || [];
+    } catch (error) {
+      console.warn(`Error fetching auction car bids ${auctionCarId}:`, error);
+      // Return empty array instead of throwing error
+      return [];
+    }
   }
 
   // Auction Winners endpoints

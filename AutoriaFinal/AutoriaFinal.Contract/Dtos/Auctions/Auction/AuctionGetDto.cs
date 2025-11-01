@@ -11,6 +11,7 @@ namespace AutoriaFinal.Contract.Dtos.Auctions.Auction
         public string Status { get; set; } = default!;
         public decimal? StartPrice { get; set; }
         public bool IsLive { get; set; }
+        public decimal MinBidIncrement { get; set; }
         public string? CurrentCarLotNumber { get; set; }
         public int TotalCarsCount { get; set; }
         public int CarsWithPreBidsCount { get; set; }

@@ -1,419 +1,369 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
-import * as signalR from '@microsoft/signalr';
+"use client"
 
-interface BidHubConfig {
-  baseUrl: string;
-  token: string;
+import { useEffect, useState, useCallback, useRef } from "react"
+import * as signalR from "@microsoft/signalr"
+import { toast } from "react-hot-toast"
+import { useAuctionStore } from "../stores/auctionStore"
+
+/**
+ * useBidHub
+ *
+ * BidHub SignalR connection-u idarə edir
+ * Backend URL: /bidHub
+ *
+ * Funksiyalar:
+ * - JoinAuctionCarGroup(auctionCarId)
+ * - LeaveAuctionCarGroup(auctionCarId)
+ * - PlaceLiveBid(auctionCarId, amount)
+ */
+
+interface UseBidHubProps {
+  baseUrl: string
+  token: string
+  auctionCarId: string | null
+  onNewLiveBid?: (data: any) => void
+  onHighestBidUpdated?: (data: any) => void
+  onBidStatsUpdated?: (data: any) => void
 }
 
-interface JoinedAuctionCar {
-  auctionCarId: string;
-  highestBid: number;
-  stats: {
-    totalBids: number;
-    bidCount: number;
-    averageBid: number;
-    soldCount: number;
-    totalSalesAmount: number;
-  };
-  lastBidTime: string;
-  minimumBid: number;
-  joinedAt: string;
+interface UseBidHubReturn {
+  isConnected: boolean
+  connectionState: string
+  placeLiveBid: (auctionCarId: string, amount: number) => Promise<void>
+  joinCarGroup: (carId: string) => Promise<void>
+  leaveCarGroup: (carId: string) => Promise<void>
 }
 
-interface NewLiveBid {
-  id: string;
-  auctionCarId: string;
-  userId: string;
-  amount: number;
-  placedAtUtc: string;
-  userName: string;
-  isHighestBid: boolean;
-}
+export const useBidHub = ({
+  baseUrl,
+  token,
+  auctionCarId,
+  onNewLiveBid,
+  onHighestBidUpdated,
+  onBidStatsUpdated,
+}: UseBidHubProps): UseBidHubReturn => {
+  const [isConnected, setIsConnected] = useState(false)
+  const [connectionState, setConnectionState] = useState<string>("Disconnected")
+  const connectionRef = useRef<signalR.HubConnection | null>(null)
+  const currentCarIdRef = useRef<string | null>(null)
 
-interface HighestBidUpdated {
-  auctionCarId: string;
-  amount: number;
-  bidderId: string;
-  bidderName: string;
-  updatedAt: string;
-}
+  // Store actions
+  const updateHighestBid = useAuctionStore((state) => state.updateHighestBid)
+  const addBidToHistory = useAuctionStore((state) => state.addBidToHistory)
+  const updateStats = useAuctionStore((state) => state.updateStats)
 
-interface PreBidPlaced {
-  id: string;
-  auctionCarId: string;
-  userId: string;
-  amount: number;
-  placedAtUtc: string;
-  userName: string;
-}
+  // ========================================
+  // CONNECTION SETUP
+  // ========================================
 
-interface AuctionTimerReset {
-  auctionCarId: string;
-  secondsRemaining: number;
-  resetAt: string;
-}
-
-interface BidStatsUpdated {
-  auctionCarId: string;
-  stats: {
-    totalBids: number;
-    bidCount: number;
-    averageBid: number;
-    soldCount: number;
-    totalSalesAmount: number;
-  };
-}
-
-interface BidValidationError {
-  errors: string[];
-  minimumBid: number;
-  suggestedAmount: number;
-}
-
-interface BidHubEvents {
-  onJoinedAuctionCar: (data: JoinedAuctionCar) => void;
-  onNewLiveBid: (data: NewLiveBid) => void;
-  onPreBidPlaced: (data: PreBidPlaced) => void;
-  onHighestBidUpdated: (data: HighestBidUpdated) => void;
-  onAuctionTimerReset: (data: AuctionTimerReset) => void;
-  onBidStatsUpdated: (data: BidStatsUpdated) => void;
-  onBidValidationError: (data: BidValidationError) => void;
-  onBidError: (error: string) => void;
-  onConnectionStateChanged: (isConnected: boolean, error?: string) => void;
-}
-
-interface ConnectionState {
-  isConnected: boolean;
-  isConnecting: boolean;
-  error?: string;
-  reconnectAttempts: number;
-}
-
-export const useBidHub = (config: BidHubConfig, events: BidHubEvents) => {
-  const [connectionState, setConnectionState] = useState<ConnectionState>({
-    isConnected: false,
-    isConnecting: false,
-    reconnectAttempts: 0
-  });
-
-  const connectionRef = useRef<signalR.HubConnection | null>(null);
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const maxReconnectAttempts = 5;
-  const reconnectDelay = 3000;
-
-  const connect = useCallback(async () => {
-    if (connectionRef.current?.state === signalR.HubConnectionState.Connected) {
-      console.log('BidHub already connected');
-      return;
-    }
-
-    if (connectionRef.current?.state === signalR.HubConnectionState.Connecting) {
-      console.log('BidHub connection already in progress');
-      return;
-    }
-
-    try {
-      setConnectionState(prev => ({ 
-        ...prev, 
-        isConnecting: true, 
-        error: undefined 
-      }));
-
-      console.log('Starting BidHub connection...');
-
-      // Create connection with authorization
-      const connection = new signalR.HubConnectionBuilder()
-        .withUrl(`${config.baseUrl}/bidhub`, {
-          accessTokenFactory: () => config.token,
-          transport: signalR.HttpTransportType.WebSockets,
-          skipNegotiation: true
-        })
-        .withAutomaticReconnect({
-          nextRetryDelayInMilliseconds: (retryContext) => {
-            if (retryContext.previousRetryCount < maxReconnectAttempts) {
-              return Math.min(1000 * Math.pow(2, retryContext.previousRetryCount), 30000);
-            }
-            return null;
-          }
-        })
-        .configureLogging(signalR.LogLevel.Information)
-        .build();
-
-      // Set up event handlers
-      connection.on('JoinedAuctionCar', events.onJoinedAuctionCar);
-      connection.on('NewLiveBid', events.onNewLiveBid);
-      connection.on('PreBidPlaced', events.onPreBidPlaced);
-      connection.on('HighestBidUpdated', events.onHighestBidUpdated);
-      connection.on('AuctionTimerReset', events.onAuctionTimerReset);
-      connection.on('BidStatsUpdated', events.onBidStatsUpdated);
-      connection.on('BidValidationError', events.onBidValidationError);
-      connection.on('BidError', events.onBidError);
-
-      // Handle connection state changes
-      connection.onclose((error) => {
-        console.log('BidHub connection closed:', error);
-        setConnectionState(prev => ({ 
-          ...prev, 
-          isConnected: false, 
-          isConnecting: false,
-          error: error?.message 
-        }));
-        events.onConnectionStateChanged(false, error?.message);
-      });
-
-      connection.onreconnecting((error) => {
-        console.log('BidHub reconnecting:', error);
-        setConnectionState(prev => ({ 
-          ...prev, 
-          isConnected: false, 
-          isConnecting: true,
-          error: error?.message 
-        }));
-        events.onConnectionStateChanged(false, error?.message);
-      });
-
-      connection.onreconnected((connectionId) => {
-        console.log('BidHub reconnected:', connectionId);
-        setConnectionState(prev => ({ 
-          ...prev, 
-          isConnected: true, 
-          isConnecting: false,
-          error: undefined,
-          reconnectAttempts: 0
-        }));
-        events.onConnectionStateChanged(true);
-      });
-
-      connectionRef.current = connection;
-
-      // Start connection
-      await connection.start();
-      
-      console.log('BidHub connected successfully');
-      setConnectionState(prev => ({ 
-        ...prev, 
-        isConnected: true, 
-        isConnecting: false,
-        error: undefined,
-        reconnectAttempts: 0
-      }));
-      events.onConnectionStateChanged(true);
-
-    } catch (error: any) {
-      console.error('BidHub connection failed:', error);
-      setConnectionState(prev => ({ 
-        ...prev, 
-        isConnected: false, 
-        isConnecting: false,
-        error: error.message,
-        reconnectAttempts: prev.reconnectAttempts + 1
-      }));
-      events.onConnectionStateChanged(false, error.message);
-
-      // Attempt reconnection
-      if (connectionState.reconnectAttempts < maxReconnectAttempts) {
-        console.log(`Attempting reconnection ${connectionState.reconnectAttempts + 1}/${maxReconnectAttempts}...`);
-        reconnectTimeoutRef.current = setTimeout(() => {
-          connect();
-        }, reconnectDelay);
-      }
-    }
-  }, [config, events, connectionState.reconnectAttempts]);
-
-  const disconnect = useCallback(async () => {
-    if (reconnectTimeoutRef.current) {
-      clearTimeout(reconnectTimeoutRef.current);
-      reconnectTimeoutRef.current = null;
-    }
-
-    if (connectionRef.current) {
-      try {
-        await connectionRef.current.stop();
-        console.log('BidHub disconnected');
-      } catch (error) {
-        console.error('Error disconnecting BidHub:', error);
-      }
-      connectionRef.current = null;
-    }
-
-    setConnectionState({
-      isConnected: false,
-      isConnecting: false,
-      reconnectAttempts: 0
-    });
-  }, []);
-
-  // Hub method calls
-  const joinAuctionCar = useCallback(async (auctionCarId: string): Promise<JoinedAuctionCar | null> => {
-    if (!connectionRef.current || connectionState.isConnected === false) {
-      console.error('BidHub not connected');
-      return null;
-    }
-
-    try {
-      console.log('Joining auction car:', auctionCarId);
-      const result = await connectionRef.current.invoke<JoinedAuctionCar>('JoinAuctionCar', auctionCarId);
-      console.log('Joined auction car result:', result);
-      return result;
-    } catch (error) {
-      console.error('Failed to join auction car:', error);
-      events.onBidError(`Failed to join auction car: ${error}`);
-      return null;
-    }
-  }, [connectionState.isConnected, events]);
-
-  const leaveAuctionCar = useCallback(async (auctionCarId: string): Promise<void> => {
-    if (!connectionRef.current || connectionState.isConnected === false) {
-      console.error('BidHub not connected');
-      return;
-    }
-
-    try {
-      console.log('Leaving auction car:', auctionCarId);
-      await connectionRef.current.invoke('LeaveAuctionCar', auctionCarId);
-      console.log('Left auction car successfully');
-    } catch (error) {
-      console.error('Failed to leave auction car:', error);
-      events.onBidError(`Failed to leave auction car: ${error}`);
-    }
-  }, [connectionState.isConnected, events]);
-
-  const placeLiveBid = useCallback(async (auctionCarId: string, amount: number): Promise<boolean> => {
-    if (!connectionRef.current || connectionState.isConnected === false) {
-      console.error('BidHub not connected');
-      events.onBidError('Not connected to auction');
-      return false;
-    }
-
-    try {
-      console.log('Placing live bid:', { auctionCarId, amount });
-      await connectionRef.current.invoke('PlaceLiveBid', auctionCarId, amount);
-      console.log('Live bid placed successfully');
-      return true;
-    } catch (error) {
-      console.error('Failed to place live bid:', error);
-      events.onBidError(`Failed to place live bid: ${error}`);
-      return false;
-    }
-  }, [connectionState.isConnected, events]);
-
-  const placePreBid = useCallback(async (auctionCarId: string, amount: number): Promise<boolean> => {
-    if (!connectionRef.current || connectionState.isConnected === false) {
-      console.error('BidHub not connected');
-      events.onBidError('Not connected to auction');
-      return false;
-    }
-
-    try {
-      console.log('Placing pre-bid:', { auctionCarId, amount });
-      await connectionRef.current.invoke('PlacePreBid', auctionCarId, amount);
-      console.log('Pre-bid placed successfully');
-      return true;
-    } catch (error) {
-      console.error('Failed to place pre-bid:', error);
-      events.onBidError(`Failed to place pre-bid: ${error}`);
-      return false;
-    }
-  }, [connectionState.isConnected, events]);
-
-  const placeProxyBid = useCallback(async (auctionCarId: string, startAmount: number, maxAmount: number): Promise<boolean> => {
-    if (!connectionRef.current || connectionState.isConnected === false) {
-      console.error('BidHub not connected');
-      events.onBidError('Not connected to auction');
-      return false;
-    }
-
-    try {
-      console.log('Placing proxy bid:', { auctionCarId, startAmount, maxAmount });
-      await connectionRef.current.invoke('PlaceProxyBid', auctionCarId, startAmount, maxAmount);
-      console.log('Proxy bid placed successfully');
-      return true;
-    } catch (error) {
-      console.error('Failed to place proxy bid:', error);
-      events.onBidError(`Failed to place proxy bid: ${error}`);
-      return false;
-    }
-  }, [connectionState.isConnected, events]);
-
-  const cancelProxyBid = useCallback(async (auctionCarId: string): Promise<boolean> => {
-    if (!connectionRef.current || connectionState.isConnected === false) {
-      console.error('BidHub not connected');
-      events.onBidError('Not connected to auction');
-      return false;
-    }
-
-    try {
-      console.log('Canceling proxy bid:', auctionCarId);
-      await connectionRef.current.invoke('CancelProxyBid', auctionCarId);
-      console.log('Proxy bid canceled successfully');
-      return true;
-    } catch (error) {
-      console.error('Failed to cancel proxy bid:', error);
-      events.onBidError(`Failed to cancel proxy bid: ${error}`);
-      return false;
-    }
-  }, [connectionState.isConnected, events]);
-
-  const getAuctionStats = useCallback(async (auctionCarId: string): Promise<any> => {
-    if (!connectionRef.current || connectionState.isConnected === false) {
-      console.error('BidHub not connected');
-      return null;
-    }
-
-    try {
-      console.log('Getting auction stats:', auctionCarId);
-      const stats = await connectionRef.current.invoke('GetAuctionStats', auctionCarId);
-      console.log('Auction stats received:', stats);
-      return stats;
-    } catch (error) {
-      console.error('Failed to get auction stats:', error);
-      events.onBidError(`Failed to get auction stats: ${error}`);
-      return null;
-    }
-  }, [connectionState.isConnected, events]);
-
-  const getMyBids = useCallback(async (auctionCarId: string): Promise<any[]> => {
-    if (!connectionRef.current || connectionState.isConnected === false) {
-      console.error('BidHub not connected');
-      return [];
-    }
-
-    try {
-      console.log('Getting my bids:', auctionCarId);
-      const bids = await connectionRef.current.invoke<any[]>('GetMyBids', auctionCarId);
-      console.log('My bids received:', bids);
-      return bids || [];
-    } catch (error) {
-      console.error('Failed to get my bids:', error);
-      events.onBidError(`Failed to get my bids: ${error}`);
-      return [];
-    }
-  }, [connectionState.isConnected, events]);
-
-  // Cleanup on unmount
   useEffect(() => {
+    const BID_HUB_URL = `${baseUrl}/bidHub`
+
+    console.log("🔌 [BidHub] Initializing connection to:", BID_HUB_URL)
+
+    const connection = new signalR.HubConnectionBuilder()
+      .withUrl(BID_HUB_URL, {
+        accessTokenFactory: () => token || "",
+        transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.ServerSentEvents,
+        skipNegotiation: false,
+      })
+      .withAutomaticReconnect({
+        nextRetryDelayInMilliseconds: (retryContext) => {
+          if (retryContext.elapsedMilliseconds < 60000) {
+            return Math.min(1000 * Math.pow(2, retryContext.previousRetryCount), 10000)
+          }
+          return null
+        },
+      })
+      .configureLogging(signalR.LogLevel.Information)
+      .build()
+
+    connectionRef.current = connection
+
+    // ========================================
+    // EVENT HANDLERS (Case-Sensitive!)
+    // ========================================
+
+    connection.on("NewLiveBid", (data: any) => {
+      console.log("💰 [BidHub] NewLiveBid received:", {
+        id: data.id,
+        amount: data.amount,
+        userId: data.userId,
+        userName: data.userName,
+        carId: data.auctionCarId,
+        timestamp: data.timestamp,
+      })
+
+      // Validate required fields
+      if (!data.amount || !data.auctionCarId) {
+        console.error("❌ [BidHub] Invalid bid data received:", data)
+        return
+      }
+
+      const bidData = {
+        id: data.id || `bid-${Date.now()}-${Math.random()}`,
+        auctionCarId: data.auctionCarId,
+        userId: data.userId || "unknown",
+        amount: Number(data.amount), // Ensure it's a number
+        bidType: data.bidType || "Live",
+        timestamp: data.timestamp || new Date().toISOString(),
+        isWinning: data.isWinning ?? true,
+        isOutbid: data.isOutbid ?? false,
+        user: {
+          id: data.userId || "unknown",
+          email: data.userEmail || "",
+          firstName: data.userName || data.user?.firstName || "Anonymous",
+          lastName: data.user?.lastName || "",
+        },
+      }
+
+      console.log("📝 [BidHub] Updating store with bid:", bidData)
+      updateHighestBid(bidData)
+      addBidToHistory(bidData)
+
+      // Call callback if provided
+      onNewLiveBid?.(data)
+
+      const toastId = `bid-${data.auctionCarId}-${data.amount}`
+      toast(`${bidData.user.firstName} bid $${bidData.amount.toLocaleString()}`, {
+        id: toastId,
+        icon: "🔨",
+        duration: 3000,
+      })
+    })
+
+    connection.on("HighestBidUpdated", (data: any) => {
+      console.log("🏆 [BidHub] HighestBidUpdated received:", {
+        amount: data.amount,
+        userId: data.userId,
+        userName: data.userName,
+        carId: data.auctionCarId,
+      })
+
+      // Update store if valid data
+      if (data.amount && data.auctionCarId) {
+        const bidData = {
+          id: data.id || `bid-${Date.now()}-${Math.random()}`,
+          auctionCarId: data.auctionCarId,
+          userId: data.userId || "unknown",
+          amount: Number(data.amount),
+          bidType: "Live",
+          timestamp: data.timestamp || new Date().toISOString(),
+          isWinning: true,
+          isOutbid: false,
+          user: {
+            id: data.userId || "unknown",
+            email: data.userEmail || "",
+            firstName: data.userName || "Winner",
+            lastName: "",
+          },
+        }
+
+        console.log("📝 [BidHub] Updating highest bid in store:", bidData)
+        updateHighestBid(bidData)
+      }
+
+      onHighestBidUpdated?.(data)
+    })
+
+    connection.on("BidStatsUpdated", (data: any) => {
+      console.log("📊 [BidHub] BidStatsUpdated received:", data)
+
+      updateStats({
+        totalBids: data.totalBids || 0,
+        uniqueBidders: data.uniqueBidders || 0,
+        activeBidders: data.activeBidders || 0,
+      })
+
+      onBidStatsUpdated?.(data)
+    })
+
+    // ========================================
+    // CONNECTION LIFECYCLE
+    // ========================================
+
+    connection.onclose((error) => {
+      console.log("❌ [BidHub] Connection closed:", error?.message)
+      setIsConnected(false)
+      setConnectionState("Disconnected")
+      toast.error("Disconnected from bid service... reconnecting", {
+        id: "bidhub-status",
+        duration: 3000,
+      })
+    })
+
+    connection.onreconnecting((error) => {
+      console.log("🔄 [BidHub] Reconnecting...", error?.message)
+      setConnectionState("Reconnecting")
+      toast.loading("Reconnecting to bid service...", {
+        id: "bidhub-reconnect",
+        duration: Number.POSITIVE_INFINITY,
+      })
+    })
+
+    connection.onreconnected((connectionId) => {
+      console.log("✅ [BidHub] Reconnected:", connectionId)
+      setIsConnected(true)
+      setConnectionState("Connected")
+      toast.success("Reconnected to bid service!", {
+        id: "bidhub-reconnect",
+        duration: 3000,
+      })
+
+      if (currentCarIdRef.current) {
+        connection
+          .invoke("JoinAuctionCarGroup", currentCarIdRef.current)
+          .then(() => {
+            console.log("✅ [BidHub] Rejoined car group:", currentCarIdRef.current)
+            toast("Connected to live auction", {
+              id: "bidhub-joined",
+              icon: "✅",
+              duration: 2000,
+            })
+          })
+          .catch((err) => {
+            console.error("❌ [BidHub] Failed to rejoin car group:", err)
+          })
+      }
+    })
+
+    // ========================================
+    // START CONNECTION
+    // ========================================
+
+    const startConnection = async () => {
+      try {
+        setConnectionState("Connecting")
+        await connection.start()
+        console.log("✅ [BidHub] Connected successfully")
+        setIsConnected(true)
+        setConnectionState("Connected")
+      } catch (err) {
+        console.error("❌ [BidHub] Connection failed:", err)
+        setConnectionState("Failed")
+        toast.error("Failed to connect to bid service", { id: "bidhub-error" })
+      }
+    }
+
+    startConnection()
+
+    // Cleanup
     return () => {
-      if (reconnectTimeoutRef.current) {
-        clearTimeout(reconnectTimeoutRef.current);
+      console.log("🧹 [BidHub] Cleaning up...")
+      if (currentCarIdRef.current) {
+        connection.invoke("LeaveAuctionCarGroup", currentCarIdRef.current).catch((err) => {
+          console.warn("⚠️ Failed to leave car group:", err)
+        })
       }
-      if (connectionRef.current) {
-        connectionRef.current.stop();
+      connection.stop().catch((err) => {
+        console.warn("⚠️ Failed to stop connection:", err)
+      })
+    }
+  }, [
+    baseUrl,
+    token,
+    updateHighestBid,
+    addBidToHistory,
+    updateStats,
+    onNewLiveBid,
+    onHighestBidUpdated,
+    onBidStatsUpdated,
+  ])
+
+  // ========================================
+  // JOIN/LEAVE CAR GROUP
+  // ========================================
+
+  useEffect(() => {
+    const connection = connectionRef.current
+    if (!connection || !isConnected || !auctionCarId) return
+
+    const joinCarGroup = async () => {
+      try {
+        // Leave previous group if exists
+        if (currentCarIdRef.current && currentCarIdRef.current !== auctionCarId) {
+          await connection.invoke("LeaveAuctionCarGroup", currentCarIdRef.current)
+          console.log("👋 [BidHub] Left car group:", currentCarIdRef.current)
+        }
+
+        // Join new group
+        await connection.invoke("JoinAuctionCarGroup", auctionCarId)
+        currentCarIdRef.current = auctionCarId
+        console.log("✅ [BidHub] Joined car group:", auctionCarId)
+      } catch (err) {
+        console.error("❌ [BidHub] Failed to join car group:", err)
+        toast.error("Failed to join car auction")
       }
-    };
-  }, []);
+    }
+
+    joinCarGroup()
+  }, [auctionCarId, isConnected])
+
+  // ========================================
+  // METHODS
+  // ========================================
+
+  const placeLiveBid = useCallback(
+    async (carId: string, amount: number): Promise<void> => {
+      const connection = connectionRef.current
+      if (!connection || !isConnected) {
+        throw new Error("Not connected to bid service")
+    }
+
+    try {
+        console.log("🎯 [BidHub] Placing bid:", { carId, amount })
+
+        // Call server method: PlaceLiveBid(auctionCarId, amount)
+        await connection.invoke("PlaceLiveBid", carId, amount)
+
+        console.log("✅ [BidHub] Bid placed successfully")
+      } catch (err: any) {
+        console.error("❌ [BidHub] Bid failed:", err)
+        throw err
+      }
+    },
+    [isConnected],
+  )
+
+  const joinCarGroup = useCallback(
+    async (carId: string): Promise<void> => {
+      const connection = connectionRef.current
+      if (!connection || !isConnected) return
+
+      try {
+        await connection.invoke("JoinAuctionCarGroup", carId)
+        currentCarIdRef.current = carId
+        console.log("✅ [BidHub] Joined car group:", carId)
+      } catch (err) {
+        console.error("❌ [BidHub] Failed to join car group:", err)
+        throw err
+      }
+    },
+    [isConnected],
+  )
+
+  const leaveCarGroup = useCallback(async (carId: string): Promise<void> => {
+    const connection = connectionRef.current
+    if (!connection) return
+
+    try {
+      await connection.invoke("LeaveAuctionCarGroup", carId)
+      if (currentCarIdRef.current === carId) {
+        currentCarIdRef.current = null
+      }
+      console.log("👋 [BidHub] Left car group:", carId)
+    } catch (err) {
+      console.error("❌ [BidHub] Failed to leave car group:", err)
+    }
+  }, [])
 
   return {
+    isConnected,
     connectionState,
-    connect,
-    disconnect,
-    joinAuctionCar,
-    leaveAuctionCar,
     placeLiveBid,
-    placePreBid,
-    placeProxyBid,
-    cancelProxyBid,
-    getAuctionStats,
-    getMyBids
-  };
-};
+    joinCarGroup,
+    leaveCarGroup,
+  }
+}
+
+export default useBidHub

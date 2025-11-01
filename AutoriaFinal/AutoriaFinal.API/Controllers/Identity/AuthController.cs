@@ -1,7 +1,9 @@
 ﻿using AutoriaFinal.Application.Exceptions;
+using AutoriaFinal.Application.Services.Identity;
 using AutoriaFinal.Contract.Dtos.Identity;
 using AutoriaFinal.Contract.Services.Identity;
 using AutoriaFinal.Domain.Entities.Identity;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -15,13 +17,17 @@ namespace AutoriaFinal.API.Controllers.Identity
     public class AuthController : ControllerBase
     {
        private readonly IAuthService _authService;
+        private readonly IGoogleAuthService _googleAuthService;
         private readonly ILogger<AuthController> _logger;
-        public AuthController(IAuthService authService, ILogger<AuthController> logger)
+        public AuthController(
+            IAuthService authService,
+            IGoogleAuthService googleAuthService,
+            ILogger<AuthController> logger)
         {
             _authService = authService;
+            _googleAuthService = googleAuthService;
             _logger = logger;
         }
-
         #region AUTHENTICATION ENDPOINTS
         // İstifadəçi qeydiyyatı - Rol seçimi ilə
         [HttpPost("register")]
@@ -79,6 +85,34 @@ namespace AutoriaFinal.API.Controllers.Identity
             return Ok(result);
         }
         #endregion
+
+        #region Google AUTHENTICATION
+        [HttpGet("login-google")]
+        public IActionResult LoginGoogle()
+        {
+            var redirectUrl = Url.Action(nameof(GoogleResponse), "Authorization");
+            var properties = new AuthenticationProperties
+            {
+                RedirectUri = redirectUrl
+            };
+            return Challenge(properties, "Google");
+        }
+
+        [HttpGet("google-response")]
+        public async Task<IActionResult> GoogleResponse()
+        {
+            var jwt = await _googleAuthService.HandleGoogleLoginAsync();
+
+
+            var script = $@"
+                <script>
+                    window.opener.postMessage({{ token: '{jwt}' }}, 'https://localhost:7249');
+                    window.close();
+                </script>";
+            return Content(script, "text/html");
+        }
+        #endregion
+
         #region EMAIL CONFIRMATION
         /// Email təsdiqi (Email-dən gələn linkdən)
         [HttpGet("confirmemail")]

@@ -1,26 +1,121 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
-import { Search, Filter, Grid, List, MapPin, Gauge, Car, Eye, Heart, Plus, X, RefreshCw } from 'lucide-react';
-import { apiClient } from '../lib/api';
-import { VehicleSearchParams, VehicleSearchResult, VehicleFilters, CarData } from '../types/api';
-import CarPhotos from '../components/CarPhotos';
 import { useAuth } from '../hooks/useAuth';
+import { apiClient } from '../lib/api';
+import CarPhotos from '../components/CarPhotos';
+import Alert from '../components/Alert';
+import { 
+  Car, 
+  Calendar, 
+  Gauge, 
+  Hash, 
+  Palette, 
+  Fuel, 
+  Wrench, 
+  MapPin,
+  Plus,
+  Eye,
+  Heart,
+  Loader2,
+  RefreshCw,
+  Search,
+  Filter,
+  SortAsc,
+  SortDesc,
+  ChevronDown,
+  ChevronUp
+} from 'lucide-react';
+import { getEnumLabel, getEnumBadgeClasses } from '../services/enumService';
+
+// Updated Vehicle interface matching backend DTO structure exactly
+interface Vehicle {
+  id: string;
+  make: string;
+  model: string;
+  year: number;
+  vin: string;
+  color?: string;
+  bodyStyle?: string;
+  
+  // Backend DTO fields (exact match)
+  mileage?: number;
+  mileageUnit?: string;
+  fuelType?: number; // Enum value (numeric)
+  damageType?: number; // Enum value (numeric)
+  carCondition?: number; // Enum value (numeric)
+  transmission?: number; // Enum value (numeric)
+  driveTrain?: number; // Enum value (numeric)
+  titleType?: number; // Enum value (numeric)
+  secondaryDamage?: number; // Enum value (numeric)
+  hasKeys?: boolean;
+  titleState?: string;
+  
+  // Financial information
+  price?: number;
+  currency?: string;
+  estimatedRetailValue?: number;
+  
+  // Location information
+  locationId?: string;
+  locationName?: string;
+  locationAddress?: string;
+  locationCity?: string;
+  
+  // Metadata
+  createdAt?: string;
+  updatedAtUtc?: string;
+  ownerId?: string;
+  ownerUsername?: string;
+  
+  // Media (backend returns these fields)
+  photoUrls?: string[];
+  videoUrls?: string[];
+  
+  // Legacy fields for backward compatibility (will be removed)
+  imagePath?: string;
+  image?: string;
+  imageUrl?: string;
+}
 
 const VehicleFinder: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [urlSearchParams] = useSearchParams();
-  const [searchParams, setSearchParams] = useState<VehicleSearchParams>({
-    page: 1,
-    pageSize: 12
+  
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string>('');
+  const [alert, setAlert] = useState<{ message: string; type: 'success' | 'error' | 'info' | 'removed' } | null>(null);
+  
+  // Search and filter state
+  const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+  const [sortField, setSortField] = useState<keyof Vehicle>('createdAt');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  const [showFilters, setShowFilters] = useState(false);
+  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+  const [filters, setFilters] = useState({
+    fuelType: '',
+    carCondition: '',
+    damageType: '',
+    titleType: '',
+    hasKeys: '',
+    priceRange: { min: '', max: '' },
+    yearRange: { min: '', max: '' },
+    mileageRange: { min: '', max: '' }
   });
-  const [searchResults, setSearchResults] = useState<VehicleSearchResult | null>(null);
-  const [filters, setFilters] = useState<VehicleFilters | null>(null);
-  const [models, setModels] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+
+  // Watchlist state
   const [watchlist, setWatchlist] = useState<Set<string>>(new Set());
-  const [alert, setAlert] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   // Role-based access control
   useEffect(() => {
@@ -39,11 +134,11 @@ const VehicleFinder: React.FC = () => {
     }
   }, [isAuthenticated, user, navigate]);
 
-  // Load filters and watchlist on component mount
+  // Load vehicles and watchlist on component mount
   useEffect(() => {
     if (isAuthenticated && (user?.user?.roles?.includes('Member') || user?.user?.roles?.includes('Seller'))) {
-    loadFilters();
-    loadWatchlist();
+      loadVehicles();
+      loadWatchlist();
     }
   }, [isAuthenticated, user]);
 
@@ -51,79 +146,228 @@ const VehicleFinder: React.FC = () => {
   useEffect(() => {
     const searchQuery = urlSearchParams.get('search');
     if (searchQuery) {
-      // Set search parameters based on URL query
-      setSearchParams(prev => ({
-        ...prev,
-        make: searchQuery,
-        page: 1
-      }));
+      setSearchTerm(searchQuery);
     }
   }, [urlSearchParams]);
 
-  // Load models when make changes
-  useEffect(() => {
-    if (searchParams.make) {
-      loadModels(searchParams.make);
-    } else {
-      setModels([]);
-    }
-  }, [searchParams.make]);
-
-  const loadFilters = async () => {
+  const loadVehicles = async () => {
     try {
-      console.log('Loading vehicle filters from API endpoints...');
-      // Load all filter data in parallel for better performance
-      const [makes, conditions, damageTypes, types, locations] = await Promise.all([
-        apiClient.getVehicleMakes(),
-        apiClient.getVehicleConditions(),
-        apiClient.getVehicleDamageTypes(),
-        apiClient.getVehicleTypes(),
-        apiClient.getLocations()
-      ]);
-
-      // Extract location names from location objects
-      const locationNames = locations.map((location: any) => 
-        location.name || location.city || location.id || 'Unknown Location'
-      );
-
-      const filtersData = {
-        conditions: ['All', ...conditions],
-        types: ['All', ...types],
-        damageTypes: ['All', ...damageTypes],
-        makes: ['All', ...makes],
-        models: ['All'], // Models will be loaded dynamically when make is selected
-        locations: ['All', ...locationNames]
-      };
-
-      console.log('Filters loaded successfully:', filtersData);
-      setFilters(filtersData);
-    } catch (error) {
-      console.error('Error loading filters:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      showAlert(`Failed to load filters: ${errorMessage}. Using default options.`, 'error');
-      // Set default filters
-      setFilters({
-        conditions: ['All', 'Used', 'Salvage', 'Excellent', 'Good', 'Fair'],
-        types: ['All', 'Sedan', 'SUV', 'Truck', 'Coupe', 'Convertible', 'Hatchback', 'Wagon'],
-        damageTypes: ['All', 'None', 'Front End', 'Rear End', 'Side', 'All Over', 'Water/Flood', 'Hail', 'Vandalism'],
-        makes: ['All', 'Ford', 'Chevrolet', 'BMW', 'Mercedes-Benz', 'Audi', 'Porsche', 'Toyota', 'Honda', 'Nissan', 'Hyundai'],
-        models: ['All'],
-        locations: ['All', 'New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'Miami', 'Dallas', 'Atlanta', 'Denver', 'Seattle']
+      setLoading(true);
+      setError('');
+      
+      console.log('Loading vehicles with optimized LiveAuction filter...');
+      
+      // Step 1: Load all vehicles from GET /api/Car
+      console.log('Step 1: Loading all vehicles...');
+      const allVehicles = await apiClient.getCars();
+      console.log('All vehicles loaded:', allVehicles.length);
+      
+      if (allVehicles.length === 0) {
+        console.log('No vehicles found, setting empty results');
+        setVehicles([]);
+        return;
+      }
+      
+      // Step 2: Extract all car IDs
+      console.log('Step 2: Extracting car IDs...');
+      const allCarIds = allVehicles.map(vehicle => vehicle.id);
+      console.log('Car IDs extracted:', allCarIds.length);
+      
+      // Step 3: Split IDs into batches of max 200
+      console.log('Step 3: Creating batches...');
+      const batchSize = 200;
+      const batches: string[][] = [];
+      for (let i = 0; i < allCarIds.length; i += batchSize) {
+        batches.push(allCarIds.slice(i, i + batchSize));
+      }
+      console.log(`Created ${batches.length} batches`);
+      
+      // Step 4: Send parallel batch requests
+      console.log('Step 4: Sending parallel batch requests...');
+      const batchPromises = batches.map(async (batch, index) => {
+        try {
+          return await apiClient.getBatchAuctionStatus(batch);
+        } catch (error) {
+          console.error(`Batch ${index + 1} failed:`, error);
+          // Return empty array for failed batch to continue processing
+          return [];
+        }
       });
-    }
-  };
-
-  const loadModels = async (make: string) => {
-    try {
-      console.log(`Loading models for make: ${make}`);
-      const modelsData = await apiClient.getVehicleModels(make);
-      console.log('Models loaded successfully:', modelsData);
-      setModels(modelsData);
+      
+      const batchResults = await Promise.all(batchPromises);
+      console.log('Batch requests completed');
+      
+      // Step 5: Combine and filter results
+      console.log('Step 5: Combining and filtering results...');
+      const auctionStatusResults = batchResults.flat();
+      console.log('Combined auction status results:', auctionStatusResults.length);
+      
+      // Check if we got any results from batch requests
+      if (auctionStatusResults.length === 0) {
+        console.warn('No auction status results received, falling back to showing all vehicles');
+        // Fallback: show all vehicles if batch endpoint fails
+        const processedVehicles = await Promise.all(
+          allVehicles.map(async (vehicle) => {
+            try {
+              let locationName = vehicle.locationName;
+              if (vehicle.locationId && !locationName) {
+                try {
+                  const location = await apiClient.getLocation(vehicle.locationId);
+                  locationName = location.name || location.city;
+                } catch (locationError) {
+                  console.warn(`Could not fetch location for ${vehicle.locationId}`);
+                }
+              }
+              
+              return {
+                id: vehicle.id,
+                make: vehicle.make || 'Unknown',
+                model: vehicle.model || 'Unknown',
+                year: vehicle.year || 0,
+                vin: vehicle.vin || '',
+                color: vehicle.color,
+                bodyStyle: vehicle.bodyStyle,
+                mileage: vehicle.mileage,
+                mileageUnit: vehicle.mileageUnit || 'km',
+                fuelType: vehicle.fuelType,
+                damageType: vehicle.damageType,
+                carCondition: vehicle.carCondition,
+                transmission: vehicle.transmission,
+                driveTrain: vehicle.driveTrain,
+                titleType: vehicle.titleType,
+                secondaryDamage: vehicle.secondaryDamage,
+                hasKeys: vehicle.hasKeys,
+                titleState: vehicle.titleState,
+                price: vehicle.price,
+                currency: vehicle.currency || 'USD',
+                estimatedRetailValue: vehicle.estimatedRetailValue,
+                locationId: vehicle.locationId,
+                locationName: locationName,
+                locationAddress: vehicle.locationAddress,
+                locationCity: vehicle.locationCity,
+                createdAt: vehicle.createdAt,
+                updatedAtUtc: vehicle.updatedAtUtc,
+                ownerId: vehicle.ownerId,
+                ownerUsername: vehicle.ownerUsername,
+                photoUrls: vehicle.photoUrls || [],
+                videoUrls: vehicle.videoUrls || [],
+                imagePath: vehicle.imagePath,
+                image: vehicle.image,
+                imageUrl: vehicle.imageUrl
+              };
+            } catch (error) {
+              console.error(`Error processing vehicle ${vehicle.id}:`, error);
+              return null;
+            }
+          })
+        );
+        
+        const validVehicles = processedVehicles.filter(vehicle => vehicle !== null) as Vehicle[];
+        console.log('Fallback processed vehicles:', validVehicles.length);
+        setVehicles(validVehicles);
+        return;
+      }
+      
+      // Filter for LiveAuction status (enum value 2)
+      const liveAuctionStatuses = auctionStatusResults.filter(status => 
+        status.auctionCarCondition === 2
+      );
+      console.log('Live auction statuses:', liveAuctionStatuses.length);
+      
+      // Step 6: Extract live car IDs
+      console.log('Step 6: Extracting live car IDs...');
+      const liveCarIds = new Set(liveAuctionStatuses.map(status => status.carId));
+      console.log('Live car IDs:', liveCarIds.size);
+      
+      // Step 7: Filter all vehicles to only include live auction vehicles
+      console.log('Step 7: Filtering vehicles...');
+      const liveAuctionVehicles = allVehicles.filter(vehicle => 
+        liveCarIds.has(vehicle.id)
+      );
+      console.log('Live auction vehicles:', liveAuctionVehicles.length);
+      
+      // Step 8: Process vehicles with location data
+      console.log('Step 8: Processing vehicles...');
+      const processedVehicles = await Promise.all(
+        liveAuctionVehicles.map(async (vehicle) => {
+          try {
+            // Get location data if available
+            let locationName = vehicle.locationName;
+            if (vehicle.locationId && !locationName) {
+              try {
+                const location = await apiClient.getLocation(vehicle.locationId);
+                locationName = location.name || location.city;
+              } catch (locationError) {
+                console.warn(`Could not fetch location for ${vehicle.locationId}`);
+              }
+            }
+            
+            return {
+              id: vehicle.id,
+              make: vehicle.make || 'Unknown',
+              model: vehicle.model || 'Unknown',
+              year: vehicle.year || 0,
+              vin: vehicle.vin || '',
+              color: vehicle.color,
+              bodyStyle: vehicle.bodyStyle,
+              
+              // Backend DTO field mapping
+              mileage: vehicle.mileage,
+              mileageUnit: vehicle.mileageUnit || 'km',
+              fuelType: vehicle.fuelType,
+              damageType: vehicle.damageType,
+              carCondition: vehicle.carCondition,
+              transmission: vehicle.transmission,
+              driveTrain: vehicle.driveTrain,
+              titleType: vehicle.titleType,
+              secondaryDamage: vehicle.secondaryDamage,
+              hasKeys: vehicle.hasKeys,
+              titleState: vehicle.titleState,
+              
+              // Financial information
+              price: vehicle.price,
+              currency: vehicle.currency || 'USD',
+              estimatedRetailValue: vehicle.estimatedRetailValue,
+              
+              // Location information
+              locationId: vehicle.locationId,
+              locationName: locationName,
+              locationAddress: vehicle.locationAddress,
+              locationCity: vehicle.locationCity,
+              
+              // Metadata
+              createdAt: vehicle.createdAt,
+              updatedAtUtc: vehicle.updatedAtUtc,
+              ownerId: vehicle.ownerId,
+              ownerUsername: vehicle.ownerUsername,
+              
+              // Media
+              photoUrls: vehicle.photoUrls || [],
+              videoUrls: vehicle.videoUrls || [],
+              
+              // Legacy fields
+              imagePath: vehicle.imagePath,
+              image: vehicle.image,
+              imageUrl: vehicle.imageUrl
+            };
+          } catch (error) {
+            console.error(`Error processing vehicle ${vehicle.id}:`, error);
+            return null;
+          }
+        })
+      );
+      
+      // Filter out null results
+      const validVehicles = processedVehicles.filter(vehicle => vehicle !== null) as Vehicle[];
+      
+      console.log('Final processed vehicles:', validVehicles.length);
+      setVehicles(validVehicles);
+      
     } catch (error) {
-      console.error('Error loading models:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      console.log(`Failed to load models: ${errorMessage}`);
-      setModels([]);
+      console.error('Error loading vehicles:', error);
+      setError('Failed to load vehicles. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -146,1083 +390,1032 @@ const VehicleFinder: React.FC = () => {
     }
   };
 
-  const handleSearch = async () => {
-    setLoading(true);
-    try {
-      console.log('Loading all vehicles from GET /api/car...');
-      
-      // Get all vehicles from GET /api/car endpoint
-      const allVehicles: CarData[] = await apiClient.getCars();
-      console.log('All vehicles from API:', allVehicles);
-      
-      // Apply client-side filtering
-      const filteredVehicles = applyClientSideFilters(allVehicles, searchParams);
-      console.log('Filtered vehicles:', filteredVehicles);
-      
-      // Apply pagination
-      const page = searchParams.page || 1;
-      const pageSize = searchParams.pageSize || 12;
-      const startIndex = (page - 1) * pageSize;
-      const endIndex = startIndex + pageSize;
-      const paginatedVehicles = filteredVehicles.slice(startIndex, endIndex);
-      
-      const results = {
-        vehicles: paginatedVehicles,
-        totalCount: filteredVehicles.length,
-        page: page,
-        pageSize: pageSize,
-        totalPages: Math.ceil(filteredVehicles.length / pageSize)
-      };
-      
-      console.log('Final search results:', results);
-      setSearchResults(results);
-    } catch (error) {
-      console.error('Error loading vehicles:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      showAlert(`Failed to load vehicles: ${errorMessage}. Please check your connection and try again.`, 'error');
-      setSearchResults({
-        vehicles: [],
-        totalCount: 0,
-        page: 1,
-        pageSize: 12,
-        totalPages: 0
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Client-side filtering function
-  const applyClientSideFilters = (vehicles: CarData[], params: VehicleSearchParams) => {
-    if (!vehicles || vehicles.length === 0) return [];
-    
-    return vehicles.filter(vehicle => {
-      // Make filter
-      if (params.make && params.make !== 'All' && vehicle.make?.toLowerCase() !== params.make.toLowerCase()) {
-        return false;
-      }
-      
-      // Model filter
-      if (params.model && params.model !== 'All' && vehicle.model?.toLowerCase() !== params.model.toLowerCase()) {
-        return false;
-      }
-      
-      // Year range filter
-      if (params.yearFrom && vehicle.year < params.yearFrom) {
-        return false;
-      }
-      if (params.yearTo && vehicle.year > params.yearTo) {
-        return false;
-      }
-      
-      // Price range filter
-      if (params.priceFrom && vehicle.estimatedRetailValue && vehicle.estimatedRetailValue < params.priceFrom) {
-        return false;
-      }
-      if (params.priceTo && vehicle.estimatedRetailValue && vehicle.estimatedRetailValue > params.priceTo) {
-        return false;
-      }
-      
-      // Mileage filter
-      if (params.mileageFrom && vehicle.odometer && vehicle.odometer < params.mileageFrom) {
-        return false;
-      }
-      if (params.mileageTo && vehicle.odometer && vehicle.odometer > params.mileageTo) {
-        return false;
-      }
-      
-      // Condition filter
-      if (params.condition && params.condition !== 'All' && vehicle.condition?.toLowerCase() !== params.condition.toLowerCase()) {
-        return false;
-      }
-      
-      // Damage type filter
-      if (params.damageType && params.damageType !== 'All' && vehicle.primaryDamage?.toLowerCase() !== params.damageType.toLowerCase()) {
-        return false;
-      }
-      
-      // Type filter
-      if (params.type && params.type !== 'All' && vehicle.type?.toLowerCase() !== params.type.toLowerCase()) {
-        return false;
-      }
-      
-      // Location filter
-      if (params.location && params.location !== 'All') {
-        // This would need location data to be loaded and matched
-        // For now, we'll skip location filtering or implement it based on available data
-      }
-      
-      // Text search filter
-      if (params.searchQuery) {
-        const searchTerm = params.searchQuery.toLowerCase();
-        const searchableFields = [
-          vehicle.make,
-          vehicle.model,
-          vehicle.vin,
-          vehicle.color,
-          vehicle.bodyStyle,
-          vehicle.fuelType,
-          vehicle.transmission
-        ].filter(Boolean).map(field => field?.toLowerCase() || '');
-        
-        const matchesSearch = searchableFields.some(field => field.includes(searchTerm));
-        if (!matchesSearch) {
-          return false;
-        }
-      }
-      
-      return true;
-    });
-  };
-
-  // Enhanced search with debouncing
-  const debouncedSearch = React.useCallback(
-    debounce(() => {
-      if (filters) {
-        handleSearch();
-      }
-    }, 500),
-    [filters]
-  );
-
-  // Debounce function
-  function debounce<T extends (...args: any[]) => any>(
-    func: T,
-    wait: number
-  ): (...args: Parameters<T>) => void {
-    let timeout: NodeJS.Timeout;
-    return (...args: Parameters<T>) => {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func(...args), wait);
-    };
-  }
-
-  // Auto-search when filters change with debouncing
-  useEffect(() => {
-    if (filters) {
-      debouncedSearch();
-    }
-  }, [searchParams, filters, debouncedSearch]);
-
-  // Load all vehicles on component mount
-  useEffect(() => {
-    if (isAuthenticated && (user?.user?.roles?.includes('Member') || user?.user?.roles?.includes('Seller'))) {
-      handleSearch();
-    }
-  }, [isAuthenticated, user]);
-
-  // Reload watchlist when component becomes visible (handles page refresh)
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (!document.hidden) {
-        loadWatchlist();
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, []);
-
-  const handleInputChange = (field: keyof VehicleSearchParams, value: any) => {
-    setSearchParams(prev => ({
-      ...prev,
-      [field]: value,
-      page: 1 // Reset to first page when filters change
-    }));
-  };
-
-  // Enhanced search input handler with better logic
-  const handleSearchInputChange = (value: string) => {
-    if (value.match(/^[A-Z0-9]{17}$/)) {
-      // VIN pattern (17 alphanumeric characters)
-      handleInputChange('vin', value);
-      handleInputChange('lotNumber', undefined);
-      handleInputChange('make', undefined);
-      handleInputChange('model', undefined);
-    } else if (value.match(/^LOT-/i)) {
-      // Lot number pattern
-      handleInputChange('lotNumber', value);
-      handleInputChange('vin', undefined);
-      handleInputChange('make', undefined);
-      handleInputChange('model', undefined);
-    } else if (value.length > 0) {
-      // General search - try to match make first, then model
-      const words = value.split(' ');
-      if (words.length === 1) {
-        // Single word - likely a make
-        handleInputChange('make', value);
-        handleInputChange('model', undefined);
-        handleInputChange('vin', undefined);
-        handleInputChange('lotNumber', undefined);
-      } else {
-        // Multiple words - first word is make, rest is model
-        handleInputChange('make', words[0]);
-        handleInputChange('model', words.slice(1).join(' '));
-        handleInputChange('vin', undefined);
-        handleInputChange('lotNumber', undefined);
-      }
-    } else {
-      // Clear all search fields
-      handleInputChange('make', undefined);
-      handleInputChange('model', undefined);
-      handleInputChange('vin', undefined);
-      handleInputChange('lotNumber', undefined);
-    }
-  };
-
-  const clearFilters = () => {
-    setSearchParams({
-      page: 1,
-      pageSize: 12
-    });
-  };
-
-  const clearWatchlist = () => {
-    try {
-      setWatchlist(new Set<string>());
-      localStorage.removeItem('watchlist');
-      localStorage.removeItem('vehicleWatchlist');
-      localStorage.removeItem('vehicleWatchlistData');
-      showAlert('Watchlist cleared successfully', 'success');
-      console.log('Watchlist cleared');
-    } catch (error) {
-      console.error('Error clearing watchlist:', error);
-      showAlert('Error clearing watchlist. Please try again.', 'error');
-    }
-  };
-
-  const showAlert = (message: string, type: 'success' | 'error') => {
+  const showAlert = (message: string, type: 'success' | 'error' | 'info' | 'removed') => {
     setAlert({ message, type });
-    setTimeout(() => {
-      setAlert(null);
-    }, 3000);
   };
 
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(price);
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
   };
 
+  const formatPrice = (price?: number, currency?: string) => {
+    if (!price || price === 0) return 'N/A';
+    const currencySymbol = currency === 'AZN' ? '₼' : currency === 'EUR' ? '€' : currency === 'USD' ? '$' : '$';
+    return `${currencySymbol}${price.toLocaleString()}`;
+  };
 
-  const VehicleCard: React.FC<{ vehicle: CarData; viewMode: 'grid' | 'list' }> = ({ vehicle, viewMode }) => {
-    if (viewMode === 'list') {
-      return (
-        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
-          <div className="flex">
-            <div className="relative w-48 h-32 flex-shrink-0">
-              <CarPhotos 
-                carId={vehicle.id} 
-                showMultiple={false}
-                className="w-full h-full"
-              />
-              {/* Status Badge */}
-              <div className="absolute top-2 left-2">
-                <span className="bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-bold">
-                  Available
-                </span>
-              </div>
-              {/* VIN */}
-              <div className="absolute top-2 right-2">
-                <span className="bg-black/70 text-white px-2 py-1 rounded text-xs font-bold">
-                  {vehicle.vin ? vehicle.vin.substring(0, 8) + '...' : 'N/A'}
-                </span>
-              </div>
-            </div>
-            <div className="flex-1 p-4">
-              <div className="flex justify-between items-start mb-3">
-                <div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-1">
-                    {vehicle.year} {vehicle.make} {vehicle.model}
-                  </h3>
-                  <div className="flex items-center gap-4 text-sm text-gray-600">
-                    {vehicle.odometer && (
-                      <span className="flex items-center gap-1">
-                        <Gauge className="h-4 w-4" />
-                        {vehicle.odometer.toLocaleString()} {vehicle.odometerUnit || 'km'}
-                      </span>
-                    )}
-                    {vehicle.primaryDamage && vehicle.primaryDamage !== 'None' && (
-                      <span className="flex items-center gap-1">
-                        <Car className="h-4 w-4" />
-                        {vehicle.primaryDamage}
-                      </span>
-                    )}
-                    {vehicle.locationName && (
-                      <span className="flex items-center gap-1">
-                        <MapPin className="h-4 w-4" />
-                        {vehicle.locationName}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-2xl font-bold text-green-600 mb-1">
-                    {vehicle.estimatedRetailValue ? formatPrice(vehicle.estimatedRetailValue) : 'Contact for Price'}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    {vehicle.color || 'N/A'}
-                  </p>
-                </div>
-              </div>
-              <div className="flex justify-between items-center">
-                <div className="flex gap-2">
-                  {vehicle.condition && (
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      vehicle.condition === 'Used' ? 'bg-blue-100 text-blue-700' : 
-                      vehicle.condition === 'Salvage' ? 'bg-red-100 text-red-700' : 
-                      'bg-green-100 text-green-700'
-                    }`}>
-                      {vehicle.condition}
-                    </span>
-                  )}
-                  {vehicle.type && (
-                    <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full font-medium">
-                      {vehicle.type}
-                    </span>
-                  )}
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => {
-                      const newWatchlist = new Set(watchlist);
-                      if (watchlist.has(vehicle.id)) {
-                        // Remove from watchlist
-                        newWatchlist.delete(vehicle.id);
-                        setWatchlist(newWatchlist);
-                        
-                        // Remove from localStorage IDs
-                        localStorage.setItem('watchlist', JSON.stringify(Array.from(newWatchlist)));
-                        
-                        // Remove from localStorage detailed data
-                        const savedWatchlistData = localStorage.getItem('vehicleWatchlistData');
-                        if (savedWatchlistData) {
-                          const watchlistData: any[] = JSON.parse(savedWatchlistData);
-                          const filteredData = watchlistData.filter(item => item.id !== vehicle.id);
-                          localStorage.setItem('vehicleWatchlistData', JSON.stringify(filteredData));
-                        }
-                        
-                        // Also remove from vehicleWatchlist (for compatibility)
-                        const savedVehicleWatchlist = localStorage.getItem('vehicleWatchlist');
-                        if (savedVehicleWatchlist) {
-                          const vehicleWatchlistArray: string[] = JSON.parse(savedVehicleWatchlist);
-                          const filteredIds = vehicleWatchlistArray.filter(id => id !== vehicle.id);
-                          localStorage.setItem('vehicleWatchlist', JSON.stringify(filteredIds));
-                        }
-                      } else {
-                        // Add to watchlist
-                        newWatchlist.add(vehicle.id);
-                        setWatchlist(newWatchlist);
-                        
-                        // Save IDs to localStorage
-                        localStorage.setItem('watchlist', JSON.stringify(Array.from(newWatchlist)));
-                        
-                        // Save detailed vehicle data to localStorage
-                        const savedWatchlistData = localStorage.getItem('vehicleWatchlistData');
-                        const watchlistData: any[] = savedWatchlistData ? JSON.parse(savedWatchlistData) : [];
-                        
-                        const detailedVehicleData = {
-                          id: vehicle.id,
-                          auctionCarId: vehicle.id,
-                          carId: vehicle.id,
-                          auctionId: 'unknown',
-                          lotNumber: `LOT-${vehicle.id.slice(-4)}`,
-                          year: vehicle.year || 2020,
-                          make: vehicle.make || 'Unknown',
-                          model: vehicle.model || 'Unknown',
-                          image: vehicle.photoUrls?.[0] || '/placeholder-car.jpg',
-                          odometer: vehicle.odometer || 0,
-                          damage: vehicle.primaryDamage || 'None',
-                          estimatedRetailValue: vehicle.estimatedRetailValue || 0,
-                          currentBid: vehicle.estimatedRetailValue || 0,
-                          bidCount: 0,
-                          reservePrice: vehicle.estimatedRetailValue || 0,
-                          isReserveMet: false,
-                          auctionStartTime: new Date().toISOString(),
-                          auctionEndTime: new Date().toISOString(),
-                          isLive: false,
-                          location: {
-                            city: vehicle.locationCity || 'Unknown',
-                            region: 'North America',
-                            address: vehicle.locationAddress || 'Unknown',
-                            phone: '+1-555-0123',
-                            email: 'auction@example.com',
-                            username: 'AuctionHouse',
-                            auctionJoinDate: new Date().toISOString()
-                          },
-                          condition: {
-                            titleType: vehicle.condition === 'Salvage' ? 'Salvage' : 'Clean',
-                            keysStatus: 'Available' as const
-                          },
-                          addedToWatchlistAt: new Date().toISOString()
-                        };
-                        
-                        // Check if vehicle already exists in detailed data
-                        const existingIndex = watchlistData.findIndex(item => item.id === vehicle.id);
-                        if (existingIndex === -1) {
-                          watchlistData.push(detailedVehicleData);
-                          localStorage.setItem('vehicleWatchlistData', JSON.stringify(watchlistData));
-                        }
-                        
-                        // Also save to vehicleWatchlist (for compatibility)
-                        const savedVehicleWatchlist = localStorage.getItem('vehicleWatchlist');
-                        const vehicleWatchlistArray: string[] = savedVehicleWatchlist ? JSON.parse(savedVehicleWatchlist) : [];
-                        if (!vehicleWatchlistArray.includes(vehicle.id)) {
-                          vehicleWatchlistArray.push(vehicle.id);
-                          localStorage.setItem('vehicleWatchlist', JSON.stringify(vehicleWatchlistArray));
-                        }
-                      }
-                    }}
-                    className={`px-3 py-2 rounded-lg transition-all duration-200 flex items-center gap-1 text-xs font-medium ${
-                      watchlist.has(vehicle.id)
-                        ? 'bg-green-600 text-white hover:bg-green-700'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    {watchlist.has(vehicle.id) ? (
-                      <>
-                        <Heart className="h-3 w-3 fill-current" />
-                        Watched
-                      </>
-                    ) : (
-                      <>
-                        <Plus className="h-3 w-3" />
-                        Watch
-                      </>
-                    )}
-                  </button>
-                  <Link 
-                    to={`/car/${vehicle.id}`}
-                    className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-3 py-2 rounded-lg transition-all duration-200 flex items-center gap-1 text-xs font-medium"
-                  >
-                    <Eye className="h-3 w-3" />
-                    Details
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+  const formatMileage = (mileage?: number, unit?: string) => {
+    if (!mileage || mileage === 0) return 'N/A';
+    const unitText = unit === 'km' ? 'km' : unit === 'miles' ? 'mi' : unit || 'km';
+    return `${mileage.toLocaleString()} ${unitText}`;
+  };
+
+  // Filtered and sorted vehicles
+  const filteredVehicles = useMemo(() => {
+    let filtered = vehicles;
+
+    // Search filter (using debounced term)
+    if (debouncedSearchTerm) {
+      const term = debouncedSearchTerm.toLowerCase();
+      filtered = filtered.filter(vehicle => 
+        vehicle.make.toLowerCase().includes(term) ||
+        vehicle.model.toLowerCase().includes(term) ||
+        vehicle.year.toString().includes(term) ||
+        vehicle.vin.toLowerCase().includes(term) ||
+        vehicle.color?.toLowerCase().includes(term)
       );
     }
 
+    // Enum filters
+    if (filters.fuelType) {
+      filtered = filtered.filter(vehicle => vehicle.fuelType === Number(filters.fuelType));
+    }
+    if (filters.carCondition) {
+      filtered = filtered.filter(vehicle => vehicle.carCondition === Number(filters.carCondition));
+    }
+    if (filters.damageType) {
+      filtered = filtered.filter(vehicle => vehicle.damageType === Number(filters.damageType));
+    }
+    if (filters.titleType) {
+      filtered = filtered.filter(vehicle => vehicle.titleType === Number(filters.titleType));
+    }
+    if (filters.hasKeys !== '') {
+      filtered = filtered.filter(vehicle => vehicle.hasKeys === (filters.hasKeys === 'true'));
+    }
+
+    // Range filters
+    if (filters.priceRange.min) {
+      filtered = filtered.filter(vehicle => (vehicle.price || 0) >= Number(filters.priceRange.min));
+    }
+    if (filters.priceRange.max) {
+      filtered = filtered.filter(vehicle => (vehicle.price || 0) <= Number(filters.priceRange.max));
+    }
+    if (filters.yearRange.min) {
+      filtered = filtered.filter(vehicle => vehicle.year >= Number(filters.yearRange.min));
+    }
+    if (filters.yearRange.max) {
+      filtered = filtered.filter(vehicle => vehicle.year <= Number(filters.yearRange.max));
+    }
+    if (filters.mileageRange.min) {
+      filtered = filtered.filter(vehicle => (vehicle.mileage || 0) >= Number(filters.mileageRange.min));
+    }
+    if (filters.mileageRange.max) {
+      filtered = filtered.filter(vehicle => (vehicle.mileage || 0) <= Number(filters.mileageRange.max));
+    }
+
+    // Sorting
+    filtered.sort((a, b) => {
+      const aValue = a[sortField];
+      const bValue = b[sortField];
+      
+      if (aValue === undefined && bValue === undefined) return 0;
+      if (aValue === undefined) return sortDirection === 'asc' ? 1 : -1;
+      if (bValue === undefined) return sortDirection === 'asc' ? -1 : 1;
+      
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
+        return sortDirection === 'asc' 
+          ? aValue.localeCompare(bValue)
+          : bValue.localeCompare(aValue);
+      }
+      
+      if (typeof aValue === 'number' && typeof bValue === 'number') {
+        return sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
+      }
+      
+      return 0;
+    });
+
+    return filtered;
+  }, [vehicles, debouncedSearchTerm, filters, sortField, sortDirection]);
+
+  const handleSort = useCallback((field: keyof Vehicle) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  }, [sortField, sortDirection]);
+
+  const clearFilters = useCallback(() => {
+    setFilters({
+      fuelType: '',
+      carCondition: '',
+      damageType: '',
+      titleType: '',
+      hasKeys: '',
+      priceRange: { min: '', max: '' },
+      yearRange: { min: '', max: '' },
+      mileageRange: { min: '', max: '' }
+    });
+    setSearchTerm('');
+  }, []);
+
+  const toggleRowExpansion = useCallback((vehicleId: string) => {
+    setExpandedRows(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(vehicleId)) {
+        newSet.delete(vehicleId);
+      } else {
+        newSet.add(vehicleId);
+      }
+      return newSet;
+    });
+  }, []);
+
+  const handleWatchlistToggle = (vehicle: Vehicle) => {
+    console.log('🔔 Watchlist toggle clicked for vehicle:', vehicle.id, vehicle.make, vehicle.model);
+    const newWatchlist = new Set(watchlist);
+    if (watchlist.has(vehicle.id)) {
+      // Remove from watchlist
+      console.log('❌ Removing from watchlist:', vehicle.id);
+      newWatchlist.delete(vehicle.id);
+      setWatchlist(newWatchlist);
+      
+      // Remove from localStorage IDs
+      localStorage.setItem('watchlist', JSON.stringify(Array.from(newWatchlist)));
+      
+      // Remove from localStorage detailed data
+      const savedWatchlistData = localStorage.getItem('vehicleWatchlistData');
+      if (savedWatchlistData) {
+        const watchlistData: any[] = JSON.parse(savedWatchlistData);
+        const filteredData = watchlistData.filter(item => item.id !== vehicle.id);
+        localStorage.setItem('vehicleWatchlistData', JSON.stringify(filteredData));
+      }
+      
+      // Also remove from vehicleWatchlist (for compatibility)
+      const savedVehicleWatchlist = localStorage.getItem('vehicleWatchlist');
+      if (savedVehicleWatchlist) {
+        const vehicleWatchlistArray: string[] = JSON.parse(savedVehicleWatchlist);
+        const filteredIds = vehicleWatchlistArray.filter(id => id !== vehicle.id);
+        localStorage.setItem('vehicleWatchlist', JSON.stringify(filteredIds));
+      }
+      
+      console.log('✅ Vehicle removed from all localStorage keys');
+      showAlert('Removed from Watchlist', 'removed');
+    } else {
+      // Add to watchlist
+      console.log('✅ Adding to watchlist:', vehicle.id);
+      newWatchlist.add(vehicle.id);
+      setWatchlist(newWatchlist);
+      
+      // Save IDs to localStorage
+      localStorage.setItem('watchlist', JSON.stringify(Array.from(newWatchlist)));
+      
+      // Save detailed vehicle data to localStorage
+      const savedWatchlistData = localStorage.getItem('vehicleWatchlistData');
+      const watchlistData: any[] = savedWatchlistData ? JSON.parse(savedWatchlistData) : [];
+      
+      const detailedVehicleData = {
+        id: vehicle.id,
+        auctionCarId: vehicle.id,
+        carId: vehicle.id,
+        auctionId: 'unknown',
+        lotNumber: `LOT-${vehicle.id.slice(-4)}`,
+        year: vehicle.year || 2020,
+        make: vehicle.make || 'Unknown',
+        model: vehicle.model || 'Unknown',
+        image: vehicle.photoUrls?.[0] || '/placeholder-car.jpg',
+        odometer: vehicle.mileage || 0,
+        damage: 'None',
+        estimatedRetailValue: vehicle.estimatedRetailValue || 0,
+        currentBid: vehicle.estimatedRetailValue || 0,
+        bidCount: 0,
+        reservePrice: vehicle.estimatedRetailValue || 0,
+        isReserveMet: false,
+        auctionStartTime: new Date().toISOString(),
+        auctionEndTime: new Date().toISOString(),
+        isLive: false,
+        location: {
+          city: vehicle.locationCity || 'Unknown',
+          region: 'North America',
+          address: vehicle.locationAddress || 'Unknown',
+          phone: '+1-555-0123',
+          email: 'auction@example.com',
+          username: 'AuctionHouse',
+          auctionJoinDate: new Date().toISOString()
+        },
+        condition: {
+          titleType: 'Clean',
+          keysStatus: 'Available' as const
+        },
+        addedToWatchlistAt: new Date().toISOString()
+      };
+      
+      // Check if vehicle already exists in detailed data
+      const existingIndex = watchlistData.findIndex(item => item.id === vehicle.id);
+      if (existingIndex === -1) {
+        watchlistData.push(detailedVehicleData);
+        localStorage.setItem('vehicleWatchlistData', JSON.stringify(watchlistData));
+        console.log('💾 Saved to vehicleWatchlistData. Total vehicles in watchlist:', watchlistData.length);
+        console.log('📦 Detailed vehicle data:', detailedVehicleData);
+      } else {
+        console.log('⚠️ Vehicle already exists in watchlist data');
+      }
+      
+      // Also save to vehicleWatchlist (for compatibility)
+      const savedVehicleWatchlist = localStorage.getItem('vehicleWatchlist');
+      const vehicleWatchlistArray: string[] = savedVehicleWatchlist ? JSON.parse(savedVehicleWatchlist) : [];
+      if (!vehicleWatchlistArray.includes(vehicle.id)) {
+        vehicleWatchlistArray.push(vehicle.id);
+        localStorage.setItem('vehicleWatchlist', JSON.stringify(vehicleWatchlistArray));
+        console.log('💾 Also saved to vehicleWatchlist (compatibility)');
+      }
+      
+      console.log('🎉 Vehicle successfully added to watchlist! Check Dashboard to see it.');
+      showAlert('Added to Watchlist', 'success');
+    }
+  };
+
+  if (loading) {
     return (
-      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
-        <div className="relative h-48 bg-gray-100 overflow-hidden">
-          <CarPhotos 
-            carId={vehicle.id} 
-            showMultiple={false}
-            className="w-full h-full"
-          />
-          {/* Status Badge */}
-          <div className="absolute top-3 left-3">
-            <span className="bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-bold">
-              Available
-            </span>
-          </div>
-          {/* VIN */}
-          <div className="absolute top-3 right-3">
-            <span className="bg-black/70 text-white px-2 py-1 rounded text-xs font-bold">
-              {vehicle.vin ? vehicle.vin.substring(0, 8) + '...' : 'N/A'}
-            </span>
-          </div>
-          {/* Price */}
-          <div className="absolute bottom-3 right-3">
-            <span className="bg-green-500 text-white px-2 py-1 rounded text-sm font-bold">
-              {vehicle.estimatedRetailValue ? formatPrice(vehicle.estimatedRetailValue) : 'Contact'}
-            </span>
-          </div>
-        </div>
-        <div className="p-4">
-          <h3 className="text-lg font-bold text-gray-900 mb-2">
-            {vehicle.year} {vehicle.make} {vehicle.model}
-          </h3>
-          <div className="space-y-2 mb-4">
-            {vehicle.odometer && (
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Gauge className="h-4 w-4" />
-                <span>{vehicle.odometer.toLocaleString()} {vehicle.odometerUnit || 'km'}</span>
-              </div>
-            )}
-            {vehicle.primaryDamage && vehicle.primaryDamage !== 'None' && (
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Car className="h-4 w-4" />
-                <span>{vehicle.primaryDamage}</span>
-              </div>
-            )}
-            {vehicle.locationName && (
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <MapPin className="h-4 w-4" />
-                <span>{vehicle.locationName}</span>
-              </div>
-            )}
-          </div>
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex gap-2">
-              {vehicle.condition && (
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                  vehicle.condition === 'Used' ? 'bg-blue-100 text-blue-700' : 
-                  vehicle.condition === 'Salvage' ? 'bg-red-100 text-red-700' : 
-                  'bg-green-100 text-green-700'
-                }`}>
-                  {vehicle.condition}
-                </span>
-              )}
-              {vehicle.type && (
-                <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full font-medium">
-                  {vehicle.type}
-                </span>
-              )}
-            </div>
-            <span className="text-sm text-gray-600 font-medium">
-              {vehicle.color || 'N/A'}
-            </span>
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => {
-                const newWatchlist = new Set(watchlist);
-                if (watchlist.has(vehicle.id)) {
-                  // Remove from watchlist
-                  newWatchlist.delete(vehicle.id);
-                  setWatchlist(newWatchlist);
-                  
-                  // Remove from localStorage IDs
-                  localStorage.setItem('watchlist', JSON.stringify(Array.from(newWatchlist)));
-                  
-                  // Remove from localStorage detailed data
-                  const savedWatchlistData = localStorage.getItem('vehicleWatchlistData');
-                  if (savedWatchlistData) {
-                    const watchlistData: any[] = JSON.parse(savedWatchlistData);
-                    const filteredData = watchlistData.filter(item => item.id !== vehicle.id);
-                    localStorage.setItem('vehicleWatchlistData', JSON.stringify(filteredData));
-                  }
-                  
-                  // Also remove from vehicleWatchlist (for compatibility)
-                  const savedVehicleWatchlist = localStorage.getItem('vehicleWatchlist');
-                  if (savedVehicleWatchlist) {
-                    const vehicleWatchlistArray: string[] = JSON.parse(savedVehicleWatchlist);
-                    const filteredIds = vehicleWatchlistArray.filter(id => id !== vehicle.id);
-                    localStorage.setItem('vehicleWatchlist', JSON.stringify(filteredIds));
-                  }
-                } else {
-                  // Add to watchlist
-                  newWatchlist.add(vehicle.id);
-                  setWatchlist(newWatchlist);
-                  
-                  // Save IDs to localStorage
-                  localStorage.setItem('watchlist', JSON.stringify(Array.from(newWatchlist)));
-                  
-                  // Save detailed vehicle data to localStorage
-                  const savedWatchlistData = localStorage.getItem('vehicleWatchlistData');
-                  const watchlistData: any[] = savedWatchlistData ? JSON.parse(savedWatchlistData) : [];
-                  
-                  const detailedVehicleData = {
-                    id: vehicle.id,
-                    auctionCarId: vehicle.id,
-                    carId: vehicle.id,
-                    auctionId: 'unknown',
-                    lotNumber: `LOT-${vehicle.id.slice(-4)}`,
-                    year: vehicle.year || 2020,
-                    make: vehicle.make || 'Unknown',
-                    model: vehicle.model || 'Unknown',
-                    image: vehicle.photoUrls?.[0] || '/placeholder-car.jpg',
-                    odometer: vehicle.odometer || 0,
-                    damage: vehicle.primaryDamage || 'None',
-                    estimatedRetailValue: vehicle.estimatedRetailValue || 0,
-                    currentBid: vehicle.estimatedRetailValue || 0,
-                    bidCount: 0,
-                    reservePrice: vehicle.estimatedRetailValue || 0,
-                    isReserveMet: false,
-                    auctionStartTime: new Date().toISOString(),
-                    auctionEndTime: new Date().toISOString(),
-                    isLive: false,
-                    location: {
-                      city: vehicle.locationCity || 'Unknown',
-                      region: 'North America',
-                      address: vehicle.locationAddress || 'Unknown',
-                      phone: '+1-555-0123',
-                      email: 'auction@example.com',
-                      username: 'AuctionHouse',
-                      auctionJoinDate: new Date().toISOString()
-                    },
-                    condition: {
-                      titleType: vehicle.condition === 'Salvage' ? 'Salvage' : 'Clean',
-                      keysStatus: 'Available' as const
-                    },
-                    addedToWatchlistAt: new Date().toISOString()
-                  };
-                  
-                  // Check if vehicle already exists in detailed data
-                  const existingIndex = watchlistData.findIndex(item => item.id === vehicle.id);
-                  if (existingIndex === -1) {
-                    watchlistData.push(detailedVehicleData);
-                    localStorage.setItem('vehicleWatchlistData', JSON.stringify(watchlistData));
-                  }
-                  
-                  // Also save to vehicleWatchlist (for compatibility)
-                  const savedVehicleWatchlist = localStorage.getItem('vehicleWatchlist');
-                  const vehicleWatchlistArray: string[] = savedVehicleWatchlist ? JSON.parse(savedVehicleWatchlist) : [];
-                  if (!vehicleWatchlistArray.includes(vehicle.id)) {
-                    vehicleWatchlistArray.push(vehicle.id);
-                    localStorage.setItem('vehicleWatchlist', JSON.stringify(vehicleWatchlistArray));
-                  }
-                }
-              }}
-              className={`flex-1 px-3 py-2 rounded-lg transition-all duration-200 flex items-center justify-center gap-1 text-xs font-medium ${
-                watchlist.has(vehicle.id)
-                  ? 'bg-green-600 text-white hover:bg-green-700'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {watchlist.has(vehicle.id) ? (
-                <>
-                  <Heart className="h-3 w-3 fill-current" />
-                  Watched
-                </>
-              ) : (
-                <>
-                  <Plus className="h-3 w-3" />
-                  Watch
-                </>
-              )}
-            </button>
-            <Link 
-              to={`/car/${vehicle.id}`}
-              className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-2 px-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-1 text-xs font-medium"
-            >
-              <Eye className="h-3 w-3" />
-              Details
-            </Link>
-          </div>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
+          <p className="text-gray-900 text-lg">Loading live auction vehicles...</p>
         </div>
       </div>
     );
-  };
+  }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Custom Alert */}
+    <div className="min-h-screen" style={{
+      background: 'linear-gradient(135deg, #1e1f3b, #2b2f77)',
+      backdropFilter: 'blur(10px)'
+    }}>
+      {/* Toast Notifications */}
       {alert && (
-        <div className="fixed top-4 right-4 z-50 animate-in slide-in-from-right duration-300">
-          <div className={`px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 min-w-80 max-w-md transform transition-all duration-300 ${
-            alert.type === 'success' 
-              ? 'bg-green-500 text-white border-l-4 border-green-400' 
-              : 'bg-red-500 text-white border-l-4 border-red-400'
-          }`}>
-            <div className={`w-2 h-2 rounded-full animate-pulse ${
-              alert.type === 'success' ? 'bg-green-200' : 'bg-red-200'
-            }`}></div>
-            <span className="font-medium">{alert.message}</span>
+        <Alert 
+          message={alert.message} 
+          type={alert.type} 
+          onClose={() => setAlert(null)} 
+        />
+      )}
+      
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-4xl font-bold text-white mb-2">Vehicle Finder</h1>
+            <p className="text-blue-200 text-lg">Search and filter vehicles from live auctions</p>
+          </div>
+          <div className="flex gap-3">
             <button
-              onClick={() => setAlert(null)}
-              className="ml-auto text-white hover:text-gray-200 transition-colors p-1 rounded hover:bg-white hover:bg-opacity-20"
+              onClick={loadVehicles}
+              disabled={loading}
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-500/25 font-semibold"
             >
-              <X className="h-4 w-4" />
+              <RefreshCw className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
+              Refresh
             </button>
           </div>
         </div>
-      )}
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Vehicle Finder</h1>
-          <p className="text-gray-600 mb-6">Search and filter vehicles from our auction inventory</p>
-          
-          {/* Quick Search Bar */}
-          <div className="max-w-2xl">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search by make, model, VIN, or lot number..."
-                value={searchParams.make || searchParams.model || searchParams.vin || searchParams.lotNumber || ''}
-                onChange={(e) => handleSearchInputChange(e.target.value)}
-                className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none transition-all duration-300 shadow-lg"
-              />
-              <button
-                onClick={handleSearch}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-300 text-sm font-medium"
-              >
-                <Search className="h-4 w-4" />
-              </button>
+
+        {/* Active Filters Indicator */}
+        {(searchTerm || Object.values(filters).some(f => 
+          typeof f === 'string' ? f !== '' : 
+          typeof f === 'object' ? Object.values(f).some(v => v !== '') : false
+        )) && (
+          <div className="mb-6 p-4 bg-blue-500/20 border border-blue-500/30 rounded-xl backdrop-blur-sm">
+            <div className="flex items-center gap-2 mb-2">
+              <Filter className="h-4 w-4 text-blue-400" />
+              <span className="text-blue-200 font-semibold">Active Filters:</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {searchTerm && (
+                <span className="px-3 py-1 bg-blue-600/30 text-blue-200 rounded-full text-sm border border-blue-500/30">
+                  Search: "{searchTerm}"
+                </span>
+              )}
+              {filters.fuelType && (
+                <span className="px-3 py-1 bg-blue-600/30 text-blue-200 rounded-full text-sm border border-blue-500/30">
+                  Fuel: {getEnumLabel('FuelType', Number(filters.fuelType))}
+                </span>
+              )}
+              {filters.carCondition && (
+                <span className="px-3 py-1 bg-green-600/30 text-green-200 rounded-full text-sm border border-green-500/30">
+                  Condition: {getEnumLabel('CarCondition', Number(filters.carCondition))}
+                </span>
+              )}
+              {filters.damageType && (
+                <span className="px-3 py-1 bg-red-600/30 text-red-200 rounded-full text-sm border border-red-500/30">
+                  Damage: {getEnumLabel('DamageType', Number(filters.damageType))}
+                </span>
+              )}
+              {filters.hasKeys !== '' && (
+                <span className="px-3 py-1 bg-yellow-600/30 text-yellow-200 rounded-full text-sm border border-yellow-500/30">
+                  Keys: {filters.hasKeys === 'true' ? 'Has Keys' : 'No Keys'}
+                </span>
+              )}
+              {(filters.priceRange.min || filters.priceRange.max) && (
+                <span className="px-3 py-1 bg-green-600/30 text-green-200 rounded-full text-sm border border-green-500/30">
+                  Price: {filters.priceRange.min || '0'} - {filters.priceRange.max || '∞'}
+                </span>
+              )}
+              {(filters.yearRange.min || filters.yearRange.max) && (
+                <span className="px-3 py-1 bg-purple-600/30 text-purple-200 rounded-full text-sm border border-purple-500/30">
+                  Year: {filters.yearRange.min || '1900'} - {filters.yearRange.max || '2024'}
+                </span>
+              )}
+              {(filters.mileageRange.min || filters.mileageRange.max) && (
+                <span className="px-3 py-1 bg-orange-600/30 text-orange-200 rounded-full text-sm border border-orange-500/30">
+                  Mileage: {filters.mileageRange.min || '0'} - {filters.mileageRange.max || '∞'} km
+                </span>
+              )}
             </div>
           </div>
-        </div>
+        )}
 
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Search Filters Panel */}
-          <div className="w-full lg:w-80 flex-shrink-0">
-            <div className="relative overflow-hidden rounded-xl p-6 sticky top-8 shadow-lg" style={{
-              background: 'linear-gradient(to right, #1E3A8A, #3B82F6)',
-              backdropFilter: 'blur(12px)',
-              backgroundColor: 'rgba(255, 255, 255, 0.05)',
-              boxShadow: '0 8px 24px rgba(0,0,0,0.15)'
-            }}>
-              <div className="flex items-center gap-2 mb-6">
-                <Filter className="h-5 w-5 text-white" />
-                <h2 className="text-xl font-semibold text-white">Search Filters</h2>
-                {watchlist.size > 0 && (
-                  <div className="ml-auto flex items-center gap-1 bg-green-500/20 px-2 py-1 rounded-lg">
-                    <Heart className="h-4 w-4 text-green-400 fill-current" />
-                    <span className="text-green-400 text-sm font-medium">{watchlist.size}</span>
-                  </div>
+        {/* Search and Filter Bar */}
+        <div className="bg-slate-800/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 mb-8 shadow-2xl">
+          <div className="flex flex-col lg:flex-row gap-4">
+            {/* Search Input */}
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-blue-400" />
+                <input
+                  type="text"
+                  placeholder="Search by make, model, year, VIN, or color..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className={`w-full pl-12 pr-4 py-4 bg-slate-900/80 border-2 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 ${
+                    searchTerm ? 'border-blue-500 bg-blue-500/10' : 'border-slate-600 hover:border-slate-500'
+                  }`}
+                />
+                {searchTerm && (
+                  <button
+                    onClick={() => setSearchTerm('')}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                  >
+                    ✕
+                  </button>
                 )}
               </div>
-
-              <div className="space-y-6">
-                {/* Condition */}
-                <div>
-                  <label className="block text-sm font-medium text-white mb-3">Condition</label>
-                  <div className="flex gap-2">
-                    {filters?.conditions.map((condition) => (
-                      <button
-                        key={condition}
-                        onClick={() => handleInputChange('condition', condition === 'All' ? undefined : condition)}
-                        className={`px-3 py-1 rounded-lg text-sm transition-all duration-300 ${
-                          searchParams.condition === condition || (condition === 'All' && !searchParams.condition)
-                            ? 'bg-white text-blue-600'
-                            : 'bg-white/20 text-white hover:bg-white/30'
-                        }`}
-                      >
-                        {condition}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Type */}
-                <div>
-                  <label className="block text-sm font-medium text-white mb-2">Vehicle Type</label>
-                  <select
-                    value={searchParams.type || ''}
-                    onChange={(e) => handleInputChange('type', e.target.value || undefined)}
-                    className="w-full bg-white/20 border border-white/30 rounded-lg px-3 py-2 text-white focus:bg-white/30 focus:border-white focus:outline-none transition-all duration-300 custom-dropdown"
-                    style={{
-                      borderRadius: '8px',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
-                    }}
-                  >
-                    <option value="" style={{ backgroundColor: '#0F172A', color: '#FFFFFF' }}>All Types</option>
-                    {filters?.types.map((type) => (
-                      <option key={type} value={type} style={{ backgroundColor: '#0F172A', color: '#FFFFFF' }}>{type}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Year Range */}
-                <div>
-                  <label className="block text-sm font-medium text-white mb-2">Year Range</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      type="number"
-                      placeholder="From"
-                      value={searchParams.minYear || ''}
-                      onChange={(e) => handleInputChange('minYear', e.target.value ? parseInt(e.target.value) : undefined)}
-                      className="bg-white/20 border border-white/30 rounded-lg px-3 py-2 text-white placeholder-gray-200 focus:bg-white/30 focus:border-white focus:outline-none transition-all duration-300"
-                    />
-                    <input
-                      type="number"
-                      placeholder="To"
-                      value={searchParams.maxYear || ''}
-                      onChange={(e) => handleInputChange('maxYear', e.target.value ? parseInt(e.target.value) : undefined)}
-                      className="bg-white/20 border border-white/30 rounded-lg px-3 py-2 text-white placeholder-gray-200 focus:bg-white/30 focus:border-white focus:outline-none transition-all duration-300"
-                    />
-                  </div>
-                </div>
-
-                {/* Odometer Range */}
-                <div>
-                  <label className="block text-sm font-medium text-white mb-2">Mileage Range</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      type="number"
-                      placeholder="Min"
-                      value={searchParams.minOdometer || ''}
-                      onChange={(e) => handleInputChange('minOdometer', e.target.value ? parseInt(e.target.value) : undefined)}
-                      className="bg-white/20 border border-white/30 rounded-lg px-3 py-2 text-white placeholder-gray-200 focus:bg-white/30 focus:border-white focus:outline-none transition-all duration-300"
-                    />
-                    <input
-                      type="number"
-                      placeholder="Max"
-                      value={searchParams.maxOdometer || ''}
-                      onChange={(e) => handleInputChange('maxOdometer', e.target.value ? parseInt(e.target.value) : undefined)}
-                      className="bg-white/20 border border-white/30 rounded-lg px-3 py-2 text-white placeholder-gray-200 focus:bg-white/30 focus:border-white focus:outline-none transition-all duration-300"
-                    />
-                  </div>
-                </div>
-
-                {/* Damage Type */}
-                <div>
-                  <label className="block text-sm font-medium text-white mb-2">Damage Type</label>
-                  <select
-                    value={searchParams.damageType || ''}
-                    onChange={(e) => handleInputChange('damageType', e.target.value || undefined)}
-                    className="w-full bg-white/20 border border-white/30 rounded-lg px-3 py-2 text-white focus:bg-white/30 focus:border-white focus:outline-none transition-all duration-300 custom-dropdown"
-                    style={{
-                      borderRadius: '8px',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
-                    }}
-                  >
-                    <option value="" style={{ backgroundColor: '#0F172A', color: '#FFFFFF' }}>All Damage Types</option>
-                    {filters?.damageTypes.map((damage) => (
-                      <option key={damage} value={damage} style={{ backgroundColor: '#0F172A', color: '#FFFFFF' }}>{damage}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Make */}
-                <div>
-                  <label className="block text-sm font-medium text-white mb-2">Make</label>
-                  <select
-                    value={searchParams.make || ''}
-                    onChange={(e) => handleInputChange('make', e.target.value || undefined)}
-                    className="w-full bg-white/20 border border-white/30 rounded-lg px-3 py-2 text-white focus:bg-white/30 focus:border-white focus:outline-none transition-all duration-300 custom-dropdown"
-                    style={{
-                      borderRadius: '8px',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
-                    }}
-                  >
-                    <option value="" style={{ backgroundColor: '#0F172A', color: '#FFFFFF' }}>All Makes</option>
-                    {filters?.makes.map((make) => (
-                      <option key={make} value={make} style={{ backgroundColor: '#0F172A', color: '#FFFFFF' }}>{make}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Model */}
-                <div>
-                  <label className="block text-sm font-medium text-white mb-2">Model</label>
-                  <select
-                    value={searchParams.model || ''}
-                    onChange={(e) => handleInputChange('model', e.target.value || undefined)}
-                    disabled={!searchParams.make}
-                    className="w-full bg-white/20 border border-white/30 rounded-lg px-3 py-2 text-white focus:bg-white/30 focus:border-white focus:outline-none transition-all duration-300 disabled:opacity-50"
-                    style={{
-                      borderRadius: '8px',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
-                    }}
-                  >
-                    <option value="" style={{ backgroundColor: '#0F172A', color: '#FFFFFF' }}>All Models</option>
-                    {models.map((model) => (
-                      <option key={model} value={model} style={{ backgroundColor: '#0F172A', color: '#FFFFFF' }}>{model}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Location */}
-                <div>
-                  <label className="block text-sm font-medium text-white mb-2">Location</label>
-                  <select
-                    value={searchParams.location || ''}
-                    onChange={(e) => handleInputChange('location', e.target.value || undefined)}
-                    className="w-full bg-white/20 border border-white/30 rounded-lg px-3 py-2 text-white focus:bg-white/30 focus:border-white focus:outline-none transition-all duration-300 custom-dropdown"
-                    style={{
-                      borderRadius: '8px',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
-                    }}
-                  >
-                    <option value="" style={{ backgroundColor: '#0F172A', color: '#FFFFFF' }}>All Locations</option>
-                    {filters?.locations.map((location) => (
-                      <option key={location} value={location} style={{ backgroundColor: '#0F172A', color: '#FFFFFF' }}>{location}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* VIN / Lot Number */}
-                <div>
-                  <label className="block text-sm font-medium text-white mb-2">VIN / Lot Number</label>
-                  <input
-                    type="text"
-                    placeholder="Enter VIN or Lot #"
-                    value={searchParams.vin || searchParams.lotNumber || ''}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (value.match(/^[A-Z0-9]{17}$/)) {
-                        handleInputChange('vin', value);
-                        handleInputChange('lotNumber', undefined);
-                      } else {
-                        handleInputChange('lotNumber', value);
-                        handleInputChange('vin', undefined);
-                      }
-                    }}
-                    className="w-full bg-white/20 border border-white/30 rounded-lg px-3 py-2 text-white placeholder-gray-200 focus:bg-white/30 focus:border-white focus:outline-none transition-all duration-300"
-                  />
-                </div>
-
-                {/* Search Button */}
-                <button
-                  onClick={handleSearch}
-                  disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed font-semibold shadow-lg hover:shadow-xl"
-                  style={{
-                    borderRadius: '12px',
-                    boxShadow: '0 4px 20px rgba(59, 130, 246, 0.3)'
-                  }}
-                >
-                  <Search className="h-5 w-5" />
-                  {loading ? 'Searching...' : 'Search Vehicles'}
-                </button>
-
-                {/* Clear Filters Button */}
+            </div>
+            
+            {/* Filter Toggle */}
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`flex items-center gap-2 px-6 py-4 rounded-xl transition-all duration-300 font-semibold ${
+                  showFilters 
+                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25' 
+                    : 'bg-slate-700/80 text-white hover:bg-slate-600/80 border border-slate-600'
+                }`}
+              >
+                <Filter className="h-5 w-5" />
+                Filters
+                {showFilters ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              </button>
+              
+              {(searchTerm || Object.values(filters).some(f => 
+                typeof f === 'string' ? f !== '' : 
+                typeof f === 'object' ? Object.values(f).some(v => v !== '') : false
+              )) && (
                 <button
                   onClick={clearFilters}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all duration-300 font-medium"
+                  className="flex items-center gap-2 px-6 py-4 bg-red-600 hover:bg-red-700 text-white rounded-xl transition-all duration-300 font-semibold shadow-lg shadow-red-500/25"
                 >
-                  Clear All Filters
+                  Clear Filters
                 </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Search Results Panel */}
-          <div className="flex-1 flex justify-center">
-            <div className="w-full max-w-4xl">
-              <div className="relative overflow-hidden rounded-xl p-6 shadow-lg" style={{
-                background: 'linear-gradient(to right, #1E3A8A, #3B82F6)',
-                backdropFilter: 'blur(12px)',
-                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                boxShadow: '0 8px 24px rgba(0,0,0,0.15)'
-              }}>
-              <div className="flex justify-between items-center mb-6">
-                <div>
-                  <h2 className="text-xl font-semibold text-white">Search Results</h2>
-                  {searchResults && (
-                    <p className="text-white/80 text-sm">
-                      {searchResults.totalCount} vehicles found
-                    </p>
-                  )}
-                  {watchlist.size > 0 && (
-                    <p className="text-green-400 text-sm font-medium">
-                      {watchlist.size} vehicle{watchlist.size !== 1 ? 's' : ''} in watchlist
-                    </p>
-                  )}
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={loadWatchlist}
-                    className="p-2 rounded-lg transition-all duration-300 bg-white/20 text-white hover:bg-white/30"
-                    title="Refresh Watchlist"
-                  >
-                    <RefreshCw className="h-5 w-5" />
-                  </button>
-                  {watchlist.size > 0 && (
-                    <button
-                      onClick={clearWatchlist}
-                      className="p-2 rounded-lg transition-all duration-300 bg-red-500/20 text-white hover:bg-red-500/30"
-                      title="Clear Watchlist"
-                    >
-                      <X className="h-5 w-5" />
-                    </button>
-                  )}
-                  <button
-                    onClick={() => setViewMode('grid')}
-                    className={`p-2 rounded-lg transition-all duration-300 ${
-                      viewMode === 'grid' 
-                        ? 'bg-white text-blue-600' 
-                        : 'bg-white/20 text-white hover:bg-white/30'
-                    }`}
-                  >
-                    <Grid className="h-5 w-5" />
-                  </button>
-                  <button
-                    onClick={() => setViewMode('list')}
-                    className={`p-2 rounded-lg transition-all duration-300 ${
-                      viewMode === 'list' 
-                        ? 'bg-white text-blue-600' 
-                        : 'bg-white/20 text-white hover:bg-white/30'
-                    }`}
-                  >
-                    <List className="h-5 w-5" />
-                  </button>
-                </div>
-              </div>
-
-              {loading ? (
-                <div className="flex justify-center items-center py-12">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
-                </div>
-              ) : searchResults ? (
-                <>
-                  {searchResults.vehicles.length > 0 ? (
-                    <>
-                      <div className={viewMode === 'grid' 
-                        ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6' 
-                        : 'space-y-4'
-                      }>
-                        {searchResults.vehicles.map((vehicle) => (
-                          <VehicleCard 
-                            key={vehicle.id} 
-                            vehicle={vehicle} 
-                            viewMode={viewMode} 
-                          />
-                        ))}
-                      </div>
-                      
-                      {/* Pagination */}
-                      {searchResults.totalPages > 1 && (
-                        <div className="flex justify-center items-center gap-2 mt-8">
-                          <button
-                            onClick={() => handleInputChange('page', Math.max(1, searchResults.page - 1))}
-                            disabled={searchResults.page <= 1}
-                            className="px-3 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            Previous
-                          </button>
-                          
-                          <div className="flex gap-1">
-                            {Array.from({ length: Math.min(5, searchResults.totalPages) }, (_, i) => {
-                              const pageNum = i + 1;
-                              return (
-                                <button
-                                  key={pageNum}
-                                  onClick={() => handleInputChange('page', pageNum)}
-                                  className={`px-3 py-2 rounded-lg transition-all duration-300 ${
-                                    searchResults.page === pageNum
-                                      ? 'bg-white text-blue-600'
-                                      : 'bg-white/20 hover:bg-white/30 text-white'
-                                  }`}
-                                >
-                                  {pageNum}
-                                </button>
-                              );
-                            })}
-                          </div>
-                          
-                          <button
-                            onClick={() => handleInputChange('page', Math.min(searchResults.totalPages, searchResults.page + 1))}
-                            disabled={searchResults.page >= searchResults.totalPages}
-                            className="px-3 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            Next
-                          </button>
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <div className="text-center py-12">
-                      <Car className="h-16 w-16 text-white/60 mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold text-white mb-2">No vehicles found</h3>
-                      <p className="text-white/80">Try adjusting your search filters</p>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <div className="text-center py-12">
-                  <Search className="h-16 w-16 text-white/60 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-white mb-2">Start your search</h3>
-                  <p className="text-white/80">Use the filters on the left to find vehicles</p>
-                </div>
               )}
-              </div>
             </div>
           </div>
+
+          {/* Advanced Filters */}
+          {showFilters && (
+            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+              {/* Fuel Type Filter */}
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-white mb-2 flex items-center gap-2">
+                  <Fuel className="h-4 w-4 text-blue-400" />
+                  Fuel Type
+                </label>
+                <select
+                  value={filters.fuelType}
+                  onChange={(e) => setFilters(prev => ({ ...prev, fuelType: e.target.value }))}
+                  className={`w-full px-4 py-3 bg-slate-800/80 border-2 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 ${
+                    filters.fuelType ? 'border-blue-500 bg-blue-500/20' : 'border-slate-600 hover:border-slate-500'
+                  }`}
+                >
+                  <option value="" className="bg-slate-800 text-white">All Fuel Types</option>
+                  <option value="1" className="bg-slate-800 text-white">Benzin</option>
+                  <option value="2" className="bg-slate-800 text-white">Dizel</option>
+                  <option value="3" className="bg-slate-800 text-white">Hibrid</option>
+                  <option value="4" className="bg-slate-800 text-white">Elektrik</option>
+                  <option value="5" className="bg-slate-800 text-white">LPG</option>
+                  <option value="6" className="bg-slate-800 text-white">CNG</option>
+                  <option value="7" className="bg-slate-800 text-white">Digər</option>
+                </select>
+              </div>
+
+              {/* Condition Filter */}
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-white mb-2 flex items-center gap-2">
+                  <Car className="h-4 w-4 text-green-400" />
+                  Condition
+                </label>
+                <select
+                  value={filters.carCondition}
+                  onChange={(e) => setFilters(prev => ({ ...prev, carCondition: e.target.value }))}
+                  className={`w-full px-4 py-3 bg-slate-800/80 border-2 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 ${
+                    filters.carCondition ? 'border-green-500 bg-green-500/20' : 'border-slate-600 hover:border-slate-500'
+                  }`}
+                >
+                  <option value="" className="bg-slate-800 text-white">All Conditions</option>
+                  <option value="1" className="bg-slate-800 text-white">İşləyir və Sürülür</option>
+                  <option value="2" className="bg-slate-800 text-white">Mühərrik Başlatma Proqramı</option>
+                  <option value="3" className="bg-slate-800 text-white">Təkmilləşdirilmiş</option>
+                  <option value="4" className="bg-slate-800 text-white">Stasionar</option>
+                </select>
+              </div>
+
+              {/* Damage Type Filter */}
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-white mb-2 flex items-center gap-2">
+                  <Wrench className="h-4 w-4 text-red-400" />
+                  Damage Type
+                </label>
+                <select
+                  value={filters.damageType}
+                  onChange={(e) => setFilters(prev => ({ ...prev, damageType: e.target.value }))}
+                  className={`w-full px-4 py-3 bg-slate-800/80 border-2 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-300 ${
+                    filters.damageType ? 'border-red-500 bg-red-500/20' : 'border-slate-600 hover:border-slate-500'
+                  }`}
+                >
+                  <option value="" className="bg-slate-800 text-white">All Damage Types</option>
+                  <option value="1" className="bg-slate-800 text-white">Ön Hissə</option>
+                  <option value="2" className="bg-slate-800 text-white">Arxa Hissə</option>
+                  <option value="3" className="bg-slate-800 text-white">Yan Tərəf</option>
+                  <option value="4" className="bg-slate-800 text-white">Kiçik Batıq/Cızıqlar</option>
+                  <option value="5" className="bg-slate-800 text-white">Normal Aşınma</option>
+                  <option value="6" className="bg-slate-800 text-white">Hər Tərəfli</option>
+                  <option value="7" className="bg-slate-800 text-white">Dolu</option>
+                  <option value="8" className="bg-slate-800 text-white">Vandalizm</option>
+                  <option value="9" className="bg-slate-800 text-white">Su/Sel</option>
+                  <option value="10" className="bg-slate-800 text-white">Yanma</option>
+                  <option value="11" className="bg-slate-800 text-white">Mexaniki</option>
+                  <option value="12" className="bg-slate-800 text-white">Dam</option>
+                  <option value="13" className="bg-slate-800 text-white">Alt Hissə</option>
+                </select>
+              </div>
+
+              {/* Has Keys Filter */}
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-white mb-2 flex items-center gap-2">
+                  <Hash className="h-4 w-4 text-yellow-400" />
+                  Has Keys
+                </label>
+                <select
+                  value={filters.hasKeys}
+                  onChange={(e) => setFilters(prev => ({ ...prev, hasKeys: e.target.value }))}
+                  className={`w-full px-4 py-3 bg-slate-800/80 border-2 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-300 ${
+                    filters.hasKeys ? 'border-yellow-500 bg-yellow-500/20' : 'border-slate-600 hover:border-slate-500'
+                  }`}
+                >
+                  <option value="" className="bg-slate-800 text-white">All</option>
+                  <option value="true" className="bg-slate-800 text-white">Has Keys</option>
+                  <option value="false" className="bg-slate-800 text-white">No Keys</option>
+                </select>
+              </div>
+
+              {/* Price Range */}
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-white mb-2 flex items-center gap-2">
+                  <Hash className="h-4 w-4 text-green-400" />
+                  Price Range
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="number"
+                    placeholder="Min"
+                    value={filters.priceRange.min}
+                    onChange={(e) => setFilters(prev => ({ 
+                      ...prev, 
+                      priceRange: { ...prev.priceRange, min: e.target.value }
+                    }))}
+                    className={`flex-1 px-4 py-3 bg-slate-800/80 border-2 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 ${
+                      filters.priceRange.min ? 'border-green-500 bg-green-500/20' : 'border-slate-600 hover:border-slate-500'
+                    }`}
+                  />
+                  <input
+                    type="number"
+                    placeholder="Max"
+                    value={filters.priceRange.max}
+                    onChange={(e) => setFilters(prev => ({ 
+                      ...prev, 
+                      priceRange: { ...prev.priceRange, max: e.target.value }
+                    }))}
+                    className={`flex-1 px-4 py-3 bg-slate-800/80 border-2 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 ${
+                      filters.priceRange.max ? 'border-green-500 bg-green-500/20' : 'border-slate-600 hover:border-slate-500'
+                    }`}
+                  />
+                </div>
+              </div>
+
+              {/* Year Range */}
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-white mb-2 flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-purple-400" />
+                  Year Range
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="number"
+                    placeholder="Min Year"
+                    value={filters.yearRange.min}
+                    onChange={(e) => setFilters(prev => ({ 
+                      ...prev, 
+                      yearRange: { ...prev.yearRange, min: e.target.value }
+                    }))}
+                    className={`flex-1 px-4 py-3 bg-slate-800/80 border-2 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300 ${
+                      filters.yearRange.min ? 'border-purple-500 bg-purple-500/20' : 'border-slate-600 hover:border-slate-500'
+                    }`}
+                  />
+                  <input
+                    type="number"
+                    placeholder="Max Year"
+                    value={filters.yearRange.max}
+                    onChange={(e) => setFilters(prev => ({ 
+                      ...prev, 
+                      yearRange: { ...prev.yearRange, max: e.target.value }
+                    }))}
+                    className={`flex-1 px-4 py-3 bg-slate-800/80 border-2 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300 ${
+                      filters.yearRange.max ? 'border-purple-500 bg-purple-500/20' : 'border-slate-600 hover:border-slate-500'
+                    }`}
+                  />
+                </div>
+              </div>
+
+              {/* Mileage Range */}
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-white mb-2 flex items-center gap-2">
+                  <Gauge className="h-4 w-4 text-orange-400" />
+                  Mileage Range
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="number"
+                    placeholder="Min Mileage"
+                    value={filters.mileageRange.min}
+                    onChange={(e) => setFilters(prev => ({ 
+                      ...prev, 
+                      mileageRange: { ...prev.mileageRange, min: e.target.value }
+                    }))}
+                    className={`flex-1 px-4 py-3 bg-slate-800/80 border-2 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all duration-300 ${
+                      filters.mileageRange.min ? 'border-orange-500 bg-orange-500/20' : 'border-slate-600 hover:border-slate-500'
+                    }`}
+                  />
+                  <input
+                    type="number"
+                    placeholder="Max Mileage"
+                    value={filters.mileageRange.max}
+                    onChange={(e) => setFilters(prev => ({ 
+                      ...prev, 
+                      mileageRange: { ...prev.mileageRange, max: e.target.value }
+                    }))}
+                    className={`flex-1 px-4 py-3 bg-slate-800/80 border-2 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all duration-300 ${
+                      filters.mileageRange.max ? 'border-orange-500 bg-orange-500/20' : 'border-slate-600 hover:border-slate-500'
+                    }`}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
+
+        {/* Error Messages */}
+        {error && (
+          <div className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg">
+            <p className="text-red-400">{error}</p>
+          </div>
+        )}
+
+        {/* Results Summary */}
+        {vehicles.length > 0 && (
+          <div className="mb-4 text-center">
+            <p className="text-blue-200 text-sm">
+              Showing {filteredVehicles.length} of {vehicles.length} live auction vehicle{vehicles.length !== 1 ? 's' : ''}
+              {filteredVehicles.length !== vehicles.length && (
+                <span className="text-yellow-400"> (filtered)</span>
+              )}
+            </p>
+            {debouncedSearchTerm !== searchTerm && (
+              <p className="text-gray-400 text-xs mt-1">
+                <Loader2 className="h-3 w-3 animate-spin inline mr-1" />
+                Searching...
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Vehicles Table */}
+        {filteredVehicles.length === 0 ? (
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-12 text-center">
+            <Car className="h-16 w-16 text-blue-400 mx-auto mb-4" />
+            {vehicles.length === 0 ? (
+              <>
+                <h3 className="text-xl font-semibold text-white mb-2">No Live Auction Vehicles Found</h3>
+                <p className="text-blue-200 mb-6">There are currently no vehicles in live auctions.</p>
+              </>
+            ) : (
+              <>
+                <h3 className="text-xl font-semibold text-white mb-2">No Matching Vehicles</h3>
+                <p className="text-blue-200 mb-6">
+                  No vehicles match your current search and filter criteria.
+                </p>
+                <button
+                  onClick={clearFilters}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors duration-300"
+                >
+                  Clear Filters
+                </button>
+              </>
+            )}
+          </div>
+        ) : (
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-xl">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-white/20">
+                  <tr>
+                    <th className="px-2 py-4 text-center text-xs font-medium text-gray-300 uppercase tracking-wider w-12">
+                      <ChevronDown className="h-4 w-4 mx-auto opacity-50" />
+                    </th>
+                    <th className="px-4 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                      Image
+                    </th>
+                    <th 
+                      className="px-4 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider cursor-pointer hover:text-white transition-colors"
+                      onClick={() => handleSort('make')}
+                    >
+                      <div className="flex items-center gap-1">
+                        Vehicle Details
+                        {sortField === 'make' && (
+                          sortDirection === 'asc' ? <SortAsc className="h-4 w-4" /> : <SortDesc className="h-4 w-4" />
+                        )}
+                      </div>
+                    </th>
+                    <th className="px-4 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                      Specifications
+                    </th>
+                    <th className="px-4 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                      Location
+                    </th>
+                    <th 
+                      className="px-4 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider cursor-pointer hover:text-white transition-colors"
+                      onClick={() => handleSort('price')}
+                    >
+                      <div className="flex items-center gap-1">
+                        Price
+                        {sortField === 'price' && (
+                          sortDirection === 'asc' ? <SortAsc className="h-4 w-4" /> : <SortDesc className="h-4 w-4" />
+                        )}
+                      </div>
+                    </th>
+                    <th className="px-4 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th 
+                      className="px-4 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider cursor-pointer hover:text-white transition-colors"
+                      onClick={() => handleSort('createdAt')}
+                    >
+                      <div className="flex items-center gap-1">
+                        Added
+                        {sortField === 'createdAt' && (
+                          sortDirection === 'asc' ? <SortAsc className="h-4 w-4" /> : <SortDesc className="h-4 w-4" />
+                        )}
+                      </div>
+                    </th>
+                    <th className="px-4 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/10">
+                  {filteredVehicles.map((vehicle) => {
+                    const isExpanded = expandedRows.has(vehicle.id);
+                    return (
+                      <React.Fragment key={vehicle.id}>
+                        <tr className="hover:bg-white/5 transition-all duration-200 group">
+                          {/* Expand/Collapse Column */}
+                          <td className="px-2 py-3 text-center">
+                            <button
+                              onClick={() => toggleRowExpansion(vehicle.id)}
+                              className="text-blue-400 hover:text-blue-300 hover:bg-blue-400/10 rounded-full p-1 transition-all duration-200"
+                              title={isExpanded ? "Collapse details" : "Expand details"}
+                            >
+                              {isExpanded ? (
+                                <ChevronUp className="h-4 w-4" />
+                              ) : (
+                                <ChevronDown className="h-4 w-4" />
+                              )}
+                            </button>
+                          </td>
+                          
+                          {/* Image Column */}
+                          <td className="px-3 py-3">
+                            <CarPhotos 
+                              carId={vehicle.id} 
+                              showMultiple={false}
+                              className="h-12 w-16"
+                              enableGallery={true}
+                              lazyLoad={true}
+                            />
+                          </td>
+
+                          {/* Vehicle Details Column */}
+                          <td className="px-4 py-4">
+                            <div className="text-sm">
+                              <div className="font-medium text-white">
+                                {vehicle.make} {vehicle.model}
+                              </div>
+                              <div className="text-blue-200 text-xs">
+                                <div className="flex items-center gap-1">
+                                  <Calendar className="h-3 w-3" />
+                                  {vehicle.year}
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <Hash className="h-3 w-3" />
+                                  {vehicle.vin}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+
+                          {/* Specifications Column */}
+                          <td className="px-4 py-4">
+                            <div className="text-xs text-blue-200 space-y-1">
+                              <div className="flex items-center gap-1">
+                                <Palette className="h-3 w-3" />
+                                {vehicle.color || 'N/A'}
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Wrench className="h-3 w-3" />
+                                {vehicle.bodyStyle || 'N/A'}
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Fuel className="h-3 w-3" />
+                                {vehicle.fuelType !== undefined ? getEnumLabel('FuelType', vehicle.fuelType) : 'N/A'}
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Gauge className="h-3 w-3" />
+                                {formatMileage(vehicle.mileage, vehicle.mileageUnit)}
+                              </div>
+                            </div>
+                          </td>
+
+                          {/* Location Column */}
+                          <td className="px-4 py-4">
+                            <div className="text-xs text-blue-200">
+                              <div className="flex items-center gap-1">
+                                <MapPin className="h-3 w-3" />
+                                {vehicle.locationName || 'N/A'}
+                              </div>
+                              {vehicle.locationAddress && vehicle.locationCity && (
+                                <div className="text-xs text-gray-400 mt-1">
+                                  {vehicle.locationAddress} - {vehicle.locationCity}
+                                </div>
+                              )}
+                            </div>
+                          </td>
+
+                          {/* Price Column */}
+                          <td className="px-4 py-4">
+                            <div className="text-sm">
+                              {vehicle.price && (
+                                <div className="font-medium text-green-400">
+                                  {formatPrice(vehicle.price, vehicle.currency)}
+                                </div>
+                              )}
+                              {vehicle.estimatedRetailValue && (
+                                <div className={`text-xs ${vehicle.price ? 'text-gray-400' : 'text-green-400 font-medium'}`}>
+                                  Est: {formatPrice(vehicle.estimatedRetailValue, vehicle.currency)}
+                                </div>
+                              )}
+                              {!vehicle.price && !vehicle.estimatedRetailValue && (
+                                <div className="text-gray-400 text-xs">N/A</div>
+                              )}
+                            </div>
+                          </td>
+
+                          {/* Status Column */}
+                          <td className="px-4 py-4">
+                            <div className="space-y-1">
+                              <div className="text-xs text-green-400 font-medium">
+                                Live Auction
+                              </div>
+                              {vehicle.hasKeys !== undefined && (
+                                <div className={`text-xs ${vehicle.hasKeys ? 'text-green-400' : 'text-red-400'}`}>
+                                  {vehicle.hasKeys ? '✓ Keys' : '✗ No Keys'}
+                                </div>
+                              )}
+                            </div>
+                          </td>
+
+                          {/* Added Date Column */}
+                          <td className="px-4 py-4">
+                            <div className="text-xs text-blue-200">
+                              <div className="font-medium">
+                                {vehicle.ownerUsername || 'Unknown'}
+                              </div>
+                              <div className="text-gray-400">
+                                {formatDate(vehicle.createdAt)}
+                              </div>
+                            </div>
+                          </td>
+
+                          {/* Actions Column */}
+                          <td className="px-4 py-4">
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => handleWatchlistToggle(vehicle)}
+                                className={`text-${watchlist.has(vehicle.id) ? 'green' : 'blue'}-400 hover:text-${watchlist.has(vehicle.id) ? 'green' : 'blue'}-300 hover:bg-${watchlist.has(vehicle.id) ? 'green' : 'blue'}-400/10 rounded-full p-2 transition-all duration-200`}
+                                title={watchlist.has(vehicle.id) ? "Remove from Watchlist" : "Add to Watchlist"}
+                              >
+                                <Heart className={`h-4 w-4 ${watchlist.has(vehicle.id) ? 'fill-current' : ''}`} />
+                              </button>
+                              <Link 
+                                to={`/car/${vehicle.id}`}
+                                className="text-blue-400 hover:text-blue-300 hover:bg-blue-400/10 rounded-full p-2 transition-all duration-200"
+                                title="View Details"
+                              >
+                                <Eye className="h-4 w-4" />
+                              </Link>
+                            </div>
+                          </td>
+                        </tr>
+                        
+                        {/* Expanded Row Content */}
+                        {isExpanded && (
+                          <tr className="bg-white/5">
+                            <td colSpan={8} className="px-6 py-4">
+                              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                {/* Additional Technical Specifications */}
+                                <div>
+                                  <h4 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
+                                    <Wrench className="h-4 w-4" />
+                                    Technical Specifications
+                                  </h4>
+                                  <div className="grid grid-cols-2 gap-3 text-xs">
+                                    {vehicle.transmission !== undefined && (
+                                      <div className="flex justify-between">
+                                        <span className="text-blue-200">Transmission:</span>
+                                        <span className="text-white">{getEnumLabel('Transmission', vehicle.transmission)}</span>
+                                      </div>
+                                    )}
+                                    {vehicle.driveTrain !== undefined && (
+                                      <div className="flex justify-between">
+                                        <span className="text-blue-200">Drive Train:</span>
+                                        <span className="text-white">{getEnumLabel('DriveTrain', vehicle.driveTrain)}</span>
+                                      </div>
+                                    )}
+                                    {vehicle.titleType !== undefined && (
+                                      <div className="flex justify-between">
+                                        <span className="text-blue-200">Title Type:</span>
+                                        <span className={getEnumBadgeClasses('TitleType', vehicle.titleType)}>
+                                          {getEnumLabel('TitleType', vehicle.titleType)}
+                                        </span>
+                                      </div>
+                                    )}
+                                    {vehicle.titleState && (
+                                      <div className="flex justify-between">
+                                        <span className="text-blue-200">Title State:</span>
+                                        <span className="text-white">{vehicle.titleState}</span>
+                                      </div>
+                                    )}
+                                    {vehicle.secondaryDamage !== undefined && (
+                                      <div className="flex justify-between">
+                                        <span className="text-blue-200">Secondary Damage:</span>
+                                        <span className="text-white">{getEnumLabel('DamageType', vehicle.secondaryDamage)}</span>
+                                      </div>
+                                    )}
+                                    <div className="flex justify-between">
+                                      <span className="text-blue-200">Has Keys:</span>
+                                      <span className={`${vehicle.hasKeys ? 'text-green-400' : 'text-red-400'}`}>
+                                        {vehicle.hasKeys ? '✓ Yes' : '✗ No'}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Financial Information */}
+                                <div>
+                                  <h4 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
+                                    <Hash className="h-4 w-4" />
+                                    Financial Information
+                                  </h4>
+                                  <div className="space-y-2 text-xs">
+                                    {vehicle.price && (
+                                      <div className="flex justify-between">
+                                        <span className="text-blue-200">Listed Price:</span>
+                                        <span className="text-green-400 font-medium">
+                                          {formatPrice(vehicle.price, vehicle.currency)}
+                                        </span>
+                                      </div>
+                                    )}
+                                    {vehicle.estimatedRetailValue && (
+                                      <div className="flex justify-between">
+                                        <span className="text-blue-200">Estimated Value:</span>
+                                        <span className="text-yellow-400">
+                                          {formatPrice(vehicle.estimatedRetailValue, vehicle.currency)}
+                                        </span>
+                                      </div>
+                                    )}
+                                    {vehicle.price && vehicle.estimatedRetailValue && (
+                                      <div className="flex justify-between">
+                                        <span className="text-blue-200">Price vs Value:</span>
+                                        <span className={`${
+                                          vehicle.price <= vehicle.estimatedRetailValue 
+                                            ? 'text-green-400' 
+                                            : 'text-red-400'
+                                        }`}>
+                                          {vehicle.price <= vehicle.estimatedRetailValue ? 'Good Deal' : 'Above Value'}
+                                        </span>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+
+                                {/* Media Gallery */}
+                                <div className="lg:col-span-2">
+                                  <h4 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
+                                    <Eye className="h-4 w-4" />
+                                    Media Gallery
+                                  </h4>
+                                  <CarPhotos 
+                                    carId={vehicle.id} 
+                                    showMultiple={true}
+                                    maxImages={6}
+                                    enableGallery={true}
+                                    lazyLoad={true}
+                                    className="w-full"
+                                  />
+                                </div>
+
+                                {/* Additional Actions */}
+                                <div className="lg:col-span-2">
+                                  <h4 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
+                                    <Eye className="h-4 w-4" />
+                                    Additional Actions
+                                  </h4>
+                                  <div className="flex flex-wrap gap-2">
+                                    <button
+                                      onClick={() => handleWatchlistToggle(vehicle)}
+                                      className={`flex items-center gap-2 px-3 py-2 text-white text-xs rounded-lg transition-colors duration-200 ${
+                                        watchlist.has(vehicle.id) 
+                                          ? 'bg-green-600 hover:bg-green-700' 
+                                          : 'bg-blue-600 hover:bg-blue-700'
+                                      }`}
+                                    >
+                                      <Heart className={`h-3 w-3 ${watchlist.has(vehicle.id) ? 'fill-current' : ''}`} />
+                                      {watchlist.has(vehicle.id) ? 'Remove from Watchlist' : 'Add to Watchlist'}
+                                    </button>
+                                    <Link 
+                                      to={`/car/${vehicle.id}`}
+                                      className="flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-lg transition-colors duration-200"
+                                    >
+                                      <Eye className="h-3 w-3" />
+                                      View Details
+                                    </Link>
+                                    <button
+                                      onClick={() => navigator.clipboard.writeText(vehicle.vin)}
+                                      className="flex items-center gap-2 px-3 py-2 bg-gray-600 hover:bg-gray-700 text-white text-xs rounded-lg transition-colors duration-200"
+                                    >
+                                      <Hash className="h-3 w-3" />
+                                      Copy VIN
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </React.Fragment>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* Summary */}
+        {filteredVehicles.length > 0 && (
+          <div className="mt-6 text-center">
+            <p className="text-blue-200 text-sm">
+              Showing {filteredVehicles.length} live auction vehicle{filteredVehicles.length !== 1 ? 's' : ''}
+              {filteredVehicles.length !== vehicles.length && (
+                <span className="text-yellow-400"> (filtered from {vehicles.length} total)</span>
+              )}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

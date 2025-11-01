@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { DollarSign, Plus, Minus, Clock, Shield, Zap, Target, Settings } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { DollarSign, Plus, Minus, Clock, Shield, Zap, Target, Settings, AlertTriangle, CheckCircle } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { bidApi, CreateBidRequest } from '../api/bids';
 import { useToast } from './ToastProvider';
 import { apiClient } from '../lib/api';
+import { BidCalculator, BidValidationResult } from '../utils/bidCalculator';
 
 interface BidPanelProps {
   auctionCarId: string;
@@ -16,6 +17,14 @@ interface BidPanelProps {
   lastBidTime?: string;
   onBidPlaced?: (bid: any) => void;
   className?: string;
+  /** Minimum pre-bid amount from backend */
+  minPreBid?: number;
+  /** User's maximum bid limit */
+  userMaxBid?: number;
+  /** Whether to show real-time validation */
+  showRealTimeValidation?: boolean;
+  /** Whether to auto-calculate minimum bid */
+  autoCalculateMinimum?: boolean;
 }
 
 export const BidPanel: React.FC<BidPanelProps> = ({
@@ -28,52 +37,90 @@ export const BidPanel: React.FC<BidPanelProps> = ({
   bidCount,
   lastBidTime,
   onBidPlaced,
-  className = ''
+  className = '',
+  minPreBid = 0,
+  userMaxBid,
+  showRealTimeValidation = true,
+  autoCalculateMinimum = true
 }) => {
-  const [bidAmount, setBidAmount] = useState(currentPrice + minBidIncrement);
+  // Calculate minimum bid using BidCalculator
+  const minimumBid = autoCalculateMinimum 
+    ? BidCalculator.calculateMinimumBid(currentPrice, minPreBid)
+    : currentPrice + minBidIncrement;
+
+  const [bidAmount, setBidAmount] = useState(minimumBid);
   const [bidType, setBidType] = useState<'live' | 'pre' | 'proxy'>('live');
-  const [proxyMaxAmount, setProxyMaxAmount] = useState(currentPrice + minBidIncrement * 10);
+  const [proxyMaxAmount, setProxyMaxAmount] = useState(minimumBid * 2);
   const [proxyIncrement, setProxyIncrement] = useState(minBidIncrement);
   const [isPlacingBid, setIsPlacingBid] = useState(false);
+  const [validationResult, setValidationResult] = useState<BidValidationResult>({ isValid: true });
+  const [isValidating, setIsValidating] = useState(false);
+  
   const { isAuthenticated } = useAuth();
   const { addToast } = useToast();
 
+  // Update bid amount when minimum bid changes
   useEffect(() => {
-    setBidAmount(currentPrice + minBidIncrement);
-  }, [currentPrice, minBidIncrement]);
+    setBidAmount(minimumBid);
+    setProxyMaxAmount(minimumBid * 2);
+  }, [minimumBid]);
 
-  const formatPrice = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(amount);
-  };
+  // Real-time validation effect
+  useEffect(() => {
+    if (!showRealTimeValidation) return;
 
-  const formatTime = (dateString: string) => {
+    const validateBid = async () => {
+      setIsValidating(true);
+      try {
+        const result = BidCalculator.validateBidAmount(
+          bidAmount,
+          currentPrice,
+          minPreBid,
+          userMaxBid
+        );
+        setValidationResult(result);
+      } catch (error) {
+        console.error('Validation error:', error);
+        setValidationResult({ isValid: false, message: 'Validation error' });
+      } finally {
+        setIsValidating(false);
+      }
+    };
+
+    // Debounce validation
+    const timeoutId = setTimeout(validateBid, 300);
+    return () => clearTimeout(timeoutId);
+  }, [bidAmount, currentPrice, minPreBid, userMaxBid, showRealTimeValidation]);
+
+  const formatPrice = useCallback((amount: number) => {
+    return BidCalculator.formatCurrency(amount);
+  }, []);
+
+  const formatTime = useCallback((dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleTimeString('en-US', {
       hour: '2-digit',
       minute: '2-digit',
       hour12: true
     });
-  };
+  }, []);
 
-  const handleBidAmountChange = (value: number) => {
-    const newAmount = Math.max(currentPrice + minBidIncrement, value);
+  const handleBidAmountChange = useCallback((value: number) => {
+    const newAmount = Math.max(minimumBid, value);
     setBidAmount(newAmount);
-  };
+  }, [minimumBid]);
 
-  const incrementBid = () => {
-    handleBidAmountChange(bidAmount + minBidIncrement);
-  };
+  const incrementBid = useCallback(() => {
+    const increment = BidCalculator.calculateBidIncrement(bidAmount);
+    handleBidAmountChange(bidAmount + increment);
+  }, [bidAmount, handleBidAmountChange]);
 
-  const decrementBid = () => {
-    handleBidAmountChange(bidAmount - minBidIncrement);
-  };
+  const decrementBid = useCallback(() => {
+    const increment = BidCalculator.calculateBidIncrement(bidAmount);
+    handleBidAmountChange(bidAmount - increment);
+  }, [bidAmount, handleBidAmountChange]);
 
-  const handlePlaceBid = async () => {
+  const handlePlaceBid = useCallback(async () => {
     if (!isAuthenticated) {
       addToast({
         type: 'error',
@@ -92,11 +139,19 @@ export const BidPanel: React.FC<BidPanelProps> = ({
       return;
     }
 
-    if (bidAmount < currentPrice + minBidIncrement) {
+    // Use BidCalculator for validation
+    const validation = BidCalculator.validateBidAmount(
+      bidAmount,
+      currentPrice,
+      minPreBid,
+      userMaxBid
+    );
+
+    if (!validation.isValid) {
       addToast({
         type: 'error',
         title: 'Invalid Bid Amount',
-        message: `Bid must be at least ${formatPrice(currentPrice + minBidIncrement)}.`
+        message: validation.message || 'Please enter a valid bid amount.'
       });
       return;
     }
@@ -117,6 +172,7 @@ export const BidPanel: React.FC<BidPanelProps> = ({
             auctionCarId,
             amount: bidAmount
           });
+          console.log('response', response);
           break;
         case 'proxy':
           response = await apiClient.placeProxyBid({
@@ -137,9 +193,10 @@ export const BidPanel: React.FC<BidPanelProps> = ({
       
       onBidPlaced?.(response);
       
-      // Reset form
-      setBidAmount(currentPrice + minBidIncrement);
-      setProxyMaxAmount(currentPrice + minBidIncrement * 10);
+      // Reset form with new minimum bid
+      const newMinimumBid = BidCalculator.calculateMinimumBid(bidAmount, minPreBid);
+      setBidAmount(newMinimumBid);
+      setProxyMaxAmount(newMinimumBid * 2);
       
     } catch (error) {
       console.error('Failed to place bid:', error);
@@ -151,9 +208,9 @@ export const BidPanel: React.FC<BidPanelProps> = ({
     } finally {
       setIsPlacingBid(false);
     }
-  };
+  }, [isAuthenticated, isActive, bidType, bidAmount, currentPrice, minPreBid, userMaxBid, proxyMaxAmount, proxyIncrement, auctionCarId, addToast, onBidPlaced]);
 
-  const isBidDisabled = !isAuthenticated || !isActive || isPlacingBid;
+  const isBidDisabled = !isAuthenticated || !isActive || isPlacingBid || !validationResult.isValid;
 
   return (
     <div className={`bg-white rounded-xl shadow-sm border border-gray-200 p-6 ${className}`}>
@@ -168,6 +225,19 @@ export const BidPanel: React.FC<BidPanelProps> = ({
               {lastBidTime && ` • Last bid at ${formatTime(lastBidTime)}`}
             </p>
           )}
+          
+          {/* Minimum Bid Display */}
+          <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <div className="flex items-center justify-center gap-2 text-blue-700">
+              <Target className="h-4 w-4" />
+              <span className="text-sm font-medium">
+                Next Minimum Bid: {formatPrice(minimumBid)}
+              </span>
+            </div>
+            <div className="text-xs text-blue-600 mt-1">
+              Increment: {BidCalculator.formatBidIncrement(BidCalculator.calculateBidIncrement(currentPrice))}
+            </div>
+          </div>
         </div>
 
         {/* Reserve Status */}
@@ -245,10 +315,27 @@ export const BidPanel: React.FC<BidPanelProps> = ({
                     value={bidAmount}
                     onChange={(e) => handleBidAmountChange(Number(e.target.value))}
                     disabled={isBidDisabled}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-50 disabled:cursor-not-allowed"
-                    min={currentPrice + minBidIncrement}
-                    step={minBidIncrement}
+                    className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-50 disabled:cursor-not-allowed transition-colors ${
+                      validationResult.isValid 
+                        ? 'border-gray-300' 
+                        : 'border-red-300 bg-red-50'
+                    }`}
+                    min={minimumBid}
+                    step={BidCalculator.calculateBidIncrement(bidAmount)}
                   />
+                  
+                  {/* Validation Indicator */}
+                  {showRealTimeValidation && (
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                      {isValidating ? (
+                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent" />
+                      ) : validationResult.isValid ? (
+                        <CheckCircle className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <AlertTriangle className="h-4 w-4 text-red-500" />
+                      )}
+                    </div>
+                  )}
                 </div>
                 
                 <button
@@ -260,8 +347,26 @@ export const BidPanel: React.FC<BidPanelProps> = ({
                 </button>
               </div>
               <p className="text-xs text-gray-500 mt-1">
-                Minimum bid: {formatPrice(currentPrice + minBidIncrement)}
+                Minimum bid: {formatPrice(minimumBid)}
               </p>
+              
+              {/* Validation Message */}
+              {showRealTimeValidation && !validationResult.isValid && validationResult.message && (
+                <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded-lg">
+                  <div className="flex items-center gap-2 text-red-700 text-xs">
+                    <AlertTriangle className="h-3 w-3" />
+                    <span>{validationResult.message}</span>
+                  </div>
+                  {validationResult.suggestedAmount && (
+                    <button
+                      onClick={() => handleBidAmountChange(validationResult.suggestedAmount!)}
+                      className="mt-1 text-xs text-blue-600 hover:text-blue-800 underline"
+                    >
+                      Use suggested amount: {formatPrice(validationResult.suggestedAmount)}
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           )}
 
@@ -280,8 +385,8 @@ export const BidPanel: React.FC<BidPanelProps> = ({
                     onChange={(e) => setProxyMaxAmount(Number(e.target.value))}
                     disabled={isBidDisabled}
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-50 disabled:cursor-not-allowed"
-                    min={currentPrice + minBidIncrement}
-                    step={minBidIncrement}
+                    min={minimumBid}
+                    step={BidCalculator.calculateBidIncrement(proxyMaxAmount)}
                   />
                 </div>
               </div>
@@ -297,13 +402,13 @@ export const BidPanel: React.FC<BidPanelProps> = ({
                     onChange={(e) => setProxyIncrement(Number(e.target.value))}
                     disabled={isBidDisabled}
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-50 disabled:cursor-not-allowed"
-                    min={minBidIncrement}
-                    step={minBidIncrement}
+                    min={BidCalculator.calculateBidIncrement(currentPrice)}
+                    step={BidCalculator.calculateBidIncrement(currentPrice)}
                   />
                 </div>
               </div>
               <p className="text-xs text-gray-500">
-                Proxy bidding will automatically bid up to ${formatPrice(proxyMaxAmount)} in ${formatPrice(proxyIncrement)} increments
+                Proxy bidding will automatically bid up to {formatPrice(proxyMaxAmount)} in {formatPrice(proxyIncrement)} increments
               </p>
             </div>
           )}

@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { AuctionGetDto } from '../types/api';
 import { Calendar, MapPin, Car, Clock, TrendingUp } from 'lucide-react';
+import { getEnumLabel, getEnumBadgeClasses } from '../services/enumService';
 
 interface AuctionCardProps {
   auction: AuctionGetDto;
@@ -9,21 +10,14 @@ interface AuctionCardProps {
 
 export default function AuctionCard({ auction }: AuctionCardProps) {
   const getStatusColor = (status: string) => {
-    switch (status?.toLowerCase()) {
-      case 'live':
-      case 'active':
-        return 'bg-green-100 text-green-800';
-      case 'scheduled':
-      case 'ready':
-        return 'bg-blue-100 text-blue-800';
-      case 'ended':
-      case 'completed':
-        return 'bg-gray-100 text-gray-800';
-      case 'cancelled':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
+    // Use enum service for consistent styling
+    const badgeClasses = getEnumBadgeClasses('AuctionStatus', status)
+    return badgeClasses
+  };
+
+  const getStatusLabel = (status: string) => {
+    // Use enum service for consistent labeling
+    return getEnumLabel('AuctionStatus', status)
   };
 
   const formatDateTime = (dateString: string) => {
@@ -80,7 +74,7 @@ export default function AuctionCard({ auction }: AuctionCardProps) {
               )}
             </div>
             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(auction.status)}`}>
-              {auction.status}
+              {getStatusLabel(auction.status)}
             </span>
           </div>
           

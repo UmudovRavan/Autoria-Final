@@ -30,6 +30,9 @@ namespace AutoriaFinal.Domain.Repositories.Auctions
         Task<bool> HasUserBidAsync(Guid userId, Guid auctionCarId);
         Task<bool> HasUserPreBidAsync(Guid userId, Guid auctionCarId);
         Task<Bid?> GetUserHighestBidAsync(Guid userId, Guid auctionCarId);
+        Task<IEnumerable<Bid>> GetByAuctionCarIdAsync(Guid auctionCarId);
+        Task<AuctionCar?> GetAuctionCarWithBidsAsync(Guid auctionCarId);
+        Task<IEnumerable<Bid>> GetBidsForCarAsync(Guid auctionCarId, int pageSize);
 
         // PROXY BID İDARƏETMƏSİ
         Task<IEnumerable<Bid>> GetActiveProxyBidsAsync(Guid auctionCarId);
@@ -37,7 +40,9 @@ namespace AutoriaFinal.Domain.Repositories.Auctions
         Task<IEnumerable<Bid>> GetExpiredProxyBidsAsync();
         Task<IEnumerable<Bid>> GetProxyBidsForProcessingAsync(Guid auctionCarId, decimal currentAmount);
         Task<IEnumerable<Bid>> GetChildBidsAsync(Guid parentBidId);
-
+        Task<int> GetMaxSequenceNumberAsync(Guid auctionCarId);
+        Task<bool> HasActiveProxyBidAsync(Guid userId, Guid auctionCarId);
+        Task<IEnumerable<Bid>> GetProxyBidsAboveAmountAsync(Guid auctionCarId, decimal amount);
         // STATİSTİKA VƏ ANALİZ
         Task<IEnumerable<Bid>> GetTopBiddersAsync(Guid auctionId, int count = 10);
         Task<decimal> GetAverageBidAmountAsync(Guid auctionCarId);

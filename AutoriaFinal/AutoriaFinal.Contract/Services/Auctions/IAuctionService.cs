@@ -1,10 +1,9 @@
 ﻿using AutoriaFinal.Contract.Dtos.Auctions.Auction;
 using AutoriaFinal.Contract.Dtos.Auctions.AuctionCar;
 using AutoriaFinal.Domain.Entities.Auctions;
+using AutoriaFinal.Domain.Enums.AuctionEnums;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AutoriaFinal.Contract.Services.Auctions
@@ -31,6 +30,9 @@ namespace AutoriaFinal.Contract.Services.Auctions
         /// Copart sistemində auction vaxtı uzadıla bilər
         Task<AuctionDetailDto> ExtendAuctionAsync(Guid auctionId, int additionalMinutes, string reason);
 
+        // ✅ YENİ: Pre-bid collection lifecycle
+        Task<AuctionDetailDto> MakeAuctionReadyAsync(Guid auctionId);
+
         // ========== MAŞIN KEÇİDİ ==========
 
         /// Hər maşının 10 saniyəlik timer-ı bitdikdə növbəti maşına keçməlidir
@@ -56,7 +58,9 @@ namespace AutoriaFinal.Contract.Services.Auctions
         /// Real-time UI yeniləmələri üçün lazımdır
         Task<AuctionDetailDto> GetAuctionCurrentStateAsync(Guid auctionId);
 
-        
+        // ✅ YENİ: Status-based queries - ƏSAS ÇATIŞAN METODLAR
+        Task<IEnumerable<AuctionGetDto>> GetAuctionsByStatusAsync(AuctionStatus status);
+        Task<IEnumerable<AuctionGetDto>> GetAuctionsReadyToMakeReadyAsync();
 
         // ========== TİMER VƏ SCHEDULER DƏSTƏYİ ==========
 
@@ -84,13 +88,30 @@ namespace AutoriaFinal.Contract.Services.Auctions
     public class AuctionTimerInfo
     {
         public Guid AuctionId { get; set; }
-        public string? CurrentCarLotNumber { get; set; }
-        public DateTime? LastBidTime { get; set; }
-        public int TimerSeconds { get; set; }
-        public int RemainingSeconds { get; set; }
-        public bool IsExpired { get; set; }
-        public DateTime? CarStartTime { get; set; }
-    }
 
+        // Hal-hazırda aktiv olan lot nömrəsi
+        public string? CurrentCarLotNumber { get; set; }
+
+        // Son bid vaxtı (timer bu vaxta əsasən hesablanır)
+        public DateTime? LastBidTime { get; set; }
+
+        // Lot-un başlama vaxtı (ilk dəfə aktiv olduğu an)
+        public DateTime? CarStartTime { get; set; }
+
+        // Hər lot üçün ümumi timer müddəti (məs. 30 saniyə)
+        public int TimerSeconds { get; set; }
+
+        // Hazırda qalan saniyələr (server real-time hesablayır)
+        public int RemainingSeconds { get; set; }
+
+        // Vaxt bitibsə true
+        public bool IsExpired { get; set; }
+
+        // ✅ COPART LOGIC: Auction live status
+        public bool IsLive { get; set; }
+
+        // Qalan vaxtı frontend üçün oxunaqlı formatda göstərmək üçün (məs. "00:17")
+        public string? TimeDisplay { get; set; }
+    }
 
 }

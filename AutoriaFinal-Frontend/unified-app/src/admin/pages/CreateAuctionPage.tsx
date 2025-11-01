@@ -12,19 +12,38 @@ import {
 } from 'lucide-react'
 import { useToast } from '../components/common/Toast'
 import { AddVehicleModal } from '../components/AddVehicleModal'
+import { NewAuctionModal } from '../components/NewAuctionModal'
 
 export function CreateAuctionPage() {
   const { success } = useToast()
+  const [showNewAuctionModal, setShowNewAuctionModal] = useState(false)
   const [showAddVehicleModal, setShowAddVehicleModal] = useState(false)
   const [selectedVehicles, setSelectedVehicles] = useState<any[]>([])
+  const [createdAuction, setCreatedAuction] = useState<any>(null)
 
-  const handleAddVehicles = () => {
-    setShowAddVehicleModal(true)
+  const handleCreateAuction = () => {
+    setShowNewAuctionModal(true)
   }
 
-  const handleVehiclesAdded = (vehicles: any[]) => {
-    setSelectedVehicles(prev => [...prev, ...vehicles])
-    success('Vehicles Added', `${vehicles.length} vehicle${vehicles.length !== 1 ? 's' : ''} added to auction.`)
+  const handleAuctionCreated = (auction: any) => {
+    setCreatedAuction(auction)
+    setShowNewAuctionModal(false)
+    setShowAddVehicleModal(true)
+    success('Auction Created', 'Your auction has been created successfully. Now add vehicles to it.')
+  }
+
+  const handleAddVehicles = () => {
+    if (createdAuction) {
+      setShowAddVehicleModal(true)
+    } else {
+      // If no auction created yet, show the create auction modal first
+      setShowNewAuctionModal(true)
+    }
+  }
+
+  const handleVehiclesAdded = () => {
+    setShowAddVehicleModal(false)
+    success('Vehicles Added', 'Vehicles have been successfully added to the auction.')
   }
 
   const handleRemoveVehicle = (vehicleId: string) => {
@@ -34,11 +53,6 @@ export function CreateAuctionPage() {
   const handleSaveDraft = () => {
     // Visual feedback only
     success('Draft Saved', 'Your auction draft has been saved successfully.')
-  }
-
-  const handleCreateAuction = () => {
-    // Visual feedback only
-    success('Auction Created', 'Your auction has been created and is now live.')
   }
 
   return (
@@ -361,11 +375,20 @@ export function CreateAuctionPage() {
         </div>
       </div>
 
+      {/* New Auction Modal */}
+      <NewAuctionModal
+        isOpen={showNewAuctionModal}
+        onClose={() => setShowNewAuctionModal(false)}
+        onSuccess={() => {}} // Not used since we use onAuctionCreated
+        onAuctionCreated={handleAuctionCreated}
+      />
+
       {/* Add Vehicle Modal */}
       <AddVehicleModal
         isOpen={showAddVehicleModal}
         onClose={() => setShowAddVehicleModal(false)}
-        onAddVehicles={handleVehiclesAdded}
+        auctionId={createdAuction?.id || ''}
+        onSuccess={handleVehiclesAdded}
       />
     </div>
   )

@@ -14,26 +14,26 @@ namespace AutoriaFinal.Domain.Entities.Auctions
         public bool IsProxy { get; set; }
         public decimal? ProxyMax { get; set; }
 
-        public bool IsPreBid { get; set; } = false; // Auction başlamamışdan əvvəl qoyulubsa
+        public bool IsPreBid { get; set; } = false;
 
         public BidStatus Status { get; set; } = BidStatus.Placed;
         public DateTime PlacedAtUtc { get; set; } = DateTime.UtcNow;
-        public BidType BidType { get; set; } // Bid növü
-        public string? Notes { get; set; }                       // Bid haqqında qeydlər
-        public DateTime? ValidUntil { get; set; }               // Proxy bid-lər üçün etibarlılıq müddəti
-        public DateTime? ProcessedAt { get; set; }              // Bid-in işləndiyi vaxt
-        public string? IPAddress { get; set; }                  // Bid verənin IP ünvanı
-        public string? UserAgent { get; set; }                  // Browser məlumatları
-        public int SequenceNumber { get; set; }                // Bu maşın üçün bid sıra nömrəsi
-        public bool IsAutoBid { get; set; } = false;           // Avtomatik bid olub-olmadığı
-        public Guid? ParentBidId { get; set; }                 // Proxy bid-in əsas bid-i
-
-        // Navigation Properties
+        public BidType BidType { get; set; } 
+        public string? Notes { get; set; }                       
+        public DateTime? ValidUntil { get; set; }               
+        public DateTime? ProcessedAt { get; set; }              
+        public string? IPAddress { get; set; }                  
+        public string? UserAgent { get; set; }               
+        public int SequenceNumber { get; set; }                
+        public bool IsAutoBid { get; set; } = false;           
+        public Guid? ParentBidId { get; set; }                 
         public AuctionCar AuctionCar { get; set; } = default!;
         public Bid? ParentBid { get; set; }                    // Proxy bid-in əsas bid-i
-        public ICollection<Bid> ChildBids { get; set; } = new List<Bid>(); // Proxy bid-in törəmələri
+        public ICollection<Bid> ChildBids { get; set; } = new List<Bid>(); 
 
-        public Bid() { } // EF Core üçün
+        public Bid() { }
+        #region Rich Data Model
+        #region Factory Methods
 
         public static Bid CreateRegularBid(
             Guid auctionCarId,
@@ -64,8 +64,6 @@ namespace AutoriaFinal.Domain.Entities.Auctions
             return bid;
         }
 
-        /// Proxy bid yaratmaq üçün factory metod
-       
         public static Bid CreateProxyBid(
             Guid auctionCarId,
             Guid userId,
@@ -105,8 +103,7 @@ namespace AutoriaFinal.Domain.Entities.Auctions
 
             return bid;
         }
-        /// Avtomatik bid yaratmaq üçün factory metod (proxy bid-dən törənən)
-      
+
         public static Bid CreateAutoBid(
             Guid auctionCarId,
             Guid userId,
@@ -133,7 +130,9 @@ namespace AutoriaFinal.Domain.Entities.Auctions
             return bid;
         }
 
-        // BIZNES MƏNTİQİ METODLARI
+        #endregion
+
+        #region Business Logic Methods
 
         public void Invalidate(string? reason = null)
         {
@@ -152,18 +151,12 @@ namespace AutoriaFinal.Domain.Entities.Auctions
             MarkUpdated();
         }
 
-        
-        /// Bid-i işlənmiş olaraq işarələ
-        
         public void MarkAsProcessed()
         {
             ProcessedAt = DateTime.UtcNow;
             MarkUpdated();
         }
 
-       
-        /// Proxy bid-in hələ etibarlı olub-olmadığını yoxla
-       
         public bool IsProxyBidValid()
         {
             if (!IsProxy) return false;
@@ -173,9 +166,6 @@ namespace AutoriaFinal.Domain.Entities.Auctions
             return DateTime.UtcNow <= ValidUntil.Value;
         }
 
-        
-        /// Proxy bid-in artırıla biləcəyi maksimum məbləği qaytar
-        
         public decimal GetRemainingProxyAmount()
         {
             if (!IsProxy || !ProxyMax.HasValue)
@@ -184,9 +174,6 @@ namespace AutoriaFinal.Domain.Entities.Auctions
             return Math.Max(0, ProxyMax.Value - Amount);
         }
 
-        
-        /// Bu bid-in növbəti avtomatik artırıla biləcəyini yoxla
-        
         public bool CanAutoIncrease(decimal requiredAmount, decimal increment)
         {
             if (!IsProxy || !IsProxyBidValid()) return false;
@@ -195,10 +182,6 @@ namespace AutoriaFinal.Domain.Entities.Auctions
             var nextAmount = Math.Max(Amount + increment, requiredAmount);
             return nextAmount <= ProxyMax.Value;
         }
-        
-
-
-        /// Proxy bid üçün növbəti məbləği hesabla
 
         public decimal CalculateNextProxyAmount(decimal currentHighestBid, decimal increment)
         {
@@ -208,18 +191,12 @@ namespace AutoriaFinal.Domain.Entities.Auctions
             return Math.Min(nextAmount, ProxyMax.Value);
         }
 
-        
-        /// Bid-in vaxtının keçib-keçmədiyini yoxla (pre-bid-lər üçün)
-        
         public bool IsExpired()
         {
             if (!ValidUntil.HasValue) return false;
             return DateTime.UtcNow > ValidUntil.Value;
         }
 
-        
-        /// Bid məlumatlarını təhlükəsiz şəkildə yenilə
-        
         public void UpdateAmount(decimal newAmount, string? reason = null)
         {
             if (Status != BidStatus.Placed)
@@ -240,6 +217,117 @@ namespace AutoriaFinal.Domain.Entities.Auctions
             MarkUpdated();
         }
 
+        // ✅ ƏLAVƏ: YENİ PROXY BID METODLARI (REAL eBay MƏNTIQ)
+
+        /// <summary>
+        /// Rəqib bid-i outbid edə bilməsini yoxlayır (eBay məntiqi)
+        /// </summary>
+        public bool CanOutbid(decimal competitorBid, decimal minIncrement)
+        {
+            if (!IsProxy || !IsProxyBidValid())
+                return false;
+
+            if (!ProxyMax.HasValue)
+                return false;
+
+            // ✅ Proxy max-ı competitor + increment-dən böyükdürsə, outbid edə bilər
+            return ProxyMax.Value >= (competitorBid + minIncrement);
+        }
+
+        /// <summary>
+        /// Rəqib bid-i outbid etmək üçün lazım olan məbləği hesablayır
+        /// </summary>
+        public decimal CalculateNextProxyBidAmount(decimal competitorBid, decimal minIncrement)
+        {
+            if (!IsProxy || !ProxyMax.HasValue)
+                return 0;
+
+            // ✅ Real məntiqlə: Competitor bid + minimum increment
+            var nextAmount = competitorBid + minIncrement;
+
+            // ✅ Əgər proxy max-dan böyükdürsə, proxy max-ı qaytar
+            if (nextAmount > ProxyMax.Value)
+                return ProxyMax.Value;
+
+            return nextAmount;
+        }
+
+        /// <summary>
+        /// Proxy bid-də qalan capacity (neçə daha artıra bilər)
+        /// </summary>
+        public decimal GetProxyRemainingCapacity()
+        {
+            if (!IsProxy || !ProxyMax.HasValue)
+                return 0;
+
+            return Math.Max(0, ProxyMax.Value - Amount);
+        }
+
+        /// <summary>
+        /// İki proxy bid arasında müqayisə - hansı daha güclüdür
+        /// </summary>
+        public int CompareProxyStrength(Bid otherProxyBid)
+        {
+            if (!IsProxy || !otherProxyBid.IsProxy)
+                throw new InvalidOperationException("Hər iki bid proxy olmalıdır");
+
+            if (!ProxyMax.HasValue || !otherProxyBid.ProxyMax.HasValue)
+                return 0;
+
+            return ProxyMax.Value.CompareTo(otherProxyBid.ProxyMax.Value);
+        }
+
+        /// <summary>
+        /// Bu proxy bid-in başqa proxy bid ilə yarışa biləcəyini yoxlayır
+        /// </summary>
+        public bool CanCompeteWith(Bid otherProxyBid, decimal currentPrice, decimal minIncrement)
+        {
+            if (!IsProxy || !otherProxyBid.IsProxy)
+                return false;
+
+            if (!IsProxyBidValid() || !otherProxyBid.IsProxyBidValid())
+                return false;
+
+            var requiredToWin = currentPrice + minIncrement;
+            return ProxyMax.HasValue && ProxyMax.Value >= requiredToWin;
+        }
+
+        #endregion
+
+        #region Proxy Bid War Logic 
+        /// Proxy bid war-da hansı bidding strategy-ni istifadə edəcəyini təyin edir
+        public ProxyStrategy GetOptimalStrategy(decimal currentHighest, decimal minIncrement, IEnumerable<Bid> competingProxies)
+        {
+            if (!IsProxy || !ProxyMax.HasValue)
+                return ProxyStrategy.None;
+
+            var strongestCompetitor = competingProxies
+                .Where(p => p.IsProxy && p.ProxyMax.HasValue && p.UserId != UserId)
+                .OrderByDescending(p => p.ProxyMax.Value)
+                .FirstOrDefault();
+
+            if (strongestCompetitor == null)
+                return ProxyStrategy.Conservative; // Rəqib yoxdur, yavaş-yavaş artır
+
+            if (ProxyMax.Value > strongestCompetitor.ProxyMax.Value)
+                return ProxyStrategy.Aggressive; // Güclüyük, maksimuma qədər getməyə hazır
+
+            if (ProxyMax.Value == strongestCompetitor.ProxyMax.Value)
+                return ProxyStrategy.Competitive; // Bərabər güc, vaxt prioriteti
+
+            return ProxyStrategy.Defensive; // Zəif vəziyyət, minimum itki
+        }
+
+        #endregion
+        #endregion
     }
 
-}
+    public enum ProxyStrategy
+    {
+        None,
+        Conservative,    // Yavaş-yavaş artırma
+        Competitive,     // Normal yarış
+        Aggressive,      // Maksimuma qədər sürətli artırma
+        Defensive        // Minimum itki strategiyası
+    }
+}   
